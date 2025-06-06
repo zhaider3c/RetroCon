@@ -22,7 +22,7 @@ const Menubar = ({ links = [], di }) => {
                                     );
                                 } else {
                                     return (
-                                        <Button {...THEME.POP} key={i} onClick={() => {
+                                        <Button {...THEME.ACTIVE} key={i} onClick={() => {
                                             navigate(e.url)
                                         }}>
                                             <a href={e.url} key={i} className='text-black'>{e.text}</a>
@@ -37,7 +37,7 @@ const Menubar = ({ links = [], di }) => {
                 <div className='text-xl text-center h-full' onClick={() => { }}>
                     {localStorage.getItem('business_name') ?? "RetroEnd"}
                 </div>
-                <Button {...THEME.POP} onClick={() => {
+                <Button {...THEME.ACTIVE} onClick={() => {
                     di.request.get({ url: di.api.get('logout') });
                     localStorage.clear();
                     navigate('/');

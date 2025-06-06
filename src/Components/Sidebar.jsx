@@ -8,7 +8,7 @@ const Sidebar = ({ links = [], di }) => {
     const navigate = (location) => window.location = location;
     return (
         <Card {...THEME.MUDDY} className='h-full w-1/6 flex flex-col gap-4 p-4 overflow-hidden'>
-            <Bubble {...THEME.POP} className='text-2xl text-center' onClick={() => { }}>
+            <Bubble {...THEME.ACTIVE} className='text-2xl text-center' onClick={() => { }}>
                 {localStorage.getItem('business_name') ?? "RetroEnd"}
             </Bubble>
             <div className='flex flex-col justify-center overflow-auto grow'>
@@ -25,7 +25,7 @@ const Sidebar = ({ links = [], di }) => {
                                 } else {
 
                                     return (
-                                        <Button {...THEME.POP} key={i} onClick={() => {
+                                        <Button {...THEME.ACTIVE} key={i} onClick={() => {
                                             navigate(e.url)
                                         }}>
                                             <a href={e.url} key={i} className='text-black'>{e.text}</a>
@@ -36,7 +36,7 @@ const Sidebar = ({ links = [], di }) => {
                     }
                 </div>
             </div>
-            <Button {...THEME.POP} onClick={() => {
+            <Button {...THEME.ACTIVE} onClick={() => {
                 di.request.get({ url: di.api.get('logout') });
                 localStorage.clear();
                 navigate('/');

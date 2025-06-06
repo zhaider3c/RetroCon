@@ -33,7 +33,7 @@ const Message = ({ di }) => {
                         {searchParams.get('message')}
                     </p>
                 </Card>
-                <Button {...THEME.POP}
+                <Button {...THEME.ACTIVE}
                     className='outline-none'
                     onClick={
                         () => {

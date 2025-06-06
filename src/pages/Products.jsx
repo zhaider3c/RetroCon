@@ -94,7 +94,7 @@ const FileUpload = ({ di }) => {
 
     return (
         <div className='pt-5 h-full flex flex-col hustify-center items-center gap-5'>
-            <input onChange={(e) => {
+            <Input {...THEME.ACTIVE_INPUT} onChange={(e) => {
                 let formData = new FormData();
                 formData.append('file', e.target.files[0]);
                 di.request.get({
@@ -117,7 +117,7 @@ const FileUpload = ({ di }) => {
                     });
                 }}>Download template</a>
                 {hash &&
-                    < Button {...THEME.POP} onClick={() => {
+                    < Button {...THEME.ACTIVE} onClick={() => {
                         di.request.post({
                             url: di.api.get('product-import', 'catalog'),
                             body: JSON.stringify({
@@ -205,13 +205,13 @@ const Products = ({ di }) => {
                     <span>
                         Products
                     </span>
-                    <Input className='grow ' placeholder='Search SKU' onChange={(e) => {
+                    <Input {...THEME.ACTIVE_INPUT} className='grow ' placeholder='Search SKU' onChange={(e) => {
                         clearInterval(tt);
                         tt = setTimeout(() => {
                             setSearch(e.target.value);
                         }, 700);
                     }}></Input>
-                    <DropdownMenu {...THEME.POP} className=''>
+                    <DropdownMenu {...THEME.ACTIVE} className=''>
                         <DropdownMenuTrigger className=''>
                             Filter
                         </DropdownMenuTrigger>
@@ -228,16 +228,16 @@ const Products = ({ di }) => {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button {...THEME.POP} onClick={() => setPopupOpen(true)} className='p-2'> <FaFileCsv className='text-3xl' /> </Button>
+                    <Button {...THEME.ACTIVE} onClick={() => setPopupOpen(true)} className='p-2'> <FaFileCsv className='text-3xl' /> </Button>
                 </Card>
                 <div {...THEME.MUDDY} className='w-full grow overflow-auto'>
                     <Grid products={products} di={di}></Grid>
                 </div>
                 <div className='flex'>
-                    <Button className={`py-2 px-5 ${products?.cursor?.prev ? '' : 'opacity-25'}`} {...THEME.POP} onClick={() => { setCursor(products.cursor.prev); }}>
+                    <Button className={`py-2 px-5 ${products?.cursor?.prev ? '' : 'opacity-25'}`} {...THEME.ACTIVE} onClick={() => { setCursor(products.cursor.prev); }}>
                         <TbTriangleFilled className='-rotate-90 text-yellow-900/75' /></Button>
                     <Card className='py-2 px-4' {...THEME.MUDDY}></Card>
-                    <Button className={`py-2 px-5 ${products?.cursor?.next ? '' : 'opacity-25'}`}{...THEME.POP} onClick={() => { setCursor(products.cursor.next); }}>
+                    <Button className={`py-2 px-5 ${products?.cursor?.next ? '' : 'opacity-25'}`}{...THEME.ACTIVE} onClick={() => { setCursor(products.cursor.next); }}>
                         <TbTriangleFilled className='rotate-90 text-yellow-900/75' /></Button>
                 </div>
             </div>

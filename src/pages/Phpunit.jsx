@@ -19,7 +19,7 @@ const Phpunit = ({ di }) => {
             <div className='flex flex-col justify-between items-between gap-5 overflow-hidden w-full h-full'>
                 <Card {...THEME.MUDDY} className='flex gap-5 items-center'>
                     <h1 className='px-5'>PhPUnit</h1>
-                    <Input className="grow" value={url} onChange={(e) => {
+                    <Input {...THEME.ACTIVE_INPUT} className="grow" value={url} onChange={(e) => {
                         setUrl(e.target.value);
                     }} />
                     <div className='px-5' onClick={() => {

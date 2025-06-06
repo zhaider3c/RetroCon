@@ -8,9 +8,15 @@ let HEADERS = {
 const REST = '/rest/v2';
 
 const HOSTS = {}
-HOSTS.UNICON = 'https://unicon.local.cedcommerce.com';
-HOSTS.CATALOG = 'https://catalog.local.cedcommerce.com';
-HOSTS.SALES = 'https://sales.local.cedcommerce.com';
+// UNIFIED-CON
+HOSTS.UNICON = 'https://onecon.local.cedcommerce.com';
+HOSTS.CATALOG = HOSTS.UNICON;
+HOSTS.SALES = HOSTS.UNICON;
+
+// HOSTS.UNICON = 'https://unicon.local.cedcommerce.com';
+// HOSTS.CATALOG = 'https://catalog.local.cedcommerce.com';
+// HOSTS.SALES = 'https://sales.local.cedcommerce.com';
+
 HOSTS.PHPUNIT = '/coverage-html';
 
 const apiEndpoints = {

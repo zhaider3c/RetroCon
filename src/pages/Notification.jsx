@@ -34,7 +34,7 @@ function loadData(setter, di) {
 }
 const Data = ({ data, di }) => {
     return (<div className='flex justify-start items-between gap-5' {...THEME.MUDDY}>
-        <Card className='flex flex-col gap-5 justify-center items-center overflow-auto' {...THEME.POP}>
+        <Card className='flex flex-col gap-5 justify-center items-center overflow-auto' {...THEME.ACTIVE}>
             <p className='text-2xl'>Activities</p>
             <div className='flex flex-col gap-5'>
                 {
@@ -42,7 +42,7 @@ const Data = ({ data, di }) => {
                         return (
                             <Card key={index} className={`flex flex-col gap-5 justify-between items-start overflow-hidden max-h-[32em]`} {...THEME.MUDDY} >
                                 <p className='text-2xl capitalize'>{item}: {data[item].length}</p>
-                                <div className='grid grid-cols-2 gap-5 justify-between items-start overflow-auto' {...THEME.POP}>
+                                <div className='grid grid-cols-2 gap-5 justify-between items-start overflow-auto' {...THEME.ACTIVE}>
                                     {
                                         data[item].map((item, index) => {
                                             return (

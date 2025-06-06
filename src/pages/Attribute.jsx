@@ -71,14 +71,14 @@ const CreateAttribute = () => {
                             <div key={index} className='flex justify-between items-center gap-5'>
                                 <label className='text-right'>{field.name.toUpperCase()} </label>
                                 <div className=''>
-                                    <Input placeholder='^-^' className='w-full' type={field.type}></Input>
+                                    <Input {...THEME.ACTIVE_INPUT} placeholder='^-^' className='w-full' type={field.type}></Input>
                                 </div>
                             </div>
                         )
                     })
                 }
             </div>
-            <Button className='px-5' {...THEME.POP}>Save</Button>
+            <Button className='px-5' {...THEME.ACTIVE}>Save</Button>
         </div>
     )
 }
@@ -129,16 +129,16 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
         <Card {...THEME.MUDDY} className='flex gap-3 justify-between items-center'>
             <div className='flex gap-3 justify-start items-center'>
                 <p className='text-2xl'>Attributes</p>
-                <Button className='min-w-32' {...THEME.POP} onClick={e => {
+                <Button className='min-w-32' {...THEME.ACTIVE} onClick={e => {
                     setFilter((filter + 1) % filterValues.length);
 
                 }} >{filterValues[filter][0]}</Button>
             </div>
             <div>
-                <Button {...THEME.POP} onClick={() => {
+                <Button {...THEME.ACTIVE} onClick={() => {
                     di.request.post({ url: di.api.get('attribute-import', 'catalog') });
                 }}>Import</Button>
-                <Button {...THEME.POP} onClick={() => {
+                <Button {...THEME.ACTIVE} onClick={() => {
                     setPopupOpen(true);
                 }}>Create</Button>
             </div>
@@ -162,7 +162,7 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
                                 text-right rounded-md -translate-y-9  px-2 text-xl font-mono font-black`}
                                     style={
                                         {
-                                            backgroundColor: THEME.MUDDY.bg
+                                            backgroundColor: THEME.ACTIVE.bg
                                         }
                                     }
                                 >
@@ -191,10 +191,10 @@ const Main = ({ di }) => {
         <div style={{ backgroundImage: `url('${BG}')` }} className='flex flex-col w-full h-full flex gap-5 justify-center items-center bg-cover bg-center overflow-hidden'>
             <Attributes di={di} setter={setAttributes} attributes={attributes?.data} cursor={cursor}></Attributes>
             <div className='flex'>
-                <Button className={`py-2 px-5 ${attributes?.cursor?.prev ? '' : 'opacity-25'}`} {...THEME.POP} onClick={() => { setCursor(attributes.cursor.prev); }}>
+                <Button className={`py-2 px-5 ${attributes?.cursor?.prev ? '' : 'opacity-25'}`} {...THEME.ACTIVE} onClick={() => { setCursor(attributes.cursor.prev); }}>
                     <TbTriangleFilled className='-rotate-90 text-yellow-900/75' /></Button>
                 <Card className='py-2 px-4' {...THEME.MUDDY}></Card>
-                <Button className={`py-2 px-5 ${attributes?.cursor?.next ? '' : 'opacity-25'}`}{...THEME.POP} onClick={() => { setCursor(attributes.cursor.next); }}>
+                <Button className={`py-2 px-5 ${attributes?.cursor?.next ? '' : 'opacity-25'}`}{...THEME.ACTIVE} onClick={() => { setCursor(attributes.cursor.next); }}>
                     <TbTriangleFilled className='rotate-90 text-yellow-900/75' /></Button>
             </div>
         </div>

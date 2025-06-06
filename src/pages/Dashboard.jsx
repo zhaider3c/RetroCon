@@ -6,7 +6,7 @@ import Scroll from '@components/Scroll.jsx';
 import Json from '@components/Json.jsx';
 
 function ProductStatus() {
-    return (<Card {...THEME.POP} className='w-full col-span-5'>
+    return (<Card {...THEME.ACTIVE} className='w-full col-span-5'>
         <p className='text-xl'>Products: {product['total']}</p>
         {
             product && Object.keys(product).map((x, i) => {
@@ -66,14 +66,14 @@ const Dashboard = ({ di }) => {
     const elements = [
         [
             ProductStatus,
-            <Card {...THEME.POP} className='w-full col-span-2 flex flex-col'>
+            <Card {...THEME.ACTIVE} className='w-full col-span-2 flex flex-col'>
                 <p className='text-xl'>Variant type</p>
                 <p className='text-center text-6xl'> {productWithImage.count}</p>
             </Card>,
             <div className='col-span-4 overflow-hidden'>
                 <Json data={user} className='w-full h-full overflow-auto' />
             </div>,
-            <Card {...THEME.POP} className='w-full col-span-3 flex flex-col h-full overflow-auto  p-3'>
+            <Card {...THEME.ACTIVE} className='w-full col-span-3 flex flex-col h-full overflow-auto p-3'>
                 {
                     account && Object.keys(account).map((x, i) => {
                         return (

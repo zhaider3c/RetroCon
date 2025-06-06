@@ -14,9 +14,9 @@ export default function Form({ di, onSubmit, fields, submitText = "Submit", clas
             {
                 Object.keys(fields).map((x, y) => {
                     return (
-                        <Card {...THEME.WHITE} key={y} className="flex flex-col justify-center items-start gap-0 bg-white" style={{width:'100%'}}>
+                        <Card {...THEME.WHITE} key={y} className="flex flex-col justify-center items-start gap-0 bg-white" >
                             <label>{x}</label>
-                            <Input {...fields[x]} className="border-none" />
+                            <Input {...THEME.ACTIVE_INPUT} {...fields[x]} className="border-none" />
                         </Card>
                     )
                 })

@@ -16,8 +16,8 @@ const Main = ({ di }) => {
     return (
         <div className='flex flex-col w-full h-full gap-5 justify-center items-center bg-cover bg-center overflow-hidden'>
             <div className='flex gap-5 w-full justify-center h-full items-center overflow-hidden p-5'>
-                <Card className='grid h-full w-full  grid-cols-2 gap-5 justify-center items-center overflow-auto' {...THEME.POP}>
-                    <div className='text-center' {...THEME.POP}>
+                <Card className='grid h-full w-full  grid-cols-2 gap-5 justify-center items-center overflow-auto' {...THEME.ACTIVE}>
+                    <div className='text-center' {...THEME.ACTIVE}>
                         <p className='text-2xl'>Currencies</p>
                     </div>
                     {

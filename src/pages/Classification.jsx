@@ -42,20 +42,20 @@ const CreateClassification = ({ di }) => {
     }, []);
     return (
         <div className='flex flex-col gap-5'>
-            <Input placeholder='Name' onChange={(e) => {
+            <Input {...THEME.ACTIVE_INPUT} placeholder='Name' onChange={(e) => {
                 setName(e.target.value)
             }} />
-            <DropdownMenu {...THEME.POP}>
+            <DropdownMenu {...THEME.ACTIVE}>
                 <DropdownMenuTrigger>
                     Products
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                    <DropdownMenuItem {...THEME.POP} className='h-96 overflow-auto p-3 flex flex-col gap-5'>
+                    <DropdownMenuItem {...THEME.ACTIVE} className='h-96 overflow-auto p-3 flex flex-col gap-5'>
                         {
                             products && products.map((x, i) => {
                                 return (
                                     <div key={i} className='flex gap-3 max-w-96'>
-                                        <Input data-id={x.id} type='checkbox' onChange={(e) => {
+                                        <Input {...THEME.ACTIVE_INPUT} data-id={x.id} type='checkbox' onChange={(e) => {
                                             if (e.target.checked) {
                                                 setSelected([e.target.getAttribute('data-id'), ...selected])
                                             }
@@ -75,7 +75,7 @@ const CreateClassification = ({ di }) => {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <Button {...THEME.POP} onClick={() => {
+            <Button {...THEME.ACTIVE} onClick={() => {
                 di.request.post({
                     url: di.api.get('classification'),
                     body: JSON.stringify({
@@ -142,15 +142,15 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
         <Card {...THEME.MUDDY} className='flex gap-3 justify-between items-center'>
             <div className='flex gap-3 justify-start items-center'>
                 <p className='text-2xl'>Classification</p>
-                <Button className='min-w-32' {...THEME.POP} onClick={e => {
+                <Button className='min-w-32' {...THEME.ACTIVE} onClick={e => {
                     setFilter((filter + 1) % filterValues.length);
                 }} >{filterValues[filter][0]}</Button>
             </div>
             <div>
-                <Button {...THEME.POP} onClick={() => {
+                <Button {...THEME.ACTIVE} onClick={() => {
                     setPopupOpen(true);
                 }}>Create</Button>
-                <Button {...THEME.POP} onClick={() => {
+                <Button {...THEME.ACTIVE} onClick={() => {
                     di.request.get({
                         url: di.api.get('classification-recount'), callback: (e) => {
                             if (e.success) {
@@ -186,12 +186,12 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
                                 text-right rounded-md -translate-y-9  px-2 text-xl font-mono font-black`}
                                         style={
                                             {
-                                                backgroundColor: THEME.MUDDY.bg
+                                                backgroundColor: THEME.ACTIVE.bg
                                             }
                                         }
                                     >REQUIRED</div>}
                                 </div>
-                                <Button {...THEME.POP} nClick={() => {
+                                <Button {...THEME.ACTIVE} nClick={() => {
                                     di.request.delete(
                                         {
                                             url: di.api.get('classification') + '?id=' + e.id,
@@ -230,10 +230,10 @@ const Main = ({ di }) => {
         <div style={{ backgroundImage: `url('${BG}')` }} className='flex flex-col w-full h-full flex gap-5 justify-center items-center bg-cover bg-center overflow-hidden'>
             <Attributes di={di} setter={setData} attributes={attributes?.data} cursor={cursor}></Attributes>
             <div className='flex'>
-                <Button className={`py-2 px-5 ${attributes?.cursor?.prev ? '' : 'opacity-25'}`} {...THEME.POP} onClick={() => { setCursor(attributes.cursor.prev); }}>
+                <Button className={`py-2 px-5 ${attributes?.cursor?.prev ? '' : 'opacity-25'}`} {...THEME.ACTIVE} onClick={() => { setCursor(attributes.cursor.prev); }}>
                     <TbTriangleFilled className='-rotate-90 text-yellow-900/75' /></Button>
                 <Card className='py-2 px-4' {...THEME.MUDDY}></Card>
-                <Button className={`py-2 px-5 ${attributes?.cursor?.next ? '' : 'opacity-25'}`}{...THEME.POP} onClick={() => { setCursor(attributes.cursor.next); }}>
+                <Button className={`py-2 px-5 ${attributes?.cursor?.next ? '' : 'opacity-25'}`}{...THEME.ACTIVE} onClick={() => { setCursor(attributes.cursor.next); }}>
                     <TbTriangleFilled className='rotate-90 text-yellow-900/75' /></Button>
             </div>
         </div>

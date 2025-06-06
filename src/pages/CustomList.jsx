@@ -35,19 +35,19 @@ const Create = ({ di, listData = false }) => {
         <div className='flex flex-col justify-center items-start gap-5'>
             <h1 className='text-2xl'>{listData ? listData.id : 'Create a new list'}</h1>
             <div className='flex gap-5'>
-                <Input type="text" value={data.name ?? listData?.name} placeholder="Name" className='h-full' onChange={(e) => {
+                <Input {...THEME.ACTIVE_INPUT} type="text" value={data.name ?? listData?.name} placeholder="Name" className='h-full' onChange={(e) => {
                     setData({ ...data, name: e.target.value });
                 }} />
                 <DropdownMenu>
-                    <DropdownMenuTrigger {...THEME.POP}>
+                    <DropdownMenuTrigger {...THEME.ACTIVE}>
                         Columns:{data.columns ?? listData.columns}
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent {...THEME.POP} className='flex gap-5'>
+                    <DropdownMenuContent {...THEME.ACTIVE} className='flex gap-5'>
                         {
                             [1, 2].map((x, i) => {
                                 return <DropdownMenuItem key={i}
-                                    className={'text-center grow flex' + ` hover:bg-[${THEME.MUDDY.bg}]`}
-                                ><Button className='grow' {...THEME.POP} onClick={() => {
+                                    className={'text-center grow flex' + ` hover:bg-[${THEME.ACTIVE.bg}]`}
+                                ><Button className='grow' {...THEME.ACTIVE} onClick={() => {
                                     setData({ ...data, columns: x })
                                 }}>{x}</Button>
                                 </DropdownMenuItem>
@@ -57,7 +57,7 @@ const Create = ({ di, listData = false }) => {
                 </DropdownMenu>
             </div>
             <div>
-                <Input type="file" onChange={(e) => {
+                <Input {...THEME.ACTIVE_INPUT} type="file" onChange={(e) => {
                     let formData = new FormData();
                     formData.append('file', e.target.files[0]);
                     di.request.get({
@@ -82,7 +82,7 @@ const Create = ({ di, listData = false }) => {
                     })
                 }}>Download {mediaPath?.split('/').splice(-1)}</a>}
                 <div className='grid grid-cols-4 w-full justify-end items-end'>
-                    <Button {...THEME.POP} className='px-5 col-span-1' onClick={() => {
+                    <Button {...THEME.ACTIVE} className='px-5 col-span-1' onClick={() => {
                         let postData = JSON.stringify({ ...data, "hash": hash });
                         di.request.post({
                             url: di.api.get('custom-list', 'catalog'), body: postData, callback: r => {
@@ -91,7 +91,7 @@ const Create = ({ di, listData = false }) => {
                         });
                     }}>Save</Button>
                     {
-                        listData && <Button {...THEME.POP} className='px-5' onClick={() => {
+                        listData && <Button {...THEME.ACTIVE} className='px-5' onClick={() => {
                             di.request.delete({
                                 url: di.api.get('custom-list') + `?id=${listData.id}`, callback: r => {
                                     toast.success(r.message);
@@ -134,7 +134,7 @@ const CustomList = ({ di }) => {
                     {...THEME.MUDDY}
                     className='text-2xl flex justify-between items-center gap-5'>
                     Custom Lists
-                    <Input onChange={e => {
+                    <Input {...THEME.ACTIVE_INPUT} onChange={e => {
                         loadLists(e.target.value);
                     }} placeholder='Search' />
                     <div>

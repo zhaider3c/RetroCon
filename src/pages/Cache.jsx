@@ -61,7 +61,7 @@ const Cache = ({ data, di }) => {
                 <Show di={di} id={key} />
             </div>
         </Popup>
-        <Card className='flex flex-col gap-5 justify-center items-center overflow-auto' {...THEME.POP}>
+        <Card className='flex flex-col gap-5 justify-center items-center overflow-auto' {...THEME.ACTIVE}>
             <p className='text-2xl'>Queues</p>
             <div className='flex flex-col'>
                 {

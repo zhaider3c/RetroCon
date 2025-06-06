@@ -38,7 +38,7 @@ const Swagger = ({ di }) => {
                     <div className='flex flex-col gap-5 justify-start'>
                         {
                             HOSTS.map((e, i) => {
-                                return <Button {...THEME.POP} key={i} onClick={() => { setHost(e); getJsonLink(); }}>{e.split('.')[0].toUpperCase()}</Button>
+                                return <Button {...THEME.ACTIVE} key={i} onClick={() => { setHost(e); getJsonLink(); }}>{e.split('.')[0].toUpperCase()}</Button>
                             })
                         }
                         <Button onClick={() => setShowJson(!showJson)}>{!showJson ? `Show` : 'Hide'} JSON</Button>

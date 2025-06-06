@@ -51,7 +51,7 @@ const Main = ({ di }) => {
             <div className="w-full flex justify-start gap-5">
                 <label>
                     Background Color
-                    <Input
+                    <Input {...THEME.ACTIVE_INPUT}
                         type="color"
                         value={bgColor}
                         style={{
@@ -69,7 +69,7 @@ const Main = ({ di }) => {
                 </Button>
                 <label style={{ marginLeft: "10px" }}>
                     Pen Color
-                    <Input
+                    <Input {...THEME.ACTIVE_INPUT}
                         type="color"
                         value={fgColor}
                         onChange={(e) => setFgColor(e.target.value)}
@@ -81,7 +81,7 @@ const Main = ({ di }) => {
 
                 <label style={{ marginLeft: "10px" }}>
                     Pen Size
-                    <Input
+                    <Input {...THEME.ACTIVE_INPUT}
                         type="number"
                         value={penSize}
                         min="1"
@@ -89,7 +89,7 @@ const Main = ({ di }) => {
                         onChange={(e) => setPenSize(Number(e.target.value))}
                     />
                 </label>
-                <Button {...THEME.POP} className="px-5 py-3" onClick={() => {
+                <Button {...THEME.ACTIVE} className="px-5 py-3" onClick={() => {
                     document.querySelector("canvas").getContext("2d").clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
                 }}>
                     Clear

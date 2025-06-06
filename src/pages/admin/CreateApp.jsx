@@ -46,19 +46,19 @@ const Main = ({ di,adminToken }) => {
                 <p className="text-purple-200 text-6xl text-center">Create App</p>
                 <div className="w-full grid grid-cols-4 gap-5 justify-center items-center">
                     <label htmlFor="name" className="block text-sm font-medium text-end text-purple-200">Name</label>
-                    <Input id="name" placeholder="Zed Industries" className="w-full col-span-3" onChange={(e) => setData({ ...data, name: e.target.value })} />
+                    <Input {...THEME.ACTIVE_INPUT} id="name" placeholder="Zed Industries" className="w-full col-span-3" onChange={(e) => setData({ ...data, name: e.target.value })} />
                 </div>
                 <div className="w-full grid grid-cols-4 gap-5 justify-center items-center">
                     <label htmlFor="code" className="block text-sm font-medium text-end text-purple-200">Code</label>
-                    <Input id="code" placeholder="zed_ind" className="w-full col-span-3" onChange={(e) => setData({ ...data, code: e.target.value })} />
+                    <Input {...THEME.ACTIVE_INPUT} id="code" placeholder="zed_ind" className="w-full col-span-3" onChange={(e) => setData({ ...data, code: e.target.value })} />
                 </div>
                 <div className="w-full grid grid-cols-4 gap-5 justify-center items-center">
                     <label htmlFor="url" className="block text-sm font-medium text-end text-purple-200">Url</label>
-                    <Input id="url" placeholder="zed.com/api" className="w-full col-span-3" onChange={(e) => setData({ ...data, url: e.target.value })} />
+                    <Input {...THEME.ACTIVE_INPUT} id="url" placeholder="zed.com/api" className="w-full col-span-3" onChange={(e) => setData({ ...data, url: e.target.value })} />
                 </div>
                 <div className="w-full grid grid-cols-4 gap-5 justify-center items-center">
                     <label htmlFor="marketplace" className="block text-sm font-medium text-end text-purple-200">Marketplace</label>
-                    <Input id="marketplace" placeholder="Kululu" className="w-full col-span-3" onChange={(e) => setData({ ...data, marketplace: e.target.value })} />
+                    <Input {...THEME.ACTIVE_INPUT} id="marketplace" placeholder="Kululu" className="w-full col-span-3" onChange={(e) => setData({ ...data, marketplace: e.target.value })} />
                 </div>
                 <div className="flex w-full gap-5 justify-end items-end">
                     <Button className="px-5 py-3 col-span-1" onClick={() => createApp(data)}>Create</Button>

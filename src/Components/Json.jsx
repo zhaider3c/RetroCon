@@ -5,7 +5,7 @@ import { VscTriangleDown } from "react-icons/vsc";
 const Json = ({ data, even = false }) => {
     const [open, setOpen] = useState(true);
     return (
-        <Card className={"bg-[url('/wall.png')] bg-size-[auto_18px] bg-top bg-2x flex flex-col bg-repeat-x gap-0 p-0 m-0 " + `${open ? "" : "h-10 overflow-hidden"}`} {...(even ? THEME.MUDDY : THEME.POP)} >
+        <Card className={"bg-size-[auto_18px] bg-top bg-2x flex flex-col bg-repeat-x gap-0 p-0 m-0 " + `${open ? "" : "h-10 overflow-hidden"}`} {...(!even ? THEME.ACTIVE : THEME.SECONDARY)} >
             <div className="flex justify-start items-center w-full  p-0 m-0 bg-blend-multiply"
                 onClick={() => setOpen(!open)}>
                 {<VscTriangleDown />}

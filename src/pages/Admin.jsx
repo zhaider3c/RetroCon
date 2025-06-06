@@ -19,7 +19,7 @@ const Nav = ({ pages, setPage }) => {
                             return (
                                 <Button key={x} onClick={() => {
                                     setPage(x);
-                                }} className="col-span-2" {...THEME.POP}>
+                                }} className="col-span-2" {...THEME.ACTIVE}>
                                     {x.toLocaleUpperCase().replace('_', " ")}
                                 </Button>
                             )
@@ -59,11 +59,11 @@ const Main = ({ di }) => {
     return (
         <div className="w-full h-full bg-linear-to-br from-purple-800 to-purple-950 flex flex-col justify-start items-start gap-5 p-5">
             <div className="flex gap-5 w-full items-center justify-between">
-                <Button className="flex items-center h-fit w-1/12 justify-center" {...THEME.POP} onClick={() => setPage("nav")} >
+                <Button className="flex items-center h-fit w-1/12 justify-center" {...THEME.ACTIVE} onClick={() => setPage("nav")} >
                     <IoCaretBackSharp className="text-4xl text-orange-900/75" />
                     <p>Back</p>
                 </Button>
-                <Input placeholder="Admin Token" value={adminToken} className="grow h-fit" onChange={(e) => {
+                <Input {...THEME.ACTIVE_INPUT} placeholder="Admin Token" value={adminToken} className="grow h-fit" onChange={(e) => {
                     setAdminToken(e.target.value);
                     localStorage.setItem("admin_token", e.target.value);
                 }} />

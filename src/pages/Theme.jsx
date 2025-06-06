@@ -23,12 +23,29 @@ THEME.GRAY = {
 }
 
 THEME.MATRIX = {
-    bg: "black",
+    bg: "#202020",
     textColor: "lime",
+    borderColor: "black",
+    shadowColor: "black",
+    baseBg: "#2e2e2e"
+}
+
+THEME.BLACK = {
+    bg: "#202020",
+    textColor: "darkgray",
+    borderColor: "black",
+    shadowColor: "black",
+    baseBg: "#202020"
+}
+
+THEME.BLACK_ALT = {
+    bg: "black",
+    textColor: "white",
     borderColor: "black",
     shadowColor: "black",
     baseBg: "black"
 }
+
 THEME.WHITE = {
     bg: "white",
     textColor: "black",
@@ -36,3 +53,7 @@ THEME.WHITE = {
     shadowColor: "black",
     baseBg: "white"
 }
+
+THEME.ACTIVE = THEME.BLACK;
+THEME.SECONDARY = THEME.BLACK_ALT;
+THEME.ACTIVE_INPUT = THEME.MATRIX;

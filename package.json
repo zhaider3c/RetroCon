@@ -1,17 +1,21 @@
 {
+  "homepage": "https://zhaider3c.github.io/unicon",
   "name": "unicon",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@microlink/react-json-view": "^1.26.1",
     "@tailwindcss/vite": "^4.1.7",
+    "gh-pages": "^6.3.0",
     "node-fetch": "^3.3.2",
     "pixel-retroui": "^1.0.67",
     "react": "^18.3.1",

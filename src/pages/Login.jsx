@@ -15,13 +15,13 @@ const Main = ({ di }) => {
         <div className="w-full h-full bg-blue-700 flex flex-col justify-center items-center gap-5">
             <div className="w-1/2 flex flex-col items-start gap-5">
                 <span className="text-xl">Email</span>
-                <Input
+                <Input {...THEME.ACTIVE_INPUT}
                     name="email"
                     className="w-full"
                     placeholder="Enter your username"
                 />
                 <span className="text-xl">Password</span>
-                <Input
+                <Input {...THEME.ACTIVE_INPUT}
                     name='password'
                     type="password"
                     className="w-full"

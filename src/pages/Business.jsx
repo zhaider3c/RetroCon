@@ -42,7 +42,7 @@ const Business = ({ di }) => {
                     className='min-h-96 flex flex-col justify-start items-beetween gap-5'>
                     {
                         business && business.map((b, index) => {
-                            return <Button {...THEME.POP} key={b.id} onClick={() => {
+                            return <Button {...THEME.ACTIVE} key={b.id} onClick={() => {
                                 localStorage.setItem('business', b.id);
                                 localStorage.setItem('business_name', b.business_name);
                                 navigate('/dashboard');

@@ -72,7 +72,7 @@ const Main = ({ di, adminToken }) => {
                 <p className="text-purple-200 text-6xl text-center">Create Channel</p>
                 <div className="w-full flex flex-col gap-5 justify-start items-center">
                     <label htmlFor="name" className="block text-xl font-medium text-start w-full text-purple-200">Name</label>
-                    <Input autoComplete="off" id="name" placeholder="Zed Industries" className="w-full col-span-3" onChange={(e) => setData({ ...data, name: e.target.value })} />
+                    <Input {...THEME.ACTIVE_INPUT} autoComplete="off" id="name" placeholder="Zed Industries" className="w-full col-span-3" onChange={(e) => setData({ ...data, name: e.target.value })} />
                 </div>
                 <div className="flex flex-col gap-5 justify-start items-center w-full">
                     <label htmlFor="channel" className="block text-xl font-medium text-start w-full text-purple-200">Channels</label>
@@ -89,7 +89,7 @@ const Main = ({ di, adminToken }) => {
                                             channels = [id, ...data.channel_id ?? []];
                                         }
                                         setData({ ...data, channel_id: channels });
-                                    }} bg={((data.channel_id ?? []).includes(e.id)) ? "#4ade80" : THEME.POP.bg} >
+                                    }} bg={((data.channel_id ?? []).includes(e.id)) ? "#4ade80" : THEME.ACTIVE.bg} >
                                         {e.name}
                                     </Button>
                                 </div>

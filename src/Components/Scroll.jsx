@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-export default function Scroll({ children, className, ...args }) {
+export default function Scroll({ children, className,itemsClass="flex flex-col gap-1 items-center justify-center", ...args }) {
     const [renderShadow, setRenderShadow] = React.useState(false);
     function showShadow(e) {
         setRenderShadow(e.target.clientHeight < e.target.scrollHeight);
@@ -28,11 +28,13 @@ export default function Scroll({ children, className, ...args }) {
                     e.target.querySelector('#shadow-bottom').classList.remove('hidden');
                 }
             }}
-            className={'overflow-auto h-full p-0 ' + className}
+            className={`overflow-auto h-full p-0 ${className}`}
             {...args}
         >
             <div id='shadow-top' className='hidden w-full sticky top-0 h-8 bg-linear-to-b from-black/50 to-transparent'></div>
-            {children}
+            <div className={'flex '+itemsClass}>
+                {children}
+            </div>
             <div id='shadow-bottom' className={`${renderShadow ? "" : "hidden"} w-full sticky bottom-0 h-8 bg-linear-to-t from-black/50 to-transparent`}></div>
         </div>
     )
