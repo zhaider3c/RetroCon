@@ -61,7 +61,7 @@ const Grid = ({ products, di }) => {
                 products?.data && products.data.map((e, i) => {
                     const isVariant = e.u_product_type == 'variant' && !e.u_relation_id;
                     return (
-                        <Card key={e.id} {...THEME.MUDDY} className={'bg-cover bg-center items-center flex flex-col-reverse gap-2 border-box'}>
+                        <Card key={e.id} {...THEME.SECONDARY} className={'bg-cover bg-center items-center flex flex-col-reverse gap-2 border-box'}>
                             <div className={`flex w-full h-full items-center gap-5`}>
                                 <img className='w-16 aspect-square rounded-xl'
                                     src={e.images?.length?e.images[0].url:"na"}></img>
@@ -197,11 +197,11 @@ const Products = ({ di }) => {
     let tt;
     return (
         <div style={{ backgroundImage: `url('${BG}')` }} className='w-full h-full flex flex-col gap-5 justify-center items-center bg-cover bg-center p-5'>
-            <Popup {...THEME.MUDDY} isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
+            <Popup {...THEME.SECONDARY} isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
                 <FileUpload di={di} />
             </Popup>
             <div className='flex flex-col gap-5 justify-center items-center h-full w-3/4'>
-                <Card {...THEME.MUDDY} className='flex gap-5 items-center justify-center text-2xl w-full px-5 py-3'>
+                <Card {...THEME.SECONDARY} className='flex gap-5 items-center justify-center text-2xl w-full px-5 py-3'>
                     <span>
                         Products
                     </span>
@@ -230,13 +230,13 @@ const Products = ({ di }) => {
                     </DropdownMenu>
                     <Button {...THEME.ACTIVE} onClick={() => setPopupOpen(true)} className='p-2'> <FaFileCsv className='text-3xl' /> </Button>
                 </Card>
-                <div {...THEME.MUDDY} className='w-full grow overflow-auto'>
+                <div {...THEME.SECONDARY} className='w-full grow overflow-auto'>
                     <Grid products={products} di={di}></Grid>
                 </div>
                 <div className='flex'>
                     <Button className={`py-2 px-5 ${products?.cursor?.prev ? '' : 'opacity-25'}`} {...THEME.ACTIVE} onClick={() => { setCursor(products.cursor.prev); }}>
                         <TbTriangleFilled className='-rotate-90 text-yellow-900/75' /></Button>
-                    <Card className='py-2 px-4' {...THEME.MUDDY}></Card>
+                    <Card className='py-2 px-4' {...THEME.SECONDARY}></Card>
                     <Button className={`py-2 px-5 ${products?.cursor?.next ? '' : 'opacity-25'}`}{...THEME.ACTIVE} onClick={() => { setCursor(products.cursor.next); }}>
                         <TbTriangleFilled className='rotate-90 text-yellow-900/75' /></Button>
                 </div>

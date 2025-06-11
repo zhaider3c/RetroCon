@@ -119,14 +119,14 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
     useEffect(() => {
         loadAttributes(di, curosr, filterValues[filter][1], setter);
     }, [filter]);
-    return (<div className='flex justify-start flex-col overflow-hidden items-between gap-5 w-full h-full p-3' {...THEME.MUDDY}>
-        <Popup {...THEME.MUDDY} isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
+    return (<div className='flex justify-start flex-col overflow-hidden items-between gap-5 w-full h-full p-3' {...THEME.SECONDARY}>
+        <Popup {...THEME.SECONDARY} isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
             <CreateAttribute />
         </Popup>
-        <Popup {...THEME.MUDDY} isOpen={singleDisplay} onClose={() => setSingleDisplay(false)}>
+        <Popup {...THEME.SECONDARY} isOpen={singleDisplay} onClose={() => setSingleDisplay(false)}>
             <ShowAttribute data={singleAttribute} />
         </Popup>
-        <Card {...THEME.MUDDY} className='flex gap-3 justify-between items-center'>
+        <Card {...THEME.SECONDARY} className='flex gap-3 justify-between items-center'>
             <div className='flex gap-3 justify-start items-center'>
                 <p className='text-2xl'>Attributes</p>
                 <Button className='min-w-32' {...THEME.ACTIVE} onClick={e => {
@@ -148,7 +148,7 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
                 {
                     attributes?.map((e, index) => {
                         return <Card key={e.id} className={`flex flex-col grid-span-1 border-2 items-start justify-center
-                         rounded-xl px-5 py-3 h-full`} {...THEME.MUDDY} onClick={(event) => {
+                         rounded-xl px-5 py-3 h-full`} {...THEME.SECONDARY} onClick={(event) => {
                                 event.stopPropagation();
                                 setSingleAttribute(JSON.parse(event.target.querySelector('#full-data').innerHTML));
                                 setSingleDisplay(true);
@@ -193,7 +193,7 @@ const Main = ({ di }) => {
             <div className='flex'>
                 <Button className={`py-2 px-5 ${attributes?.cursor?.prev ? '' : 'opacity-25'}`} {...THEME.ACTIVE} onClick={() => { setCursor(attributes.cursor.prev); }}>
                     <TbTriangleFilled className='-rotate-90 text-yellow-900/75' /></Button>
-                <Card className='py-2 px-4' {...THEME.MUDDY}></Card>
+                <Card className='py-2 px-4' {...THEME.SECONDARY}></Card>
                 <Button className={`py-2 px-5 ${attributes?.cursor?.next ? '' : 'opacity-25'}`}{...THEME.ACTIVE} onClick={() => { setCursor(attributes.cursor.next); }}>
                     <TbTriangleFilled className='rotate-90 text-yellow-900/75' /></Button>
             </div>

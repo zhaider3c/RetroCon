@@ -31,10 +31,10 @@ const Swagger = ({ di }) => {
     return (
         <div className='flex flex-col items-center gap-5 w-full h-full p-5 bg-[url("/swagger-bg.gif")] bg-no-repeat bg-center bg-cover'>
             <div className='flex flex-col items-start gap-5 overflow-hidden min-w-[70%] h-full'>
-                <Card {...THEME.MUDDY}>
+                <Card {...THEME.SECONDARY}>
                     <h1 className='px-5'>API Reference</h1>
                 </Card>
-                <Card {...THEME.MUDDY} className='grow flex flex-row-reverse gap-5 p-5 overflow-auto w-full'>
+                <Card {...THEME.SECONDARY} className='grow flex flex-row-reverse gap-5 p-5 overflow-auto w-full'>
                     <div className='flex flex-col gap-5 justify-start'>
                         {
                             HOSTS.map((e, i) => {

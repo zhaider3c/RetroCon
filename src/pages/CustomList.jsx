@@ -127,11 +127,11 @@ const CustomList = ({ di }) => {
         <div className={`flex flex-col justify-center items-center w-full h-full bg-cover bg-bottom`}
             style={{ backgroundImage: `url('${BG}')` }}>
             <div className='flex flex-col justify-center items-between gap-5'>
-                <Popup {...THEME.MUDDY} isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
+                <Popup {...THEME.SECONDARY} isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
                     <Create di={di} listData={selectedList} />
                 </Popup>
                 <Card
-                    {...THEME.MUDDY}
+                    {...THEME.SECONDARY}
                     className='text-2xl flex justify-between items-center gap-5'>
                     Custom Lists
                     <Input {...THEME.ACTIVE_INPUT} onChange={e => {
@@ -145,7 +145,7 @@ const CustomList = ({ di }) => {
                     </div>
                 </Card>
                 <Card
-                    {...THEME.MUDDY}
+                    {...THEME.SECONDARY}
                     className='min-h-96 flex flex-col justify-start items-beetween gap-5'>
                     {
                         <table>

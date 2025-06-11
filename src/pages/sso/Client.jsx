@@ -46,7 +46,7 @@ const Main = ({ di, adminToken }) => {
                 <p className="text-4xl text-start">Groups</p>
                 {apps.map((e, i) => {
                     return (
-                        <Card key={i} className="flex gap-5 p-5" {...THEME.MUDDY}>
+                        <Card key={i} className="flex gap-5 p-5" {...THEME.SECONDARY}>
                             <p className="text-2xl">{e.name} : </p>
                             <p className="text-2xl">{e.channel_id.length} channel{e.channel_id.length > 1 ? 's' : ""}</p>
                         </Card>

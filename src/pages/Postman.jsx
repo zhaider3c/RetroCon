@@ -21,22 +21,40 @@ const Main = ({ di }) => {
     const [host, setHost] = useState("None");
     const [verb, setVerb] = useState("GET");
     const [body, setBody] = useState(localStorage.getItem('post-body') || '');
+    const [loading, setLoading] = useState(false);
+
+    // Debounce function helper
+    const debounce = (func, wait) => {
+        let timeout;
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func(...args), wait);
+        };
+    };
+
+    // Debounced handlers
+    const handleUrlChange = debounce((e) => setUrl(e.target.value), 7);
+    const handleTokenChange = debounce((e) => {
+        setToken(e.target.value);
+        localStorage.setItem('postman_token', e.target.value);
+    }, 7);
+    const handleBodyChange = debounce((e) => {
+        setBody(e.target.value);
+        localStorage.setItem('post-body', e.target.value);
+    }, 7);
     return (
-        <div className='w-full h-full bg-[url("/postman.png")] bg-no-repeat bg-cover flex flex-col justify-center items-center'>
-            <div className='flex w-full h-full flex-col gap-5 p-5'>
-                <div className='flex flex-col gap-5 items-center'>
-                    <div className='w-full flex gap-5 items-center'>
-                        <Input {...THEME.ACTIVE_INPUT} placeholder='Token' className='w-full' value={token} onChange={(e) => {
-                            setToken(e.target.value);
-                            localStorage.setItem('postman_token', e.target.value);
-                        }} />
+        <div className='w-full h-full bg-[url("/postman.png")] bg-no-repeat bg-cover flex flex-col justify-center items-center gap-5'>
+            <div className='flex w-full h-full flex-col gap-3 p-5'>
+                <div className='flex flex-col items-center gap-3'>
+                    <div className='w-full flex gap-3 items-center'>
+                        <Input {...THEME.ACTIVE_INPUT} placeholder='Token' className='w-full' value={token} onChange={handleTokenChange} />
                     </div>
-                    <div className='w-full flex gap-5 items-center'>
-                        <DropdownMenu {...THEME.ACTIVE}>
-                            <DropdownMenuTrigger>
+                    <div className='w-full flex gap-3 items-center justify-center'>
+                        <DropdownMenu {...THEME.ACTIVE} className='px-1'>
+                            <DropdownMenuTrigger >
                                 {host ?? "Select Host"}
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent {...THEME.MUDDY}>
+                            <DropdownMenuContent {...THEME.SECONDARY}>
                                 {
                                     Object.keys(di.hosts
                                     ).map((x, u) => {
@@ -53,11 +71,11 @@ const Main = ({ di }) => {
                                 }
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <DropdownMenu {...THEME.ACTIVE}>
+                        <DropdownMenu {...THEME.ACTIVE} className='px-1'>
                             <DropdownMenuTrigger>
                                 {verb ?? "---"}
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent {...THEME.MUDDY} className=''>
+                            <DropdownMenuContent {...THEME.SECONDARY} className=''>
                                 {
                                     VERBS.map((x, u) => {
                                         return (
@@ -73,32 +91,28 @@ const Main = ({ di }) => {
                                 }
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <Input {...THEME.ACTIVE_INPUT} placeholder='/rest/v2/ping' onChange={(e) => setUrl(e.target.value)} className='grow'></Input>
-                        <div className='h-full flex gap-3 items-center'>
-                            <Button {...THEME.ACTIVE} onClick={() => {
-                                fetch(host === "None" ? url : host + url, {
-                                    // mode: 'no-cors',
+                        <Input {...THEME.ACTIVE_INPUT} placeholder='/rest/v2/ping' onChange={handleUrlChange} className='grow' />
+                        <Button {...(loading ? THEME.BLOCKED : THEME.ACTIVE)} onClick={async () => {
+                            setLoading(true);
+                            try {
+                                setResponse({});
+                                const response = await fetch(host === "None" ? url : host + url, {
                                     method: verb,
                                     headers: {
                                         'Authorization': 'Bearer ' + token,
                                         'Content-Type': 'application/json'
                                     },
                                     ...(verb === 'POST' ? { body: body } : {})
-                                }).then(response => {
-                                    return response.json();
-                                }).then(json => {
-                                    setResponse(json);
-                                }).catch(error => {
-                                    console.error(error);
-                                    setResponse({ error: error });
-                                })
-                            }} >Yeet!</Button>
-
-                            {/* <Card className={'w-48 flex gap-5 items-center ' + `bg-${autoRefresh ? 'green-600' : 'amber-400'}`}>
-                            <Input {...THEME.ACTIVE_INPUT} onChange={(e) => { setAutoRefresh(e.target.checked) }} type="checkbox" />
-                            Auto Refresh
-                        </Card> */}
-                        </div>
+                                });
+                                const json = await response.json();
+                                setResponse(json);
+                            } catch (error) {
+                                console.error(error);
+                                setResponse({ error: error });
+                            } finally {
+                                setLoading(false);
+                            }
+                        }} disabled={loading} >Yeet!</Button>
                     </div>
                 </div>
                 <div className='w-full flex grow whitespace-pre overflow-hidden' {...THEME.ACTIVE}>

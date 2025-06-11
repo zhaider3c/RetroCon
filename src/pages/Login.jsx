@@ -29,7 +29,7 @@ const Main = ({ di }) => {
                     onFocus={(e) => {e.target.type='text'}}
                     onBlur={(e) => {e.target.type='password'}}
                 />
-                <Button {...THEME.MUDDY} className="px-5" onClick={() => {
+                <Button {...THEME.SECONDARY} className="px-5" onClick={() => {
                     di.request.post({
                         url: di.api.get('login'),
                         body: JSON.stringify({
@@ -55,7 +55,7 @@ const Main = ({ di }) => {
                 <span className="text-xl">TOKEN </span>
                 <TextArea className="grow" onChange={(e) => (setToken(e.target.value))}></TextArea>
                 <div className="flex w-full items-end justify-end">
-                    <Button {...THEME.MUDDY} className="px-5" onClick={
+                    <Button {...THEME.SECONDARY} className="px-5" onClick={
                         () => {
                             window.location = "/message?message=Login+Success&token=" + token
                         }

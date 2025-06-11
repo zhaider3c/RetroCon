@@ -59,7 +59,7 @@ const Main = ({ di, adminToken }) => {
                 <p className="text-4xl text-start">Channels</p>
                 {apps && apps.map((e, i) => {
                     return (
-                        <Card key={i} className="flex gap-5 p-5" {...THEME.MUDDY} onClick={(e) => {
+                        <Card key={i} className="flex gap-5 p-5" {...THEME.SECONDARY} onClick={(e) => {
                             setIsPopupOpen(true);
                             setChannelIndex(i);
                         }}>

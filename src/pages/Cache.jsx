@@ -55,8 +55,8 @@ const Show = ({ id, di }) => {
 const Cache = ({ data, di }) => {
     const [popupOpen, setPopupOpen] = useState(false);
     const [key, setKey] = useState(false);
-    return (<div className='flex justify-center items-center gap-5' {...THEME.MUDDY}>
-        <Popup {...THEME.MUDDY} isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
+    return (<div className='flex justify-center items-center gap-5' {...THEME.SECONDARY}>
+        <Popup {...THEME.SECONDARY} isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
             <div className='w-[90em] overflow-hidden h-[50em]'>
                 <Show di={di} id={key} />
             </div>
@@ -66,7 +66,7 @@ const Cache = ({ data, di }) => {
             <div className='flex flex-col'>
                 {
                     data.catalog && Object.keys(data.catalog).map((item, index) => {
-                        return (<Card key={index} className={`flex flex-col gap-5 justify-between items-start`} {...THEME.MUDDY} onClick={() => {
+                        return (<Card key={index} className={`flex flex-col gap-5 justify-between items-start`} {...THEME.SECONDARY} onClick={() => {
                             setPopupOpen(true);
                             setKey(item);
                         }}>
@@ -79,7 +79,7 @@ const Cache = ({ data, di }) => {
             <div className='flex flex-col'>
                 {
                     data.unicon && Object.keys(data.unicon).map((item, index) => {
-                        return (<Card key={index} className={`flex flex-col gap-5 justify-between items-start`} {...THEME.MUDDY} onClick={() => {
+                        return (<Card key={index} className={`flex flex-col gap-5 justify-between items-start`} {...THEME.SECONDARY} onClick={() => {
                             setPopupOpen(true);
                             setKey(item);
                         }}>

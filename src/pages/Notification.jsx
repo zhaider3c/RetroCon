@@ -33,14 +33,14 @@ function loadData(setter, di) {
     });
 }
 const Data = ({ data, di }) => {
-    return (<div className='flex justify-start items-between gap-5' {...THEME.MUDDY}>
+    return (<div className='flex justify-start items-between gap-5' {...THEME.SECONDARY}>
         <Card className='flex flex-col gap-5 justify-center items-center overflow-auto' {...THEME.ACTIVE}>
             <p className='text-2xl'>Activities</p>
             <div className='flex flex-col gap-5'>
                 {
                     data && Object.keys(data).map((item, index) => {
                         return (
-                            <Card key={index} className={`flex flex-col gap-5 justify-between items-start overflow-hidden max-h-[32em]`} {...THEME.MUDDY} >
+                            <Card key={index} className={`flex flex-col gap-5 justify-between items-start overflow-hidden max-h-[32em]`} {...THEME.SECONDARY} >
                                 <p className='text-2xl capitalize'>{item}: {data[item].length}</p>
                                 <div className='grid grid-cols-2 gap-5 justify-between items-start overflow-auto' {...THEME.ACTIVE}>
                                     {

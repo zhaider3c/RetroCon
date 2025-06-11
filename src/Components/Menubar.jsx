@@ -8,16 +8,16 @@ import Scroll from '@components/Scroll';
 const Menubar = ({ links = [], di }) => {
     const navigate = (location) => window.location = location;
     return (
-        <Card {...THEME.MUDDY} className='h-3/4 flex flex-col gap-4 p-4 overflow-hidden p-0 m-0'>
+        <Card {...THEME.SECONDARY} className='h-3/4 flex flex-col gap-4 p-4 overflow-hidden p-0 m-0'>
             <Scroll className='w-full h-full'>
-                <Card className='h-full justify-between gap-3 grid grid-cols-2' {...THEME.GRAY} >
+                <Card className='h-full justify-between gap-3 grid grid-cols-2' {...THEME.ACTIVE} >
                     {
                         links.map((e, i) => {
                             if (e.show)
                                 if (e.url === window.location.pathname) {
                                     return (
-                                        <Card {...THEME.MUDDY} key={i}>
-                                            <p href={e.url} key={i} className='text-black text-center'>{e.text}</p>
+                                        <Card {...THEME.BUTTON_ACTIVE} key={i}>
+                                            <p href={e.url} key={i} className='text-inherit text-center'>{e.text}</p>
                                         </Card>
                                     );
                                 } else {
@@ -53,7 +53,7 @@ const Menubar = ({ links = [], di }) => {
 export function Main({ links = [], di }) {
     const [menuOpen, setMenuOpen] = useState(false);
     return (
-        <Card {...THEME.MUDDY} className={`w-full h-16 flex justify-start items-center`}>
+        <Card {...THEME.SECONDARY} className={`w-full h-16 flex justify-start items-center`}>
             <Button className='px-5' onClick={() => {
                 setMenuOpen(!menuOpen);
             }}>Menu</Button>

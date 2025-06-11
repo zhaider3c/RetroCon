@@ -33,7 +33,7 @@ const Main = ({ di,adminToken }) => {
                 <p className="text-4xl text-start">Apps</p>
                 {apps.map((e, i) => {
                     return (
-                        <Card key={i} className="flex flex-col gap-5 p-5" {...THEME.MUDDY}>
+                        <Card key={i} className="flex flex-col gap-5 p-5" {...THEME.SECONDARY}>
                             <p className="text-2xl">{e.name}</p>
                             <p className="text-xl">{e.code}</p>
                             <p className="text-xl">{e.url.substring(0, 35)}</p>

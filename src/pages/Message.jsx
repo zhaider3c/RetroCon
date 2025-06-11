@@ -28,7 +28,7 @@ const Message = ({ di }) => {
             backgroundColor: '#7EAB93'
         }} className='w-full h-full flex flex-col justify-center items-center bg-top bg-fill bg-no-repeat' >
             <div className='flex flex-col justify-center items-between gap-5'>
-                <Card {...THEME.MUDDY} className='min-h-32 min-w-64 flex items-center'>
+                <Card {...THEME.SECONDARY} className='min-h-32 min-w-64 flex items-center'>
                     <p className='text-center w-full'>
                         {searchParams.get('message')}
                     </p>

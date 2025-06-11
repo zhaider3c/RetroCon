@@ -23,7 +23,7 @@ const Main = ({ di }) => {
                     {
                         currency && currency.map((e, i) => {
                             return (
-                                <Card key={i} {...THEME.MUDDY} className='flex flex-col'>
+                                <Card key={i} {...THEME.SECONDARY} className='flex flex-col'>
                                     {Object.keys(e).map((x, j) => {
                                         return (
                                             <div key={j} className='flex gap-5 justify-between'>

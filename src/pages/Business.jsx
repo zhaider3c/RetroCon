@@ -31,14 +31,14 @@ const Business = ({ di }) => {
             style={{ backgroundImage: `url('${BG}')` }}>
             <div className='flex flex-col justify-center items-between gap-5'>
                 <Card
-                    {...THEME.MUDDY}
+                    {...THEME.SECONDARY}
                     className='text-2xl'
                 >
                     <p>{`Welcome, ${user?.first_name ?? "User"} ${user?.last_name ?? "User"}`}</p>
 
                 </Card>
                 <Card
-                    {...THEME.MUDDY}
+                    {...THEME.SECONDARY}
                     className='min-h-96 flex flex-col justify-start items-beetween gap-5'>
                     {
                         business && business.map((b, index) => {

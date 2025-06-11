@@ -41,7 +41,7 @@ export function Main({ di }) {
                 Single Sign On
             </Card>
             <div className="w-full flex justify-center items-center grow">
-                <Card className="w-1/2 flex flex-col" {...THEME.MUDDY}>
+                <Card className="w-1/2 flex flex-col" {...THEME.SECONDARY}>
                     <p className="text-2xl w-full">Create SSO Client</p>
                     <div className="flex bg-red-900 items-end justify-center">
                         <Form di={di} fields={fields} submitText="Save" className='grow bg-blue-900 w-full'/>

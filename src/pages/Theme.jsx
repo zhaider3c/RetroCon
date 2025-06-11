@@ -19,7 +19,7 @@ THEME.GRAY = {
     textColor: "black",
     borderColor: "black",
     shadowColor: "black",
-    baseBg: "gray"
+    baseBg: "darkgray"
 }
 
 THEME.MATRIX = {
@@ -38,12 +38,12 @@ THEME.BLACK = {
     baseBg: "#202020"
 }
 
-THEME.BLACK_ALT = {
-    bg: "black",
+THEME.MIDNIGHT = {
+    bg: "#20202e",
     textColor: "white",
     borderColor: "black",
     shadowColor: "black",
-    baseBg: "black"
+    baseBg: "#20202e"
 }
 
 THEME.WHITE = {
@@ -55,5 +55,7 @@ THEME.WHITE = {
 }
 
 THEME.ACTIVE = THEME.BLACK;
-THEME.SECONDARY = THEME.BLACK_ALT;
+THEME.SECONDARY = THEME.MIDNIGHT;
 THEME.ACTIVE_INPUT = THEME.MATRIX;
+THEME.ACTIVE_BUTTON = THEME.GRAY;
+THEME.BLOCKED = THEME.GRAY;

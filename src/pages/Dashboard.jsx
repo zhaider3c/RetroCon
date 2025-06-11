@@ -92,14 +92,14 @@ const Dashboard = ({ di }) => {
     ];
 
     return (
-        <div className='flex flex-col gap-5 w-full h-full bg-linear-to-b from-zinc-500 via-stone-500 to-slate-900 p-5'>
-            <Card {...THEME.MUDDY}>
+        <div className='flex flex-col gap-5 w-full h-full bg-linear-to-b from-zinc-500 via-stone-500 to-slate-900 p-5 bg-[url("/uni-new.png")] bg-contain bg-center blur-xl'>
+            <Card {...THEME.SECONDARY}>
                 <h1>Dashboard - {user?.business_name ?? user?.organisation_name}</h1>
             </Card>
             <div className='overflow-hidden w-full flex justify-between items-start p-5 gap-5'>
                 {
                     elements.map((x, i) => {
-                        return (<Scroll {...THEME.MUDDY} key={i} className='grow'>
+                        return (<Scroll {...THEME.SECONDARY} key={i} className='grow'>
                             <div className='h-full flex flex-col justify-between items-start p-5 gap-5'>
                                 {
                                     x.map((y, j) => {
