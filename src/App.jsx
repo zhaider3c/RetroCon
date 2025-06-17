@@ -1,6 +1,6 @@
 import React from 'react';
 import { DI } from './Helper';
-import { BrowserRouter, Routes, Route } from "react-router";
+import { HashRouter, Routes, Route, Link, Navigate, useNavigate } from "react-router-dom";
 import { Toaster } from 'react-hot-toast';
 
 import Cache from '@pages/Cache';
@@ -24,16 +24,12 @@ import Whiteboard from '@pages/Whiteboard';
 import { Main as Menubar } from '@components/Menubar';
 import { Main as SSO } from '@pages/sso/Main.jsx';
 
-const Redirect = ({ url }) => {
-  window.location = url;
-  return null;
-};
 const NAV_URLS = [
   { text: "SSO", url: '/sso', component: <SSO di={DI} />, show: true },
   { text: "Cache", url: '/cache', component: <Cache di={DI} />, show: true },
   { text: "Admin", url: '/admin', component: <Admin di={DI} />, show: true },
   { text: "Country", url: '/country', component: <Country di={DI} />, show: true },
-  { text: "Postman", url: '/postman', component: <Postman di={DI} />, show: true },
+  { text: "Postman", url: '/postman', component: <Postman di={DI} />, show: true, tip: "Press Ctrl+B to open preset menu" },
   { text: "Php Unit", url: '/phpunit', component: <Phpunit di={DI} />, show: true },
   { text: "Canvas", url: '/canvas', component: <Whiteboard di={DI} />, show: true },
   { text: "Products", url: '/product', component: <Products di={DI} />, show: true },
@@ -45,30 +41,29 @@ const NAV_URLS = [
   { text: "Classification", url: '/classification', component: <Classification di={DI} />, show: true },
   // False
   { text: "Login", url: '/login', component: <Login di={DI} />, show: false },
-  { text: "Logout", url: '/login', component: <Redirect url={'/'} />, show: false },
+  { text: "Logout", url: '/login', component: <Navigate to={'/'} />, show: false },
   { text: "Message", url: '/message', component: <Message di={DI} />, show: false },
   { text: "Businesses", url: '/business', component: <Business di={DI} />, show: false },
   { text: "API Reference", url: '/swagger', component: <Swagger di={DI} />, show: false },
 ];
 
 const App = () => {
+  DI.navigate = useNavigate();
   return (
-    <div className='w-screen h-screen flex flex-col justify-center items-center overflow-hidden'>
+    <div className='w-screen h-screen flex flex-col justify-center items-center overflow-hidden bg-black'>
       <div className='overflow-y-auto overflow-hidden w-full grow'>
-        <BrowserRouter>
-          <Routes>
-            {/* <Route path="/" element={<Redirect url='https://unicon.local.cedcommerce.com/sso/prompt/login' />} /> */}
-            <Route path="/" element={<Redirect url='/login' />} />
-            <Route path="/auth/login" element={<Message di={DI} />} />
-            {
-              NAV_URLS.map((e, i) => {
-                return (
-                  <Route key={i} path={e.url} element={e.component} />
-                )
-              })
-            }
-          </Routes>
-        </BrowserRouter>
+        <Routes>
+          {/* <Route path="/" element={<Redirect url='https://unicon.local.cedcommerce.com/sso/prompt/login' />} /> */}
+          <Route path="/" element={<Navigate to='/login' />} />
+          <Route path="/auth/login" element={<Message di={DI} />} />
+          {
+            NAV_URLS.map((e, i) => {
+              return (
+                <Route key={i} path={e.url} element={e.component} />
+              )
+            })
+          }
+        </Routes>
       </div>
       <Menubar links={NAV_URLS} di={DI} />
       <Toaster />

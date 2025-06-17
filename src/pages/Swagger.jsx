@@ -24,7 +24,6 @@ const Swagger = ({ di }) => {
                 .then((data) => {
                     setJson(data);
                 }).catch((err) => {
-                    console.log(err);
                 });
         }
     }, [url]);

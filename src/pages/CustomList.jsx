@@ -21,7 +21,6 @@ const Create = ({ di, listData = false }) => {
     if (listData && !data.name) {
         di.request.get({
             url: di.api.get('media') + `?id=${listData.additional_data.media_id}`, callback: r => {
-                console.log(r);
                 setMediaPath(r.data.additional_data.real_name ?? "Not_dound");
             }
         })
@@ -77,7 +76,7 @@ const Create = ({ di, listData = false }) => {
                 {mediaPath && <a className='grow' src="#" onClick={() => {
                     di.request.get({
                         url: di.api.get('get-download-url', 'catalog') + `?media_id=${listData.additional_data.media_id}`, callback: r => {
-                            window.location.href = r.data.url
+                            di.navigate(r.data.url)
                         }
                     })
                 }}>Download {mediaPath?.split('/').splice(-1)}</a>}

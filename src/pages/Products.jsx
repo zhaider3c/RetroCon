@@ -112,7 +112,7 @@ const FileUpload = ({ di }) => {
                 <a href="#" onClick={() => {
                     di.request.get({
                         url: di.api.get('product-csv', 'catalog'), callback: (data) => {
-                            window.location = data.url;
+                            di.navigate(data.url);
                         }
                     });
                 }}>Download template</a>

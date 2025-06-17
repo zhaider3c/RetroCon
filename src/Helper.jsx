@@ -1,5 +1,7 @@
 import toast from 'react-hot-toast';
 
+
+
 let HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "*",
@@ -70,7 +72,7 @@ function init(url) {
 function errorRedirect(message, to = '/logout', time = 3000, handle = true) {
   const url = `/message?message=${message.replaceAll(' ', '%20')}&wait=${time}&forward=${to}&auto=false`
   if (handle) {
-    window.location = url;
+    DI.navigate(url);
   }
 }
 

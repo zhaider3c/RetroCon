@@ -7,9 +7,8 @@ import { useState } from "react";
 const Main = ({ di }) => {
     const [token, setToken] = useState("");
     if (localStorage.getItem("token")) {
-        window.location = "/business";
+        di.navigate("/business");
     } else {
-        console.log("no token");
     }
     return (
         <div className="w-full h-full bg-blue-700 flex flex-col justify-center items-center gap-5">
@@ -41,7 +40,7 @@ const Main = ({ di }) => {
                         },
                         callback: (res) => {
                             if (res.success) {
-                                window.location = "/message?message=Login+Success&token=" + res.data.token;
+                                di.navigate("/message?message=Login+Success&token=" + res.data.token);
                             } else {
                                 di.toast.error("Login failed: " + res.data.message);
                             }
@@ -57,7 +56,7 @@ const Main = ({ di }) => {
                 <div className="flex w-full items-end justify-end">
                     <Button {...THEME.SECONDARY} className="px-5" onClick={
                         () => {
-                            window.location = "/message?message=Login+Success&token=" + token
+                            di.navigate("/message?message=Login+Success&token=" + token)
                         }
                     }> Login </Button>
                 </div>

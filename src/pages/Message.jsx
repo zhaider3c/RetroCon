@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Card } from 'pixel-retroui';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { THEME } from './Theme';
 const Message = ({ di }) => {
     const BG = '/message.webp';
@@ -11,10 +11,9 @@ const Message = ({ di }) => {
         localStorage.setItem('token', searchParams.get('token'));
     if (searchParams.has('user'))
         localStorage.setItem('user', searchParams.get('user'));
-    const navigate = useNavigate();
+    const navigate = di.navigate;
     useEffect(() => {
         setFroward(searchParams.get('forward') ?? '/business');
-        console.log(forward);
         clearTimeout(tt);
         if (searchParams.get('auto') == true || !searchParams.has('auto')) {
             setTt(setTimeout(() => {

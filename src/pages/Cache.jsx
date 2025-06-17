@@ -4,8 +4,6 @@ import { Button, Card, Input, Popup } from 'pixel-retroui';
 import { THEME } from './Theme';
 
 
-const BG = "cache-bg.gif";
-
 function loadData(setter, di) {
     (async () => {
         let apiData = {};
@@ -31,13 +29,11 @@ const Show = ({ id, di }) => {
     useEffect(() => {
         di.request.get({
             url: di.api.get('cache') + `?key=${id}&type=queue`, callback: apiData => {
-                console.log(data);
                 setData({ ...data, unicon: apiData.data }, null, 2);
             }
         });
         di.request.get({
             url: di.api.get('cache', 'catalog') + `?key=${id}&type=queue`, callback: apiData => {
-                console.log(data);
                 setData({ ...data, catalog: apiData.data }, null, 2);
             }
         })
@@ -100,7 +96,7 @@ const Main = ({ di }) => {
         loadData(setData, di);
     }, []);
     return (
-        <div style={{ backgroundImage: `url('${BG}')` }} className='w-full h-full flex gap-5 justify-center items-center bg-cover bg-center'>
+        <div style={{ backgroundImage: `url("cache-bg.gif")` }} className='w-full h-full flex gap-5 justify-center items-center bg-cover bg-center'>
             <Cache di={di} data={data}></Cache>
         </div>
     );

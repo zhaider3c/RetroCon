@@ -156,7 +156,7 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
                             if (e.success) {
                                 toast.success(e.message + '. Refreshing feed');
                                 setTimeout(() => {
-                                    window.location = "/classification";
+                                    di.navigate('/classification');
                                 }, 2300)
                             } else {
                                 toast.error(e.message)

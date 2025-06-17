@@ -15,7 +15,7 @@ THEME.POP = {
     baseBg: "#c381b5"
 }
 THEME.GRAY = {
-    bg: "darkgray",
+    bg: "#6f707f",
     textColor: "black",
     borderColor: "black",
     shadowColor: "black",

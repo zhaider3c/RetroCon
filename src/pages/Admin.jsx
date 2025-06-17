@@ -52,7 +52,7 @@ const Main = ({ di }) => {
         ),
         "home": (
             <div className="w-full h-full flex flex-col bg-[url(/unicon.gif)] justify-center items-center gap-5 ">
-                <img src="/loader.gif" className="w-128 square"/>
+                <img src="loader.gif" className="w-128 square"/>
             </div>
         )
     }

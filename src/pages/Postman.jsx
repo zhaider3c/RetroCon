@@ -30,7 +30,7 @@ const Main = ({ di }) => {
     const HOSTS = {
         ...di.hosts,
         "Production": "https://unicon-backend.cedcommerce.com",
-        "Dev": "https://uni-backend.cedcommerce.com",
+        "Dev": "https://uni-backend.cifapps.com",
 
     }
     const [url, setUrl] = useState(null);
