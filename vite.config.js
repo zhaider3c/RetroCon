@@ -23,6 +23,7 @@ export default defineConfig({
     alias: {
       '@pages': '/src/pages', // Alias for the pages directory
       '@components': '/src/Components', // Alias for the Components directory
+      '@assets': '/src/assets', // Alias for the Components directory
     },
   },
 });

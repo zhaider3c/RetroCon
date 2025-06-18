@@ -4,8 +4,16 @@ import { Button, Card, ProgressBar } from 'pixel-retroui';
 import { THEME } from './Theme';
 import Scroll from '@components/Scroll.jsx';
 import Json from '@components/Json.jsx';
+import uniNew from '@assets/uni-new.png';
 
-function ProductStatus() {
+const COLORS = [
+    "#ff2f2f",
+    "#2fff2f",
+    "#2f2fff",
+    "#2fffff",
+];
+
+function ProductStatus({ product }) {
     return (<Card {...THEME.ACTIVE} className='w-full col-span-5'>
         <p className='text-xl'>Products: {product['total']}</p>
         {
@@ -23,16 +31,33 @@ function ProductStatus() {
     </Card>);
 }
 
+function Account({ account }) {
+    return (<Card {...THEME.ACTIVE} className='w-full col-span-3 flex flex-col h-full overflow-auto p-3'>
+        {
+            account && Object.keys(account).map((x, i) => {
+                return (
+                    <div key={i} className='flex gap-5 justify-between'>
+                        <p >{x}</p>
+                        <p >{account[x]}</p>
+                    </div>
+                )
+            })
+        }
+    </Card>);
+}
+
+function Variants({ productWithImage }) {
+    return (<Card {...THEME.ACTIVE} className='w-full col-span-2 flex flex-col'>
+        <p className='text-xl'>Variant type</p>
+        <p className='text-center text-6xl'> {productWithImage.count}</p>
+    </Card>);
+}
+
 const Dashboard = ({ di }) => {
-    const COLORS = [
-        "#ff2f2f",
-        "#2fff2f",
-        "#2f2fff",
-        "#2fffff",
-    ];
+
     const [user, setUser] = useState({});
     const [product, setProduct] = useState({});
-    const [productWithImage, setProductWithImage] = useState(0);
+    const [productWithImage, setProductWithImage] = useState({}); // These are variants. Param name is wrong
     const [account, setAccount] = useState([]);
     useEffect(() => {
         di.request.get({
@@ -65,34 +90,21 @@ const Dashboard = ({ di }) => {
 
     const elements = [
         [
-            ProductStatus,
-            <Card {...THEME.ACTIVE} className='w-full col-span-2 flex flex-col'>
-                <p className='text-xl'>Variant type</p>
-                <p className='text-center text-6xl'> {productWithImage.count}</p>
-            </Card>,
+            ProductStatus({ product }),
+            Variants({ productWithImage }),
+            Account({ account })
+        ],
+        [
             <div className='col-span-4 overflow-hidden'>
                 <Json data={user} className='w-full h-full overflow-auto' />
-            </div>,
-            <Card {...THEME.ACTIVE} className='w-full col-span-3 flex flex-col h-full overflow-auto p-3'>
-                {
-                    account && Object.keys(account).map((x, i) => {
-                        return (
-                            <div key={i} className='flex gap-5 justify-between'>
-                                <p >{x}</p>
-                                <p >{account[x]}</p>
-                            </div>
-                        )
-                    })
-                }
-            </Card>
-
+            </div>
         ],
-        [],
-        [],
+        [
+        ],
     ];
 
     return (
-        <div className='flex flex-col gap-5 w-full h-full bg-linear-to-b from-zinc-500 via-stone-500 to-slate-900 p-5 bg-[url("/uni-new.png")] bg-contain bg-center blur-xl'>
+        <div className='flex flex-col gap-5 w-full h-full p-5 bg-cover bg-bottom' style={{ backgroundImage: `url("${uniNew}")` }}>
             <Card {...THEME.SECONDARY}>
                 <h1>Dashboard - {user?.business_name ?? user?.organisation_name}</h1>
             </Card>
@@ -100,7 +112,7 @@ const Dashboard = ({ di }) => {
                 {
                     elements.map((x, i) => {
                         return (<Scroll {...THEME.SECONDARY} key={i} className='grow'>
-                            <div className='h-full flex flex-col justify-between items-start p-5 gap-5'>
+                            <div className='h-full flex flex-col justify-between items-start p-5 gap-5 w-full'>
                                 {
                                     x.map((y, j) => {
                                         return y;

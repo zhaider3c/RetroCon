@@ -7,7 +7,7 @@ import CreateApp from "@pages/admin/CreateApp";
 import ChannelGroup from "@pages/admin/ChannelGroup";
 import Channel from "@pages/admin/Channel";
 import { IoCaretBackSharp } from "react-icons/io5";
-
+import loader from "@assets/loader.gif";
 const Nav = ({ pages, setPage }) => {
     return (
         (
@@ -52,7 +52,7 @@ const Main = ({ di }) => {
         ),
         "home": (
             <div className="w-full h-full flex flex-col bg-[url(/unicon.gif)] justify-center items-center gap-5 ">
-                <img src="loader.gif" className="w-128 square"/>
+                <img src={loader} className="w-128 square"/>
             </div>
         )
     }

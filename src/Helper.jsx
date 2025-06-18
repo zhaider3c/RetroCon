@@ -98,6 +98,12 @@ async function handleResponse(response, callback) {
   return response.ok;
 }
 
+function filterHeaders(headers) {
+  return Object.fromEntries(
+    Object.entries({ ...HEADERS, ...headers }).filter(([key, value]) => Boolean(value))
+  );
+}
+
 export const DI = {
   request: {
     get: async (
@@ -107,9 +113,7 @@ export const DI = {
         error_callback = (err) => { } }
     ) => {
       init(url);
-      let sendHeaders = Object.fromEntries(
-        Object.entries({ ...HEADERS, ...headers }).filter(([key, value]) => value != null)
-      );
+      let sendHeaders = filterHeaders(headers);
       if (!url) {
         url = '/rest/v2/ping';
       }
@@ -130,9 +134,7 @@ export const DI = {
         error_callback = (err) => { } }
     ) => {
       init(url);
-      let sendHeaders = Object.fromEntries(
-        Object.entries({ ...HEADERS, ...headers }).filter(([key, value]) => value != null)
-      );
+      let sendHeaders = filterHeaders(headers);
       if (!url) {
         url = '/rest/v2/ping';
       }
@@ -156,9 +158,7 @@ export const DI = {
       }
     ) => {
       init(url);
-      let sendHeaders = Object.fromEntries(
-        Object.entries({ "Content-Type": "application/json", ...HEADERS, ...headers }).filter(([key, value]) => value != null)
-      );
+      let sendHeaders = filterHeaders({ "Content-Type": "application/json", ...headers });
       if (!url) {
         url = '/rest/v2/ping';
       }

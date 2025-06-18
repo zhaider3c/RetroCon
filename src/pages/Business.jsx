@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card } from 'pixel-retroui';
 import { THEME } from './Theme'
+import BG from '@assets/business-bg.gif';
 
 
 const Business = ({ di }) => {
@@ -25,7 +26,7 @@ const Business = ({ di }) => {
 
 
     return (
-        <div className={`flex flex-col justify-center items-center w-full h-full bg-cover bg-bottom bg-[url("/business-bg.gif")]`}>
+        <div className={`flex flex-col justify-center items-center w-full h-full bg-cover bg-bottom bg-[url("${BG}")]`}>
             <div className='flex flex-col justify-center items-between gap-5'>
                 <Card
                     {...THEME.SECONDARY}
