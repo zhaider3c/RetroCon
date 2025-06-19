@@ -2,9 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Input, Popup } from 'pixel-retroui';
 import { THEME } from './Theme';
+import BG from '../assets/cache-bg.gif';
 
-
-const BG = "cache-bg.gif";
 
 function loadData(setter, di) {
     (async () => {

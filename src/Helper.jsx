@@ -22,40 +22,38 @@ HOSTS.SALES = HOSTS.UNICON;
 HOSTS.PHPUNIT = '/coverage-html';
 
 const apiEndpoints = {
-  product: `${REST}/product`,
-  attribute: `${REST}/attribute`,
-  logout: `${REST}/user/logout`,
-  user: `${REST}/user`,
-  swagger: `${REST}/swagger/json`,
-  cache: `${REST}/redis`,
-  app: `${REST}/apps`,
-  channel: `${REST}/channel`,
   phpunit: '/',
+  app: `${REST}/apps`,
+  user: `${REST}/user`,
+  cache: `${REST}/redis`,
+  media: `${REST}/media`,
+  channel: `${REST}/channel`,
   country: `${REST}/country`,
   currency: `${REST}/currency`,
-  state: `${REST}/country/state`,
-  app: `${REST}/apps`,
-  channel: `${REST}/channel`,
+  product: `${REST}/product`,
+  attribute: `${REST}/attribute`,
+  activity: `${REST}/activity`,
   login: `${REST}/user/login`,
-  'channel-group': `${REST}/channel/group`,
+  logout: `${REST}/user/logout`,
+  swagger: `${REST}/swagger/json`,
+  state: `${REST}/country/state`,
   'cache-list': `${REST}/redis/list`,
-  'business-all': `${REST}/business`,
-  'attribute-import': `${REST}/attribute-set/default`,
-  'product-csv': `${REST}/product/csv`,
-  'product-csv-import': `${REST}/product/import/bulk`,
-  'product-delete': `${REST}/product/delete`,
   'custom-list': `${REST}/custom-list`,
+  'business-all': `${REST}/business`,
+  'product-csv': `${REST}/product/csv`,
+  'product-count': `${REST}/product/count`,
+  'product-delete': `${REST}/product/delete`,
+  'product-import': `${REST}/product/import`,
+  'notification': `${REST}/notification`,
+  'announcement': `${REST}/announcement`,
+  'classification': `${REST}/classification`,
+  'account-setting': `${REST}/account/settings`,
+  'channel-group': `${REST}/channel/group`,
+  'attribute-import': `${REST}/attribute-set/default`,
+  'product-csv-import': `${REST}/product/import/bulk`,
   'get-upload-url': `${REST}/media/get-upload-url`,
   'get-download-url': `${REST}/media/get-download-url`,
-  'media': `${REST}/media`,
-  'notification': `${REST}/notification`,
-  'activity': `${REST}/activity`,
-  'announcement': `${REST}/announcement`,
-  'product-import': `${REST}/product/import`,
-  'product-count': `${REST}/product/count`,
-  'classification': `${REST}/classification`,
   'classification-recount': `${REST}/classification/recount`,
-  'account-setting': `${REST}/account/settings`,
 };
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -90,7 +88,7 @@ async function handleResponse(response, callback) {
     if (response.status == 401 || response.status == 403) {
       localStorage.removeItem('token');
       localStorage.removeItem('business');
-      errorRedirect('Invalid Authorization', '/login', 1500, true);
+      // errorRedirect('Invalid Authorization', '/login', 1500, true);
     }
     toast.error(data.message);
   }

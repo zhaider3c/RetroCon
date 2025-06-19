@@ -5,8 +5,7 @@ import { THEME } from './Theme';
 import { TbTriangleFilled } from "react-icons/tb";
 import { FaFileCsv } from "react-icons/fa6";
 import toast from 'react-hot-toast';
-
-
+import productBg from '@assets/product-bg.gif';
 
 const BG = "product-bg.gif";
 const PER_PAGE = 5;
@@ -196,7 +195,7 @@ const Products = ({ di }) => {
     }, [cursor, search, filter]);
     let tt;
     return (
-        <div style={{ backgroundImage: `url('${BG}')` }} className='w-full h-full flex flex-col gap-5 justify-center items-center bg-cover bg-center p-5'>
+        <div style={{ backgroundImage: `url('${productBg}')` }} className='w-full h-full flex flex-col gap-5 justify-center items-center bg-cover bg-center p-5'>
             <Popup {...THEME.SECONDARY} isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
                 <FileUpload di={di} />
             </Popup>

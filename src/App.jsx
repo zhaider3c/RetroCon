@@ -1,6 +1,6 @@
 import React from 'react';
 import { DI } from './Helper';
-import { HashRouter, Routes, Route, Link, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { Toaster } from 'react-hot-toast';
 
 import Cache from '@pages/Cache';
@@ -10,7 +10,6 @@ import Phpunit from '@pages/Phpunit';
 import Business from "@pages/Business";
 import Products from "@pages/Products";
 import Attribute from "@pages/Attribute";
-import Sidebar from '@components/Sidebar';
 import Dashboard from '@pages/Dashboard';
 import CustomList from '@pages/CustomList';
 import Notification from '@pages/Notification';

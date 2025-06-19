@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, TextArea } from 'pixel-retroui';
 import { THEME } from './Theme';
+import swaggerBg from '@assets/swagger-bg.gif';
+
 const HOSTS = ["UNICON", "CATALOG", "SALES"];
 const Swagger = ({ di }) => {
     const [json, setJson] = useState();
@@ -28,7 +30,7 @@ const Swagger = ({ di }) => {
         }
     }, [url]);
     return (
-        <div className='flex flex-col items-center gap-5 w-full h-full p-5 bg-[url("/swagger-bg.gif")] bg-no-repeat bg-center bg-cover'>
+        <div className='flex flex-col items-center gap-5 w-full h-full p-5' style={{ backgroundImage: `url(${swaggerBg})`, backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: 'cover' }}>
             <div className='flex flex-col items-start gap-5 overflow-hidden min-w-[70%] h-full'>
                 <Card {...THEME.SECONDARY}>
                     <h1 className='px-5'>API Reference</h1>

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Input, Popup } from 'pixel-retroui';
 import { THEME } from './Theme';
+import BG from '@assets/cache-bg.gif';
 
 
 function loadData(setter, di) {
@@ -96,7 +97,7 @@ const Main = ({ di }) => {
         loadData(setData, di);
     }, []);
     return (
-        <div style={{ backgroundImage: `url("cache-bg.gif")` }} className='w-full h-full flex gap-5 justify-center items-center bg-cover bg-center'>
+        <div style={{ backgroundImage: `url(${BG})` }} className='w-full h-full flex gap-5 justify-center items-center bg-cover bg-center'>
             <Cache di={di} data={data}></Cache>
         </div>
     );

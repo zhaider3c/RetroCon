@@ -4,6 +4,7 @@ import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, Drop
 import { THEME } from './Theme';
 import Scroll from '@components/Scroll';
 import ReactJsonView from '@microlink/react-json-view';
+import postmanBg from '@assets/postman.png';
 
 const VERBS =
     [
@@ -22,16 +23,10 @@ const PRESETS = {
 
 
 const Main = ({ di }) => {
-    document.body.onkeydown = (e) => {
-        if (e.key === "b" && e.ctrlKey) {
-            setPredifOpen(!predifOpen ?? true);
-        }
-    }
     const HOSTS = {
-        ...di.hosts,
+        ...(di?.hosts || {}),
         "Production": "https://unicon-backend.cedcommerce.com",
         "Dev": "https://uni-backend.cifapps.com",
-
     }
     const [url, setUrl] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('postman_token') || localStorage.getItem('token') || '');
@@ -43,6 +38,31 @@ const Main = ({ di }) => {
     const [tokenOpen, setTokenOpen] = useState(false);
     const [predifOpen, setPredifOpen] = useState(false);
 
+    // Keyboard event listener
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "b" && e.ctrlKey) {
+                setPredifOpen(!predifOpen);
+            }
+        };
+        
+        document.body.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.body.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [predifOpen]);
+
+    // Parse JWT token safely
+    const parseToken = (token) => {
+        try {
+            if (!token || !token.includes('.')) return {};
+            const payload = token.split('.')[1];
+            return JSON.parse(atob(payload));
+        } catch (error) {
+            console.warn('Failed to parse token:', error);
+            return {};
+        }
+    };
 
     // Debounce function helper
     const DEBOUNCE_TIME = 500;
@@ -66,7 +86,7 @@ const Main = ({ di }) => {
         localStorage.setItem('post-body', e.target.value);
     };
     return (
-        <div className='w-full h-full bg-[url("/postman.png")] bg-no-repeat bg-cover flex flex-col justify-center items-center gap-5'>
+        <div className='w-full h-full bg-no-repeat bg-cover flex flex-col justify-center items-center gap-5' style={{ backgroundImage: `url(${postmanBg})` }}>
             <Popup {...THEME.ACTIVE} isOpen={predifOpen} onClose={() => setPredifOpen(false)} className='flex flex-col gap-3'>
                 <h1 className='text-2xl text-center'>Common URLS</h1>
                 <Card {...THEME.SECONDARY} className='grid grid-cols-1 justify-center items-center gap-3'>
@@ -85,7 +105,7 @@ const Main = ({ di }) => {
             <Popup {...THEME.ACTIVE} isOpen={tokenOpen} onClose={() => setTokenOpen(false)}>
                 <div className='flex gap-5 justify-center items-center'>
                     <TextArea {...THEME.SECONDARY} placeholder='Token' rows={25} cols={50} value={token} onChange={handleTokenChange} />
-                    <ReactJsonView src={{ object: JSON.parse(atob(token.split('.')[1])) }} theme='tomorrow' />
+                    <ReactJsonView src={{ object: parseToken(token) }} theme='tomorrow' />
                 </div>
             </Popup>
             <div className='flex w-full h-full flex-col gap-3 p-3'>

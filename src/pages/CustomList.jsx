@@ -11,8 +11,7 @@ import {
 import { THEME } from './Theme'
 import toast from 'react-hot-toast';
 import { FaHamburger } from 'react-icons/fa';
-
-const BG = '/bg-cList.gif';
+import bgCList from '../assets/bg-cList.gif';
 
 const Create = ({ di, listData = false }) => {
     const [data, setData] = useState({});
@@ -123,8 +122,8 @@ const CustomList = ({ di }) => {
         }
     }, []);
     return (
-        <div className={`flex flex-col justify-center items-center w-full h-full bg-cover bg-bottom`}
-            style={{ backgroundImage: `url('${BG}')` }}>
+        <div className={`flex flex-col justify-center items-center w-full h-full bg-cover bg-center bg-no-repeat`}
+            style={{ backgroundImage: `url(${bgCList})` }}>
             <div className='flex flex-col justify-center items-between gap-5'>
                 <Popup {...THEME.SECONDARY} isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
                     <Create di={di} listData={selectedList} />

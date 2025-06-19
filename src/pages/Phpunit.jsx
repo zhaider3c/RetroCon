@@ -4,6 +4,8 @@ import { Button, Card, Input, TextArea } from 'pixel-retroui';
 import { THEME } from './Theme';
 import { TfiReload } from 'react-icons/tfi';
 import { IoMdArrowRoundBack } from 'react-icons/io';
+import swaggerBg from '@assets/swagger-bg.gif';
+
 const Phpunit = ({ di }) => {
     const [url, setUrl] = useState(false);
     const [host, setHost] = useState("UNICON");
@@ -15,7 +17,7 @@ const Phpunit = ({ di }) => {
     useEffect(() => {
         setUrl(getJsonLink());
     }, [host]); return (
-        <div className='flex flex-col items-center gap-5 w-full h-full p-5 bg-[url("/swagger-bg.gif")] bg-no-repeat bg-center bg-cover'>
+        <div className='flex flex-col items-center gap-5 w-full h-full p-5' style={{ backgroundImage: `url(${swaggerBg})`, backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: 'cover' }}>
             <div className='flex flex-col justify-between items-between gap-5 overflow-hidden w-full h-full'>
                 <Card {...THEME.SECONDARY} className='flex gap-5 items-center'>
                     <h1 className='px-5'>PhPUnit</h1>

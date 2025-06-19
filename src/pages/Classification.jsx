@@ -181,8 +181,8 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
                             </div>
                             <div className='flex gap-5 justify-between w-full'>
                                 <div className='col-span-2 text-sm flex w-full justify-between items-start'>
-                                    <div className='text-2xl text-orange-900'>{e.name}</div>
-                                    {e.is_required && <div className={`text-orange-900 border-3 border-black 
+                                    <div className='text-2xl text-orange-400'>{e.name}</div>
+                                    {e.is_required && <div className={`text-orange-400 border-3 border-black 
                                 text-right rounded-md -translate-y-9  px-2 text-xl font-mono font-black`}
                                         style={
                                             {
@@ -206,7 +206,6 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
                                 }}>
                                     <span className='flex gap-1'>
                                         <RiDeleteBinFill className='text-2xl text-red-700' />
-                                        Delete
                                     </span>
                                 </Button>
                             </div>

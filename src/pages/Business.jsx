@@ -6,7 +6,6 @@ import BG from '@assets/business-bg.gif';
 
 
 const Business = ({ di }) => {
-    const navigate = di.navigate;
     const [business, setBusiness] = useState([]);
     const [user, setUser] = useState(null);
     useEffect(() => {
@@ -26,7 +25,7 @@ const Business = ({ di }) => {
 
 
     return (
-        <div className={`flex flex-col justify-center items-center w-full h-full bg-cover bg-bottom bg-[url("${BG}")]`}>
+        <div className={`flex flex-col justify-center items-center w-full h-full bg-cover bg-bottom `} style={{ backgroundImage: `url(${BG})` }}>
             <div className='flex flex-col justify-center items-between gap-5'>
                 <Card
                     {...THEME.SECONDARY}
