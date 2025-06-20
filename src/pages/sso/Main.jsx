@@ -4,6 +4,7 @@ import { Button, Card, Input, TextArea } from "pixel-retroui";
 import { useEffect, useState } from "react";
 import { THEME } from "@pages/Theme";
 import Form from "@components/Form";
+import BG from '@assets/SSO.gif';
 
 export function Main({ di }) {
     
@@ -36,7 +37,7 @@ export function Main({ di }) {
 
 
     return (
-        <div className="w-full h-full bg-[url('SSO.gif')] bg-fill bg-bottom bg-no-repeat flex flex-col gap-5 p-5">
+        <div style={{backgroundImage: `url(${BG})`}} className="w-full h-full bg-fill bg-bottom bg-no-repeat flex flex-col gap-5 p-5">
             <Card className="w-fit text-2xl" {...THEME.ACTIVE}>
                 Single Sign On
             </Card>
