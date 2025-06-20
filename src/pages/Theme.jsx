@@ -54,6 +54,30 @@ THEME.WHITE = {
     baseBg: "white"
 }
 
+THEME.DANGER = {
+    bg: "#ff003f",
+    textColor: "white",
+    borderColor: "black",
+    shadowColor: "black",
+    baseBg: "black"
+}
+
+THEME.SUCCESS = {
+    bg: "#3fbf3f",
+    textColor: "#003e20",
+    borderColor: "#004e20",
+    shadowColor: "black",
+    baseBg: "darkgreen"
+}
+
+THEME.SUCCESS_DARK = {
+    bg: "#2e802e",
+    textColor: "#e6e6e6",
+    borderColor: "#2e802e",
+    shadowColor: "black",
+    baseBg: "darkgreen"
+}
+
 THEME.ACTIVE = THEME.BLACK;
 THEME.SECONDARY = THEME.MIDNIGHT;
 THEME.ACTIVE_INPUT = THEME.MATRIX;
