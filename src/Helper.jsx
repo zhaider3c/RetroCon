@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 let HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "*",
+
 }
 
 const REST = '/rest/v2';
@@ -37,6 +38,9 @@ const apiEndpoints = {
   logout: `${REST}/user/logout`,
   swagger: `${REST}/swagger/json`,
   state: `${REST}/country/state`,
+  staff: `${REST}/staff`,
+  menu: `${REST}/staff/menu`,
+  'staff-all': `${REST}/staff/all`,
   'cache-list': `${REST}/redis/list`,
   'custom-list': `${REST}/custom-list`,
   'business-all': `${REST}/business`,
@@ -54,15 +58,16 @@ const apiEndpoints = {
   'get-upload-url': `${REST}/media/get-upload-url`,
   'get-download-url': `${REST}/media/get-download-url`,
   'classification-recount': `${REST}/classification/recount`,
+
 };
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function init(url) {
   if (!url.includes("/login")) {
-    HEADERS['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+    HEADERS['Authorization'] = 'Bearer ' + (localStorage.getItem('token'));
     if (!url.includes('business')) {
-      HEADERS['Business'] = localStorage.getItem('business') ?? "";
+      HEADERS['Business'] = localStorage.getItem('business');
     }
   }
 }

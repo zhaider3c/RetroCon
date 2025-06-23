@@ -22,6 +22,7 @@ import Admin from '@pages/Admin';
 import Whiteboard from '@pages/Whiteboard';
 import { Main as Menubar } from '@components/Menubar';
 import { Main as SSO } from '@pages/sso/Main.jsx';
+import Staff from '@pages/Staff';
 
 const NAV_URLS = [
   { text: "SSO", url: '/sso', component: <SSO di={DI} />, show: true },
@@ -38,6 +39,7 @@ const NAV_URLS = [
   { text: "Custom List", url: '/custom-list', component: <CustomList di={DI} />, show: true },
   { text: "Notifications", url: '/notification', component: <Notification di={DI} />, show: true },
   { text: "Classification", url: '/classification', component: <Classification di={DI} />, show: true },
+  { text: "Staff", url: '/staff', component: <Staff di={DI} />, show: true },
   // False
   { text: "Login", url: '/login', component: <Login di={DI} />, show: false },
   { text: "Logout", url: '/login', component: <Navigate to={'/'} />, show: false },
