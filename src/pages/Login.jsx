@@ -4,15 +4,12 @@ import { Button, Input, TextArea } from "pixel-retroui";
 import { THEME } from "./Theme";
 import { useState } from "react";
 
-const Main = ({ di }) => {
-    const [token, setToken] = useState("");
-    if (localStorage.getItem("token")) {
-        di.navigate("/business");
-    } else {
-    }
+function LoginForm({ di }) {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     return (
-        <div className="w-full h-full bg-blue-700 flex flex-col justify-center items-center gap-5">
-            <div className="w-1/2 flex flex-col items-start gap-5">
+        <div className="w-full h-full flex flex-col justify-center items-center gap-5">
+            <div className="w-full flex flex-col items-start gap-5">
                 <span className="text-xl">Email</span>
                 <Input {...THEME.ACTIVE_INPUT}
                     name="email"
@@ -25,8 +22,8 @@ const Main = ({ di }) => {
                     type="password"
                     className="w-full"
                     placeholder="Enter your password"
-                    onFocus={(e) => {e.target.type='text'}}
-                    onBlur={(e) => {e.target.type='password'}}
+                    onFocus={(e) => { e.target.type = 'text' }}
+                    onBlur={(e) => { e.target.type = 'password' }}
                 />
                 <Button {...THEME.SECONDARY} className="px-5" onClick={() => {
                     di.request.post({
@@ -61,6 +58,18 @@ const Main = ({ di }) => {
                     }> Login </Button>
                 </div>
             </div>
+        </div>);
+}
+
+const Main = ({ di }) => {
+    const [token, setToken] = useState("");
+    if (localStorage.getItem("token")) {
+        di.navigate("/business");
+    } else {
+    }
+    return (
+        <div className="w-full h-full bg-blue-700 flex flex-col justify-center items-center gap-5">
+            <LoginForm di={di} />
         </div>
     );
 };

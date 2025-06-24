@@ -3,9 +3,6 @@ import toast from 'react-hot-toast';
 
 
 let HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "*",
-
 }
 
 const REST = '/rest/v2';
@@ -27,6 +24,7 @@ const apiEndpoints = {
   app: `${REST}/apps`,
   user: `${REST}/user`,
   cache: `${REST}/redis`,
+  staff: `${REST}/staff`,
   media: `${REST}/media`,
   channel: `${REST}/channel`,
   country: `${REST}/country`,
@@ -38,7 +36,6 @@ const apiEndpoints = {
   logout: `${REST}/user/logout`,
   swagger: `${REST}/swagger/json`,
   state: `${REST}/country/state`,
-  staff: `${REST}/staff`,
   menu: `${REST}/staff/menu`,
   'staff-all': `${REST}/staff/all`,
   'cache-list': `${REST}/redis/list`,
@@ -58,17 +55,22 @@ const apiEndpoints = {
   'get-upload-url': `${REST}/media/get-upload-url`,
   'get-download-url': `${REST}/media/get-download-url`,
   'classification-recount': `${REST}/classification/recount`,
-
+  'sso-client': `${REST}/sso/client`,
 };
+
+let DI = {};
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function init(url) {
-  if (!url.includes("/login")) {
-    HEADERS['Authorization'] = 'Bearer ' + (localStorage.getItem('token'));
-    if (!url.includes('business')) {
-      HEADERS['Business'] = localStorage.getItem('business');
-    }
+  HEADERS['Authorization'] = 'Bearer ' + (localStorage.getItem('token'));
+  HEADERS['Business'] = localStorage.getItem('business');
+  if (url != DI.api.get('login') && !localStorage.getItem('token')) {
+    DI.navigate('/login');
+  } else if (url != DI.api.get('business') &&
+    url != DI.api.get('login') &&
+    !localStorage.getItem('business')) {
+    DI.navigate('/business');
   }
 }
 
@@ -103,11 +105,17 @@ async function handleResponse(response, callback) {
 
 function filterHeaders(headers) {
   return Object.fromEntries(
-    Object.entries({ ...HEADERS, ...headers }).filter(([key, value]) => Boolean(value))
+    Object.entries({ ...HEADERS, ...headers }).filter(
+      ([key, value]) => {
+        if (value && (value.includes('null') || value.includes('undefined'))) {
+          return false;
+        }
+        return Boolean(value);
+      })
   );
 }
 
-export const DI = {
+DI = {
   request: {
     get: async (
       { url,
@@ -162,6 +170,8 @@ export const DI = {
     ) => {
       init(url);
       let sendHeaders = filterHeaders({ "Content-Type": "application/json", ...headers });
+      console.log(url, sendHeaders);
+
       if (!url) {
         url = '/rest/v2/ping';
       }
@@ -211,3 +221,5 @@ DI.toast = {
   error: toast.error,
   success: toast.success,
 }
+
+export { DI };

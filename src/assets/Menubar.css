@@ -1,0 +1,7 @@
+#menu-button {
+    cursor: pointer;
+}
+
+#menu-button:hover {
+    filter: brightness(1.2);
+}

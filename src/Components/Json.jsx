@@ -12,20 +12,33 @@ const Json = ({ data, even = false }) => {
             </div>
             <div className="">
                 {
-                    Object.keys(data ?? {}).map((e, i) => {
-                        let loop = typeof data[e] === 'object' || Array.isArray(data[e]);
-                        return (
-                            <div key={i} className={`gap-1 text-sm max-w-256 overflow-x-hidden`}>
-                                <p className="font-black">{e}</p>
-                                {
-                                    (loop) ?
-                                        <Json data={data[e]} even={!even} /> :
-                                        (<p className={`ps-4 w-full`}>{data[e].toString()}</p>)
+                    Array.isArray(data) ?
+                        data.map((e, i) => {
+                            let loop = typeof e === 'object' || Array.isArray(e);
+                            return (
+                                <div key={i} className={`gap-1 text-sm max-w-256 overflow-x-hidden`}>
+                                    {
+                                        (loop) ?
+                                            <Json data={e} even={!even} /> :
+                                            (<p className={`ps-4 w-full`}>{e.toString()}</p>)
+                                    }
+                                </div>
+                            )
+                        })
+                        : Object.keys(data ?? {}).map((e, i) => {
+                            let loop = typeof data[e] === 'object' || Array.isArray(data[e]);
+                            return (
+                                <div key={i} className={`gap-1 text-sm max-w-256 overflow-x-hidden`}>
+                                    <p className="font-black">{e}</p>
+                                    {
+                                        (loop) ?
+                                            <Json data={data[e]} even={!even} /> :
+                                            (<p className={`ps-4 w-full`}>{data[e].toString()}</p>)
 
-                                }
-                            </div>
-                        )
-                    })
+                                    }
+                                </div>
+                            )
+                        })
                 }
             </div>
         </Card >

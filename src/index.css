@@ -41,3 +41,7 @@
         transform: translateX(-100%);
     }
 }    
+
+button:hover {
+  filter: brightness(1.2);
+}

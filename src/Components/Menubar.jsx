@@ -7,6 +7,7 @@ import Scroll from '@components/Scroll';
 import { Link } from 'react-router-dom';
 import Marquee from '@components/Marquee';
 import menuIcon from '@assets/menu.svg';
+import '@assets/Menubar.css';
 
 const Menubar = ({ links = [], di, setTip, setMenuOpen }) => {
     return (
@@ -44,9 +45,10 @@ const Menubar = ({ links = [], di, setTip, setMenuOpen }) => {
                     {localStorage.getItem('business_name') ?? "RetroEnd"}
                 </div>
                 <Button {...THEME.DANGER} onClick={() => {
-                    di.request.get({ url: di.api.get('logout') });
                     localStorage.clear();
-                    di.navigate('/');
+                    di.request.get({ url: di.api.get('logout') });
+                    setMenuOpen(false);
+                    di.navigate('/login');
                 }} className='flex items-center justify-between px-5 py-3 col-span-1'>
                     <RiLogoutBoxFill className='text-3xl text-white' />
                     <p>Logout</p>
@@ -60,13 +62,13 @@ export function Main({ links = [], di }) {
     const [menuOpen, setMenuOpen] = useState(false);
     return (
         <div className='w-full h-16 p-0 flex gap-0 overflow-hidden justify-between'>
-            <div className='w-1/12 h-full text-center px-3 font-black text-2xl flex items-center justify-center'
+            <div id='menu-button' className='w-1/12 h-full text-center px-3 font-black text-2xl flex items-center justify-center'
                 style={{
                     backgroundColor: THEME.SUCCESS_DARK.bg,
                     color: THEME.SUCCESS_DARK.textColor,
                     borderColor: THEME.SUCCESS_DARK.borderColor,
                     boxShadow: THEME.SUCCESS_DARK.shadowColor,
-                    border: "outset 5px " + THEME.SUCCESS_DARK.borderColor ,
+                    border: "outset 5px " + THEME.SUCCESS_DARK.borderColor,
                 }}
                 onClick={() => {
                     setMenuOpen(!menuOpen);
