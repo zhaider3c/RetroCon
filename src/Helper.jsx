@@ -26,36 +26,38 @@ const apiEndpoints = {
   cache: `${REST}/redis`,
   staff: `${REST}/staff`,
   media: `${REST}/media`,
+  menu: `${REST}/staff/menu`,
   channel: `${REST}/channel`,
   country: `${REST}/country`,
-  currency: `${REST}/currency`,
   product: `${REST}/product`,
-  attribute: `${REST}/attribute`,
-  activity: `${REST}/activity`,
   login: `${REST}/user/login`,
+  currency: `${REST}/currency`,
+  activity: `${REST}/activity`,
   logout: `${REST}/user/logout`,
-  swagger: `${REST}/swagger/json`,
+  attribute: `${REST}/attribute`,
   state: `${REST}/country/state`,
-  menu: `${REST}/staff/menu`,
+  swagger: `${REST}/swagger/json`,
   'staff-all': `${REST}/staff/all`,
+  'sso-client': `${REST}/sso/client`,
+  'business-all': `${REST}/business`,
   'cache-list': `${REST}/redis/list`,
   'custom-list': `${REST}/custom-list`,
-  'business-all': `${REST}/business`,
   'product-csv': `${REST}/product/csv`,
+  'sso-scope': `${REST}/sso/oauth/scope`,
+  'announcement': `${REST}/announcement`,
+  'notification': `${REST}/notification`,
+  'channel-group': `${REST}/channel/group`,
   'product-count': `${REST}/product/count`,
   'product-delete': `${REST}/product/delete`,
   'product-import': `${REST}/product/import`,
-  'notification': `${REST}/notification`,
-  'announcement': `${REST}/announcement`,
   'classification': `${REST}/classification`,
   'account-setting': `${REST}/account/settings`,
-  'channel-group': `${REST}/channel/group`,
+  'sso-scope-permit': `${REST}/sso/scope/permit`,
+  'get-upload-url': `${REST}/media/get-upload-url`,
   'attribute-import': `${REST}/attribute-set/default`,
   'product-csv-import': `${REST}/product/import/bulk`,
-  'get-upload-url': `${REST}/media/get-upload-url`,
   'get-download-url': `${REST}/media/get-download-url`,
   'classification-recount': `${REST}/classification/recount`,
-  'sso-client': `${REST}/sso/client`,
 };
 
 let DI = {};
@@ -89,15 +91,15 @@ function defaultErrorHandler(error) {
 async function handleResponse(response, callback) {
   let data = await response.json();
   if (response.ok) {
-    if (data.message)
-      toast.success(data.message);
+    if (data.message || data.msg)
+      toast.success(data.message ?? data.msg);
   } else {
     if (response.status == 401 || response.status == 403) {
       localStorage.removeItem('token');
       localStorage.removeItem('business');
       // errorRedirect('Invalid Authorization', '/login', 1500, true);
     }
-    toast.error(data.message);
+    toast.error(data.message ?? "Error");
   }
   callback(data);
   return response.ok;
@@ -170,7 +172,6 @@ DI = {
     ) => {
       init(url);
       let sendHeaders = filterHeaders({ "Content-Type": "application/json", ...headers });
-      console.log(url, sendHeaders);
 
       if (!url) {
         url = '/rest/v2/ping';

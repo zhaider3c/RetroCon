@@ -1,92 +1,155 @@
 /* eslint-disable react/prop-types */
 
-import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input, TextArea } from "pixel-retroui";
-import { THEME } from "@pages/Theme";
+import { Button, Card, Input, Popup, TextArea } from "pixel-retroui";
 import { useEffect, useState } from "react";
+import { THEME } from "@pages/Theme";
+import BG from '@assets/SSO.gif';
+import Scroll from "@components/Scroll";
+import ReactJson from "@microlink/react-json-view";
 
-const Main = ({ di, adminToken }) => {
-    function createApp(data) {
-        di.request.post({
-            url: di.api.get('channel-group'), body: JSON.stringify(data), headers: {
-                "Authorization": "Bearer " + adminToken,
-                "Business": null,
-                "Content-Type": "application/json"
-            }
-        });
+function Create({ di }) {
+    const [data, setData] = useState({});
+
+    // ('apps', 'name', 'scopes', 'status', 'redirect_uri')]
+    const fields = {
+        "name": {
+            label: 'Name',
+            type: 'text',
+            placeholder: "PikPok App"
+        },
+        "apps": {
+            label: 'Apps',
+            type: 'text',
+            placeholder: "PikPok App"
+        },
+        "scopes": {
+            label: 'Scopes',
+            type: 'text',
+            placeholder: "read,write,delete"
+        },
+        "status": {
+            label: 'Status',
+            type: 'select',
+            options: [
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' }
+            ]
+        },
+        "redirect_uri": {
+            label: 'Redirect URI',
+            type: 'text',
+            placeholder: "https://example.com/callback"
+        }
     }
 
-    const [apps, setApps] = useState([]);
-    const [data, setData] = useState({});
-    const [channels, setChannels] = useState([]);
-    useEffect(() => {
-        di.request.get({
-            url: di.api.get('channel-group'), headers: {
-                "Authorization": "Bearer " + adminToken,
-                "Business": null,
-                "Content-Type": "application/json"
-            }, callback: (res) => {
-                setApps(res.data);
-            }
-        });
-    }, []);
-    useEffect(() => {
-        di.request.get({
-            url: di.api.get('channel'), headers: {
-                "Authorization": "Bearer " + adminToken,
-                "Business": null,
-                "Content-Type": "application/json"
-            }, callback: (res) => {
-                setChannels(res.data);
-            }
-        });
-    }, []);
+
     return (
-        <div className="w-full h-full flex justify-center items-center gap-5">
-            <Card className="flex gap-5 flex-col">
-                <p className="text-4xl text-start">Groups</p>
-                {apps.map((e, i) => {
-                    return (
-                        <Card key={i} className="flex gap-5 p-5" {...THEME.SECONDARY}>
-                            <p className="text-2xl">{e.name} : </p>
-                            <p className="text-2xl">{e.channel_id.length} channel{e.channel_id.length > 1 ? 's' : ""}</p>
-                        </Card>
-                    )
-                })}
-            </Card>
-            <div className="flex flex-col gap-5 justify-center items-center p-5">
-                <p className="text-purple-200 text-6xl text-center">Create Group</p>
-                <div className="w-full flex flex-col gap-5 justify-start items-center">
-                    <label htmlFor="name" className="block text-xl font-medium text-start w-full text-purple-200">Name</label>
-                    <Input {...THEME.ACTIVE_INPUT} autoComplete="off" id="name" placeholder="Zed Industries" className="w-full col-span-3" onChange={(e) => setData({ ...data, name: e.target.value })} />
-                </div>
-                <div className="flex flex-col gap-5 justify-start items-center w-full">
-                    <label htmlFor="channel" className="block text-xl font-medium text-start w-full text-purple-200">Channels</label>
-                    <div className="w-full gap-3 grid grid-cols-3">
-                        {channels.map((e, i) => {
-                            return (
-                                <div key={i} className={`w-full flex items-center gap-2`}>
-                                    <Button className="w-full" data-id={e.id} onClick={(event) => {
-                                        let channels = [];
-                                        let id = event.currentTarget.getAttribute("data-id");
-                                        if ((data.channel_id ?? []).includes(id)) {
-                                            channels = (data.channel_id ?? []).filter((x) => x != id);
-                                        } else {
-                                            channels = [id, ...data.channel_id ?? []];
-                                        }
-                                        setData({ ...data, channel_id: channels });
-                                    }} bg={((data.channel_id ?? []).includes(e.id)) ? "#4ade80" : THEME.ACTIVE.bg} >
-                                        {e.name}
-                                    </Button>
-                                </div>
-                            );
-                        })}
+        <div className="flex flex-col gap-5 p-5 grow h-full">
+            <div className="w-full flex justify-center items-center grow">
+                <Card className="w-full flex flex-col" {...THEME.SECONDARY}>
+                    <p className="text-2xl w-full">Create SSO Client</p>
+                    <div className="flex items-center justify-center w-full">
+                        <div className="flex flex-col gap-4 w-full">
+                            <TextArea
+                                {...THEME.ACTIVE_INPUT}
+                                placeholder={`Enter JSON data here...
+Example:
+{
+  "name": "PikPok App",
+  "apps": "PikPok App", 
+  "scopes": "read,write,delete",
+  "status": "active",
+  "redirect_uri": "https://example.com/callback"
+}`}
+                                className="h-64"
+                                onChange={(e) => {
+                                    try {
+                                        const jsonData = JSON.parse(e.target.value);
+                                        setData(jsonData);
+                                    } catch (error) {
+                                        console.error('Invalid JSON:', error);
+                                    }
+                                }}
+                            />
+                            <Button
+                                {...THEME.ACTIVE_BUTTON}
+                                onClick={() => {
+                                    try {
+                                        di.request.post({
+                                            url: di.api.get('sso-client'),
+                                            body: JSON.stringify(data),
+                                            callback: (res) => {
+                                                console.log(res);
+                                            }
+                                        });
+                                    } catch (error) {
+                                        console.error('Invalid JSON:', error);
+                                    }
+                                }}
+                            >
+                                Save
+                            </Button>
+                        </div>
                     </div>
-                </div>
-                <div className="w-full flex w-full gap-5 justify-end items-center">
-                    <Button className="px-5 py-3" onClick={() => createApp(data)}>Create</Button>
-                </div>
+                </Card>
             </div>
         </div>
     );
-};
-export default Main;
+}
+
+function List({ di }) {
+    const [data, setData] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
+    const [selected, setSelected] = useState(null);
+    useEffect(() => {
+        di.request.get({
+            url: di.api.get('sso-client'), callback: (res) => {
+                setData(res.data);
+            }
+        })
+    }, []);
+    return (
+        <div className="flex justify-center items-center grow">
+            <Popup {...THEME.SECONDARY} className="flex flex-col justify-center items-center gap-5" isOpen={isOpen} onClose={() => setIsOpen(false)}>
+                <p className="text-2xl border-b-2 border-black">{JSON.parse(selected)?.name.toUpperCase()} {JSON.parse(selected)?._id?.$oid}</p>
+                <Card {...THEME.ACTIVE} className="w-full h-128 flex flex-col justify-center items-start gap-5">
+                    <Scroll className="grow">
+                        <ReactJson src={JSON.parse(selected)} theme="greenscreen" />
+                    </Scroll>
+                </Card>
+            </Popup>
+            <Card className="w-full flex flex-col" {...THEME.SECONDARY}>
+                <p className="text-2xl w-full">SSO Clients</p>
+                <div className="grid grid-cols-3 gap-2">
+                    {data && data.map((item, i) => (
+                        <Button {...THEME.ACTIVE}
+                            data-data={JSON.stringify(item)} key={i}
+                            className=""
+                            onClick={(e) => {
+                                setSelected(e.target.dataset.data);
+                                setIsOpen(true);
+                            }}
+                        >
+                            {item.name}
+                        </Button>
+                    ))}
+                </div>
+            </Card>
+        </div>
+    )
+}
+
+export default function Main({ di }) {
+    return (
+        <div style={{ backgroundImage: `url(${BG})` }} className="w-full h-full bg-fill bg-bottom bg-no-repeat flex flex-col gap-5 p-5">
+            <Card className="w-fit text-2xl" {...THEME.ACTIVE}>
+                Single Sign On
+            </Card>
+            <div className="flex gap-5 grow">
+                <Create di={di} />
+                <List di={di} />
+            </div>
+        </div>
+    )
+}
+

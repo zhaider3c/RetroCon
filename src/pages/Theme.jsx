@@ -78,6 +78,25 @@ THEME.SUCCESS_DARK = {
     baseBg: "darkgreen"
 }
 
+THEME.SEAMLESS = {
+    bg: "transparent",
+    textColor: "lime",
+    borderColor: "transparent",
+    shadowColor: "black",
+    baseBg: "transparent"
+}
+
+THEME.TRANSPARENT = {
+    bg: "transparent",
+    textColor: "transparent",
+    borderColor: "transparent",
+    shadowColor: "transparent",
+    baseBg: "transparent",
+    style: {
+        boxShadow: "none"
+    }
+}
+
 THEME.ACTIVE = THEME.BLACK;
 THEME.SECONDARY = THEME.MIDNIGHT;
 THEME.ACTIVE_INPUT = THEME.MATRIX;
