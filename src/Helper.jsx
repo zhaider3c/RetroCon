@@ -7,17 +7,20 @@ let HEADERS = {
 
 const REST = '/rest/v2';
 
-const HOSTS = {}
+let HOSTS = {}
 // UNIFIED-CON
 HOSTS.UNICON = 'https://onecon.local.cedcommerce.com';
 HOSTS.CATALOG = HOSTS.UNICON;
 HOSTS.SALES = HOSTS.UNICON;
+// HOSTS.PHPUNIT = '/coverage-html';
 
 // HOSTS.UNICON = 'https://unicon.local.cedcommerce.com';
 // HOSTS.CATALOG = 'https://catalog.local.cedcommerce.com';
 // HOSTS.SALES = 'https://sales.local.cedcommerce.com';
 
-HOSTS.PHPUNIT = '/coverage-html';
+
+HOSTS = { ...HOSTS, ...JSON.parse(localStorage.getItem("hosts")) };
+
 
 const apiEndpoints = {
   phpunit: '/',
@@ -58,6 +61,7 @@ const apiEndpoints = {
   'product-csv-import': `${REST}/product/import/bulk`,
   'get-download-url': `${REST}/media/get-download-url`,
   'classification-recount': `${REST}/classification/recount`,
+  'jira-auth-url': `${REST}/jira/auth/url`,
 };
 
 let DI = {};

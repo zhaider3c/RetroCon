@@ -8,12 +8,23 @@ import Scroll from "@components/Scroll.jsx";
  * @param Object fields - {input_type} 
  * @returns 
  */
-export default function Form({ di,onSubmit, fields, submitText = "Submit", className, theme }) {
-    const [data, setData] = useState({});
+export default function Form({
+    di,
+    onSubmit,
+    fields,
+    submitText = "Submit",
+    className,
+    theme,
+    data,
+    onChange = (data) => { }
+}) {
+    const [formData, setFormData] = useState(data || {});
+    console.log(formData);
+    console.log(data);
 
     // Initialize data state with field names
     React.useEffect(() => {
-        const initialData = {};
+        const initialData = formData || {};
         Object.keys(fields).forEach(fieldName => {
             const field = fields[fieldName];
             if (field.type === 'select' && field.options && field.options.length > 0) {
@@ -22,26 +33,27 @@ export default function Form({ di,onSubmit, fields, submitText = "Submit", class
                 initialData[fieldName] = '';
             }
         });
-        setData(initialData);
     }, [fields]);
 
     const handleInputChange = (fieldName, value) => {
-        setData(prevData => ({
-            ...prevData,
+        setFormData({
+            ...formData,
             [fieldName]: value
-        }));
+        });
+        onChange(formData);
     };
 
     const handleSelectChange = (fieldName, value) => {
-        setData(prevData => ({
-            ...prevData,
+        setFormData({
+            ...formData,
             [fieldName]: value
-        }));
+        });
+        onChange(formData);
     };
 
     function initiateSubmit(di) {
         // Check if data has at least one non-null/empty value
-        const hasValidData = Object.values(data).some(value =>
+        const hasValidData = Object.values(formData).some(value =>
             value !== null && value !== undefined && value !== ''
         );
 
@@ -49,7 +61,7 @@ export default function Form({ di,onSubmit, fields, submitText = "Submit", class
             di.toast.error('No data to submit');
             return;
         }
-        onSubmit(data);
+        onSubmit(formData, di);
     }
 
     const renderField = (fieldName, field) => {
@@ -58,7 +70,7 @@ export default function Form({ di,onSubmit, fields, submitText = "Submit", class
                 return (
                     <DropdownMenu {...THEME.ACTIVE} className="p-3 w-full">
                         <DropdownMenuTrigger className="w-full">
-                            {data[fieldName] || 'Select...'}
+                            {formData[fieldName] || 'Select...'}
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="flex gap-3">
                             {field.options.map((option, index) => (
@@ -78,7 +90,7 @@ export default function Form({ di,onSubmit, fields, submitText = "Submit", class
             case 'textarea':
                 return (
                     <TextArea
-                        value={data[fieldName]}
+                        value={formData[fieldName]}
                         {...THEME.SEAMLESS}
                         {...field}
                         onChange={(e) => handleInputChange(fieldName, e.target.value)}
@@ -87,21 +99,23 @@ export default function Form({ di,onSubmit, fields, submitText = "Submit", class
             case 'password':
                 return (
                     <Input
-                        value={data[fieldName]}
+                        value={formData[fieldName]}
                         {...THEME.SEAMLESS}
                         type="password"
                         onFocus={(e) => { e.target.type = 'text' }}
                         onBlur={(e) => { e.target.type = 'password' }}
                         {...field}
+                        className="w-full"
                         onChange={(e) => handleInputChange(fieldName, e.target.value)}
                     />
                 );
             default:
                 return (
                     <Input
-                        value={data[fieldName]}
+                        value={formData[fieldName]}
                         {...THEME.SEAMLESS}
                         {...field}
+                        className="w-full"
                         onChange={(e) => handleInputChange(fieldName, e.target.value)}
                     />
                 );

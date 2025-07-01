@@ -23,6 +23,7 @@ import Whiteboard from '@pages/Whiteboard';
 import { Main as Menubar } from '@components/Menubar';
 import { Main as SSO } from '@pages/sso/Main.jsx';
 import Staff from '@pages/Staff';
+import Jira from '@pages/Jira/Main';
 
 const NAV_URLS = [
   { text: "SSO", url: '/sso', component: <SSO di={DI} />, show: true },
@@ -40,6 +41,7 @@ const NAV_URLS = [
   { text: "Notifications", url: '/notification', component: <Notification di={DI} />, show: true },
   { text: "Classification", url: '/classification', component: <Classification di={DI} />, show: true },
   { text: "Staff", url: '/staff', component: <Staff di={DI} />, show: true },
+  { text: "Jira", url: '/jira', component: <Jira di={DI} />, show: true },
   // False
   { text: "Login", url: '/login', component: <Login di={DI} />, show: false },
   { text: "Logout", url: '/login', component: <Navigate to={'/'} />, show: false },
@@ -52,7 +54,7 @@ const App = () => {
   DI.navigate = useNavigate();
   return (
     <div className='w-screen h-screen flex flex-col justify-center items-center overflow-hidden bg-black'>
-      <div className='overflow-y-auto overflow-hidden w-full grow'>
+      <div className='overflow-hidden w-full grow'>
         <Routes>
           {/* <Route path="/" element={<Redirect url='https://unicon.local.cedcommerce.com/sso/prompt/login' />} /> */}
           <Route path="/" element={<Navigate to='/login' />} />

@@ -26,7 +26,7 @@ const Main = ({ di }) => {
     }, []);
     return (
         <div className='flex flex-col w-full h-full gap-5 justify-center items-center bg-cover bg-center overflow-hidden px-5' style={{ backgroundImage: `url(${BG})` }}>
-            <div className='flex gap-5 justify-center h-full items-center overflow-hidden p-0'>
+            <div className='flex gap-5 justify-center h-196 items-center overflow-hidden p-0'>
                 <div className='flex gap-5 w-full overflow-hidden h-full' {...THEME.SECONDARY}>
                     <Scroll className='h-full flex flex-col gap-5 justify-start items-center' {...THEME.ACTIVE}>
                         <div className='w-full flex justify-start items-center'>
@@ -34,7 +34,6 @@ const Main = ({ di }) => {
                                 <p className='text-2xl'>Countries</p>
                             </Card>
                         </div>
-
                         {
                             country && country.map((e, i) => {
                                 return (
