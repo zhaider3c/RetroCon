@@ -62,6 +62,7 @@ const apiEndpoints = {
   'get-download-url': `${REST}/media/get-download-url`,
   'classification-recount': `${REST}/classification/recount`,
   'jira-auth-url': `${REST}/jira/auth/url`,
+  'jira-user': `${REST}/jira/user`,
 };
 
 let DI = {};
