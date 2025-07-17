@@ -24,6 +24,7 @@ import { Main as Menubar } from '@components/Menubar';
 import { Main as SSO } from '@pages/sso/Main.jsx';
 import Staff from '@pages/Staff';
 import Jira from '@pages/Jira/Main';
+import Profile from '@pages/Profile';
 
 const NAV_URLS = [
   { text: "SSO", url: '/sso', component: <SSO di={DI} />, show: true },
@@ -46,6 +47,7 @@ const NAV_URLS = [
   { text: "Login", url: '/login', component: <Login di={DI} />, show: false },
   { text: "Logout", url: '/login', component: <Navigate to={'/'} />, show: false },
   { text: "Message", url: '/message', component: <Message di={DI} />, show: false },
+  { text: "Profile", url: '/profile', component: <Profile di={DI} />, show: false },
   { text: "Businesses", url: '/business', component: <Business di={DI} />, show: false },
   { text: "API Reference", url: '/swagger', component: <Swagger di={DI} />, show: false },
 ];

@@ -41,18 +41,29 @@ const Menubar = ({ links = [], di, setTip, setMenuOpen }) => {
                 </div>
             </Scroll>
             <div className='w-full grid grid-cols-2 gap-5 items-center justify-center'>
-                <div className='text-xl text-center h-full col-span-1' onClick={() => { }}>
-                    {localStorage.getItem('business_name') ?? "RetroEnd"}
-                </div>
-                <Button {...THEME.DANGER} onClick={() => {
-                    localStorage.clear();
-                    di.request.get({ url: di.api.get('logout') });
+                <Card {...THEME.ACTIVE} className='cursor-pointer text-xl text-center h-full w-full col-span-2 flex items-center justify-between' onClick={() => {
                     setMenuOpen(false);
-                    di.navigate('/login');
-                }} className='flex items-center justify-between px-5 py-3 col-span-1'>
-                    <RiLogoutBoxFill className='text-3xl text-white' />
-                    <p>Logout</p>
-                </Button>
+                    di.navigate('/profile');
+                }}>
+                    <div className='rounded-xl flex items-center justify-center text-2xl grow bg-black/50 h-full'>
+                        {(localStorage.getItem('business_name') ?? "RetroEnd").charAt(0).toUpperCase()}
+                    </div>
+                    <div className='flex flex-col items-center justify-between px-5 py-3'>
+                        <p className='text-xl w-full text-start'>
+                            {localStorage.getItem('business_name') ?? "RetroEnd"}
+                        </p>
+                        <span className='text-sm text-white/25 w-full text-start'> Profile </span>
+                    </div>
+                    <Button {...THEME.DANGER} onClick={() => {
+                        localStorage.clear();
+                        di.request.get({ url: di.api.get('logout') });
+                        setMenuOpen(false);
+                        di.navigate('/login');
+                    }} className='flex items-center justify-between px-5 py-3 col-span-1'>
+                        <RiLogoutBoxFill className='text-3xl text-white' />
+                        {/* <p>Logout</p> */}
+                    </Button>
+                </Card>
             </div>
         </div>
     );

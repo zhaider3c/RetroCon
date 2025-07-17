@@ -31,7 +31,7 @@ const Main = ({ di,adminToken }) => {
         <div className="w-full h-full flex justify-center items-center gap-5">
             <Card className="flex gap-5 flex-col">
                 <p className="text-4xl text-start">Apps</p>
-                {apps.map((e, i) => {
+                {apps && apps.map((e, i) => {
                     return (
                         <Card key={i} className="flex flex-col gap-5 p-5" {...THEME.SECONDARY}>
                             <p className="text-2xl">{e.name}</p>

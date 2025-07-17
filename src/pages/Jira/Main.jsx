@@ -16,8 +16,8 @@ export default function Main({ di }) {
         },
         {
             "code": "user",
-            "title": "User",
-            "desc": "Jira user info",
+            "title": "Tasks",
+            "desc": "Jira tasks",
             "component": <User di={di} />
         }
     ]

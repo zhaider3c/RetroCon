@@ -40,6 +40,7 @@ const apiEndpoints = {
   attribute: `${REST}/attribute`,
   state: `${REST}/country/state`,
   swagger: `${REST}/swagger/json`,
+  business: `${REST}/business`,
   'staff-all': `${REST}/staff/all`,
   'sso-client': `${REST}/sso/client`,
   'business-all': `${REST}/business`,
@@ -63,6 +64,8 @@ const apiEndpoints = {
   'classification-recount': `${REST}/classification/recount`,
   'jira-auth-url': `${REST}/jira/auth/url`,
   'jira-user': `${REST}/jira/user`,
+  'jira-user-issue': `${REST}/jira/user/issues`,
+  'admin-user': `${REST}/admin/user`,
 };
 
 let DI = {};

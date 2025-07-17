@@ -19,8 +19,6 @@ export default function Form({
     onChange = (data) => { }
 }) {
     const [formData, setFormData] = useState(data || {});
-    console.log(formData);
-    console.log(data);
 
     // Initialize data state with field names
     React.useEffect(() => {

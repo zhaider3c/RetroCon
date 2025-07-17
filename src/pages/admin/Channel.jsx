@@ -5,6 +5,7 @@ import Scroll from "@components/Scroll";
 import { THEME } from "@pages/Theme";
 import { useEffect, useState } from "react";
 import Json from "@components/Json";
+import Form from "@components/Form";
 
 
 const Main = ({ di, adminToken }) => {
@@ -71,8 +72,15 @@ const Main = ({ di, adminToken }) => {
             <div className="flex flex-col gap-5 justify-center items-center p-5">
                 <p className="text-purple-200 text-6xl text-center">Create Channel</p>
                 <div className="w-full flex flex-col gap-5 justify-start items-center">
-                    <label htmlFor="name" className="block text-xl font-medium text-start w-full text-purple-200">Name</label>
-                    <Input {...THEME.ACTIVE_INPUT} autoComplete="off" id="name" placeholder="Zed Industries" className="w-full col-span-3" onChange={(e) => setData({ ...data, name: e.target.value })} />
+                    <Form fields={
+                        {
+                            name:{
+                                label:"Name",
+                                type:"text",
+                                placeholder:"Zed Industries",
+                            }
+                        }
+                    }/>
                 </div>
                 <div className="flex flex-col gap-5 justify-start items-center w-full">
                     <label htmlFor="channel" className="block text-xl font-medium text-start w-full text-purple-200">Channels</label>
