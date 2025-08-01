@@ -2,25 +2,45 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button, Card } from 'pixel-retroui';
 import { useSearchParams } from 'react-router-dom';
 import { THEME } from './Theme';
+
 const Message = ({ di }) => {
     const BG = '/message.webp';
     const [searchParams, setSearchParams] = useSearchParams();
-    const [forward, setFroward] = useState('/business');
+    const [forward, setFroward] = useState(searchParams.get('forward') ?? '/business');
     const [tt, setTt] = useState();
+    const [wait, setWait] = useState(searchParams.get('wait') ?? 1500);
+    const [countdown, setCountdown] = useState(Math.ceil((searchParams.get('wait') ?? 5000) / 1000));
+    
     if (searchParams.has('token'))
         localStorage.setItem('token', searchParams.get('token'));
     if (searchParams.has('user'))
         localStorage.setItem('user', searchParams.get('user'));
+    
     const navigate = di.navigate;
+    
     useEffect(() => {
-        setFroward(searchParams.get('forward') ?? '/business');
-        clearTimeout(tt);
+        const waitTime = parseInt(searchParams.get('wait') ?? 3000);
+        setWait(waitTime);
+        setCountdown(Math.ceil(waitTime / 1000));
+        
         if (searchParams.get('auto') == true || !searchParams.has('auto')) {
             setTt(setTimeout(() => {
                 navigate(forward);
-            }, searchParams.get('wait') ?? 1500));
+            }, waitTime));
         }
     }, [])
+    
+    // Countdown effect
+    useEffect(() => {
+        if (countdown > 0) {
+            const timer = setTimeout(() => {
+                setCountdown(prev => prev - 1);
+            }, 1000);
+            
+            return () => clearTimeout(timer);
+        }
+    }, [countdown]);
+    
     return (
         <div style={{
             backgroundImage: `url(${BG})`,
@@ -30,6 +50,12 @@ const Message = ({ di }) => {
                 <Card {...THEME.SECONDARY} className='min-h-32 min-w-64 flex items-center'>
                     <p className='text-center w-full'>
                         {searchParams.get('message')}
+                        {/* Redirection counter */}
+                        {wait && (
+                            <span className="block text-xs text-gray-500 mt-2">
+                                Redirecting in {countdown} seconds...
+                            </span>
+                        )}
                     </p>
                 </Card>
                 <Button {...THEME.ACTIVE}
@@ -46,4 +72,5 @@ const Message = ({ di }) => {
         </div >
     );
 };
+
 export default Message;

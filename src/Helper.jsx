@@ -66,6 +66,7 @@ const apiEndpoints = {
   'jira-user': `${REST}/jira/user`,
   'jira-user-issue': `${REST}/jira/user/issues`,
   'admin-user': `${REST}/admin/user`,
+  'admin-user-token': `${REST}/user/access-token`,
 };
 
 let DI = {};
@@ -179,7 +180,13 @@ DI = {
       }
     ) => {
       init(url);
-      let sendHeaders = filterHeaders({ "Content-Type": "application/json", ...headers });
+
+      // If body is a string, set Content-Type to application/json, else don't set it
+      let baseHeaders = { ...headers };
+      if (typeof body === "string") {
+        baseHeaders["Content-Type"] = "application/json";
+      }
+      let sendHeaders = filterHeaders(baseHeaders);
 
       if (!url) {
         url = '/rest/v2/ping';
@@ -189,7 +196,7 @@ DI = {
         await fetch(url, {
           method: 'POST',
           headers: sendHeaders,
-          body
+          body: body
         }).then(response => handleResponse(response, callback));
       } catch (error) {
         defaultErrorHandler(error);
@@ -205,6 +212,7 @@ DI = {
     }
   },
   formatTime: (dateObj) => {
+    if (!dateObj) return null;
     let date = new Date(Number(dateObj * 1000));
     return `
     ${date.getHours()}:${date.getMinutes()}

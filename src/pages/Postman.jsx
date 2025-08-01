@@ -37,7 +37,8 @@ const Main = ({ di }) => {
     const [loading, setLoading] = useState(false);
     const [tokenOpen, setTokenOpen] = useState(false);
     const [predifOpen, setPredifOpen] = useState(false);
-
+    const [tokens, setTokens] = useState(JSON.parse(localStorage.getItem('postman_tokens') || '{}'));
+    const [tokenName, setTokenName] = useState(null);
     // Keyboard event listener
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -45,7 +46,7 @@ const Main = ({ di }) => {
                 setPredifOpen(!predifOpen);
             }
         };
-        
+
         document.body.addEventListener('keydown', handleKeyDown);
         return () => {
             document.body.removeEventListener('keydown', handleKeyDown);
@@ -87,28 +88,66 @@ const Main = ({ di }) => {
     };
     return (
         <div className='w-full h-full bg-no-repeat bg-cover flex flex-col justify-center items-center gap-5' style={{ backgroundImage: `url(${postmanBg})` }}>
-            <Popup {...THEME.ACTIVE} isOpen={predifOpen} onClose={() => setPredifOpen(false)} className='flex flex-col gap-3'>
-                <h1 className='text-2xl text-center'>Common URLS</h1>
-                <Card {...THEME.SECONDARY} className='grid grid-cols-1 justify-center items-center gap-3'>
-                    {
-                        Object.keys(PRESETS).map((x, u) => {
-                            return (
-                                <Button key={u} {...THEME.ACTIVE} data-url={PRESETS[x]} onClick={(e) => {
-                                    setUrl(e.target.getAttribute('data-url'));
-                                    setPredifOpen(false);
-                                }}>{x}</Button>
-                            )
-                        })
-                    }
-                </Card>
-            </Popup>
-            <Popup {...THEME.ACTIVE} isOpen={tokenOpen} onClose={() => setTokenOpen(false)}>
-                <div className='flex gap-5 justify-center items-center'>
-                    <TextArea {...THEME.SECONDARY} placeholder='Token' rows={25} cols={50} value={token} onChange={handleTokenChange} />
-                    <ReactJsonView src={{ object: parseToken(token) }} theme='tomorrow' />
-                </div>
-            </Popup>
-            <div className='flex w-full h-full flex-col gap-3 p-3'>
+            <div>
+                <Popup {...THEME.ACTIVE} isOpen={predifOpen} onClose={() => setPredifOpen(false)} className='flex flex-col gap-3'>
+                    <h1 className='text-2xl text-center'>Common URLS</h1>
+                    <Card {...THEME.SECONDARY} className='grid grid-cols-1 justify-center items-center gap-3'>
+                        {
+                            Object.keys(PRESETS).map((x, u) => {
+                                return (
+                                    <Button key={u} {...THEME.ACTIVE} data-url={PRESETS[x]} onClick={(e) => {
+                                        setUrl(e.target.getAttribute('data-url'));
+                                        setPredifOpen(false);
+                                    }}>{x}</Button>
+                                )
+                            })
+                        }
+                    </Card>
+                </Popup>
+                <Popup {...THEME.ACTIVE} isOpen={tokenOpen} onClose={() => setTokenOpen(false)}>
+                    <div className='w-full flex flex-col gap-5 justify-between items-start'>
+                        <DropdownMenu {...THEME.ACTIVE} className='h-full'>
+                            <DropdownMenuTrigger className='h-full'>
+                                {tokenName ?? "Select Token"}
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent {...THEME.SECONDARY} className=''>
+                                {
+                                    Object.keys(tokens).map((x, u) => {
+                                        return (
+                                            <DropdownMenuItem key={u} data-token={x} className='w-32 flex'>
+                                                <Button className='w-32' {...THEME.ACTIVE} onClick={(e) => {
+                                                    setTokenName(x);
+                                                    setToken(tokens[x]);
+                                                }}>
+                                                    {x}
+                                                </Button>
+                                            </DropdownMenuItem>
+                                        )
+                                    })
+                                }
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                    <div className='flex flex-col gap-5 justify-start items-start'>
+                        <div className='flex gap-3 w-full'>
+                            <Input {...THEME.ACTIVE_INPUT} placeholder='Token Name' className='grow' value={tokenName} onChange={(e) => {
+                                setTokenName(e.target.value);
+                            }} />
+                            <Button className='px-8' {...THEME.SUCCESS} onClick={(e) => {
+                                setTokens({ ...tokens, [tokenName]: token });
+                                localStorage.setItem('postman_tokens', JSON.stringify(tokens));
+                                setTokenOpen(false);
+                                di.toast.success("Token saved");
+                            }}>Save</Button>
+                        </div>
+                        <div className='flex gap-3'>
+                            <TextArea {...THEME.SECONDARY} placeholder='Token' rows={25} cols={50} value={token} onChange={handleTokenChange} />
+                            <ReactJsonView src={{ object: parseToken(token) }} theme='tomorrow' />
+                        </div>
+                    </div>
+                </Popup>
+            </div>
+            <div className='flex w-full grow overflow-hidden flex-col justify-between gap-3 p-3'>
                 <div className='flex flex-col items-between gap-3'>
                     <div className='flex gap-3 items-center justify-between'>
                         <Button onClick={() => setTokenOpen(true)} {...THEME.ACTIVE} className='h-full'>Token</Button>
@@ -177,8 +216,8 @@ const Main = ({ di }) => {
                         }} disabled={loading} >Yeet!</Button>
                     </div>
                 </div>
-                <div className='w-full flex grow whitespace-pre overflow-hidden' {...THEME.ACTIVE}>
-                    <Card {...THEME.ACTIVE} className=''>
+                <div className='w-full flex grow whitespace-pre' {...THEME.ACTIVE}>
+                    <Card {...THEME.ACTIVE} className='overflow-hidden'>
                         <p>Response</p>
                         <Scroll className="flex flex-col grow h-full w-full">
                             <ReactJsonView src={{ object: response }} theme='tomorrow' className='' />

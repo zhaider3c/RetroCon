@@ -6,28 +6,29 @@ import { useState } from "react";
 import CreateApp from "@pages/admin/CreateApp";
 import ChannelGroup from "@pages/admin/ChannelGroup";
 import Channel from "@pages/admin/Channel";
-import { IoCaretBackSharp } from "react-icons/io5";
-import loader from "@assets/loader.gif";
 import Users from "@pages/admin/Users";
 import BG from "@assets/admin.gif";
 
 const Nav = ({ pages, setPage, page }) => {
     return (
         (
-            <div className="grow grid grid-cols-12 gap-5 justify-start items-between w-full">
-                <div className="grid grid-cols-10 col-span-6 text-start">
-                    {
-                        Object.keys(pages).map((x, i) => {
-                            return (
-                                <Button key={x} onClick={() => {
-                                    setPage(x);
-                                }} className="col-span-2" {...(page === x ? THEME.SUCCESS : THEME.SECONDARY)}>
+            <div className="grid grid-cols-12 gap-3 justify-start items-between w-full h-16 overflow-hidden   ">
+                {
+                    Object.keys(pages).map((x, i) => {
+                        return (
+                            <Button
+                                key={x}
+                                onClick={() => setPage(x)}
+                                className="col-span-1 p-0 h-8 text-xs overflow-hidden"
+                                {...(page === x ? THEME.SUCCESS : THEME.SECONDARY)}
+                            >
+                                <p className={`${x.length > 5 ? "marquee" : ""} whitespace-nowrap`}>
                                     {x.toLocaleUpperCase().replace('_', " ")}
-                                </Button>
-                            )
-                        })
-                    }
-                </div>
+                                </p>
+                            </Button>
+                        )
+                    })
+                }
             </div>
         )
     )
@@ -67,10 +68,6 @@ const Main = ({ di }) => {
         <div className="w-full h-full bg-linear-to-br from-purple-800 to-purple-950 flex flex-col justify-start items-start gap-5 p-5 bg-cover bg-center"
             style={{ backgroundImage: `url(${BG})` }}>
             <div className="flex gap-5 w-full items-center justify-between">
-                <Button className="flex items-center h-fit w-1/12 justify-center" {...THEME.ACTIVE} onClick={() => setPage("nav")} >
-                    <IoCaretBackSharp className="text-4xl text-orange-900/75" />
-                    <p>Back</p>
-                </Button>
                 <Input {...THEME.ACTIVE_INPUT} placeholder="Admin Token" value={adminToken} className="grow h-fit" onChange={(e) => {
                     setAdminToken(e.target.value);
                     localStorage.setItem("admin_token", e.target.value);
@@ -78,7 +75,11 @@ const Main = ({ di }) => {
             </div>
             <div className="w-full grow flex flex-col justify-center items-center gap-5">
                 <Nav pages={pages} setPage={setPage} page={page} />
-                {pages[page]}
+                <div className="w-full flex justify-center grow items-center">
+                    <Card {...THEME.SECONDARY} className="">
+                        {pages[page]}
+                    </Card>
+                </div>
             </div>
         </div>
     );

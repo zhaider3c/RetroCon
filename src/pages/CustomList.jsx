@@ -59,9 +59,17 @@ const Create = ({ di, listData = false }) => {
                     let formData = new FormData();
                     formData.append('file', e.target.files[0]);
                     di.request.get({
-                        url: di.api.get('get-upload-url', 'catalog') + `?media_type=local-storage&access=temporary`, callback: r => {
+                        url: di.api.get('get-upload-url', 'catalog') + `?media_type=local-storage&access=private`, 
+                        callback: r => {
+                            // Remove Content-Type so browser sets correct boundary for multipart/form-data
                             di.request.post({
-                                url: r.url, body: formData, headers: {}, callback: re => {
+                                url: r.url, 
+                                body: formData, 
+                                headers: { 
+                                    'Accept': 'application/json'
+                                    // Do NOT set 'Content-Type' here!
+                                }, 
+                                callback: re => {
                                     toast.success('Image uploaded successfully');
                                     setHash(re.hash);
                                 }

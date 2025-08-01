@@ -70,17 +70,29 @@ const Main = ({ di, adminToken }) => {
                 })}
             </Card>
             <div className="flex flex-col gap-5 justify-center items-center p-5">
-                <p className="text-purple-200 text-6xl text-center">Create Channel</p>
                 <div className="w-full flex flex-col gap-5 justify-start items-center">
-                    <Form fields={
-                        {
-                            name:{
-                                label:"Name",
-                                type:"text",
-                                placeholder:"Zed Industries",
-                            }
+                    <Form submitText="Create" fields={{
+                        name: {
+                            label: "Name",
+                            type: "text",
+                            placeholder: "Zed Industries",
+                        },
+                        code: {
+                            label: "Code",
+                            type: "text",
+                            placeholder: "ZED123",
+                        },
+                        currency: {
+                            label: "Currency",
+                            type: "text",
+                            placeholder: "USD",
+                        },
+                        country: {
+                            label: "Country",
+                            type: "text",
+                            placeholder: "United States",
                         }
-                    }/>
+                    }} />
                 </div>
                 <div className="flex flex-col gap-5 justify-start items-center w-full">
                     <label htmlFor="channel" className="block text-xl font-medium text-start w-full text-purple-200">Channels</label>
@@ -88,7 +100,7 @@ const Main = ({ di, adminToken }) => {
                         {channels.map((e, i) => {
                             return (
                                 <div key={i} className={`w-full flex items-center gap-2`}>
-                                    <Button className="w-full" data-id={e.id} onClick={(event) => {
+                                    <Button className="w-full" {...THEME.ACTIVE} data-id={e.id} onClick={(event) => {
                                         let channels = [];
                                         let id = event.currentTarget.getAttribute("data-id");
                                         if ((data.channel_id ?? []).includes(id)) {
@@ -104,9 +116,6 @@ const Main = ({ di, adminToken }) => {
                             );
                         })}
                     </div>
-                </div>
-                <div className="w-full flex w-full gap-5 justify-end items-center">
-                    <Button className="px-5 py-3" onClick={() => createApp(data)}>Create</Button>
                 </div>
             </div>
         </div>

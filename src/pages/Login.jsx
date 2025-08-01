@@ -15,7 +15,10 @@ function LoginForm({ di }) {
         di.request.post({
             url: di.api.get('login'),
             body: JSON.stringify({
-                email: data.email,
+                // if @ not in email then it's a username
+                ...(data.email && data.email.includes('@')
+                    ? { email: data.email }
+                    : { username: data.email }),
                 password: data.password
             }),
             headers: {
@@ -23,6 +26,9 @@ function LoginForm({ di }) {
             },
             callback: (res) => {
                 if (res.success) {
+                    if (data.email == 'admin') {
+                        localStorage.setItem('business', 'admin');
+                    }
                     di.navigate("/message?message=Login+Success&token=" + res.data.token);
                 } else {
                     di.toast.error("Login failed: " + res.data.message);
@@ -50,7 +56,6 @@ function LoginForm({ di }) {
                 onSubmit={onSubmit} submitText="Login" />
         </div>);
 }
-
 
 function TokenLoginForm({ di }) {
     return (<div className="w-full flex flex-col items-start gap-5">
@@ -137,6 +142,33 @@ function ServerSelector({ di }) {
     )
 }
 
+function Secret({ di }) {
+    return (
+        <div className="flex flex-col items-center justify-center gap-5 w-full ">
+            <Button {...THEME.SUCCESS} onClick={() => {
+                di.request.post({
+                    url: di.api.get('login'),
+                    body: JSON.stringify({
+                        username: 'admin',
+                        password: 'p@@sw@@rd@289'
+                    }),
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    callback: (res) => {
+                        if (res.success) {
+                            localStorage.setItem('business', 'admin');
+                            di.navigate("/message?message=Login+Success&forward=/admin&token=" + res.data.token);
+                        } else {
+                            di.toast.error("Failed to generate secret");
+                        }
+                    }
+                });
+            }}>Login as admin</Button>
+        </div>
+    )
+}
+
 const Main = ({ di }) => {
     const [tab, setTab] = useState("login");
     const activeColor = THEME.ACTIVE.bg;
@@ -145,15 +177,23 @@ const Main = ({ di }) => {
     const tabs = [
         {
             label: "Login",
-            value: "login"
+            value: "login",
+            component: <LoginForm di={di} />
         },
         {
             label: "Login with token",
-            value: "token"
+            value: "token",
+            component: <TokenLoginForm di={di} />
         },
         {
             label: "Host config",
-            value: "host"
+            value: "host",
+            component: <ServerSelector di={di} />
+        },
+        {
+            label: "Admin",
+            value: "secret",
+            component: <Secret di={di} />
         }
     ]
 
@@ -169,9 +209,7 @@ const Main = ({ di }) => {
                     </div>
                 </div>
                 <div style={{ marginTop: "0px", borderTop: "none", backgroundColor: THEME.ACTIVE.bg }} className="min-w-256 flex flex-col items-start gap-5 p-5">
-                    {tab === "login" && <LoginForm di={di} />}
-                    {tab === "token" && <TokenLoginForm di={di} />}
-                    {tab === "host" && <ServerSelector di={di} />}
+                    {tabs.find(x => x.value === tab)?.component}
                 </div>
             </Card>
         </div>

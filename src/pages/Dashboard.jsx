@@ -108,11 +108,11 @@ const Dashboard = ({ di }) => {
             <Card {...THEME.SECONDARY}>
                 <h1>Dashboard - {user?.business_name ?? user?.organisation_name}</h1>
             </Card>
-            <div className='overflow-hidden w-full flex justify-between items-start p-5 gap-5'>
+            <div className='overflow-hidden w-full flex justify-between items-start p-5 gap-5 h-128 '>
                 {
                     elements.map((x, i) => {
                         return (<Scroll {...THEME.SECONDARY} key={i} className='grow'>
-                            <div className='h-full flex flex-col justify-between items-start p-5 gap-5 w-full'>
+                            <div className='flex flex-col justify-between items-center p-5 gap-5 w-full'>
                                 {
                                     x.map((y, j) => {
                                         return y;
