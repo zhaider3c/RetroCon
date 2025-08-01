@@ -42,7 +42,7 @@ export default function Main({ di, token }) {
                 </div>
             </div>
             <div className="grow justify-center items-center flex h-full">
-                <Scroll className="justify-center items-center flex h-full">
+                <Scroll className="justify-center items-center h-full">
                     <div className="flex flex-col bg-black/25 h-full">
                         {
                             users.length > 0 && users.map((user, index) => {
