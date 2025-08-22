@@ -26,4 +26,5 @@ export default defineConfig({
       '@assets': '/src/assets', // Alias for the Components directory
     },
   },
+  envDir: '.env',
 });

@@ -10,37 +10,42 @@ const Message = ({ di }) => {
     const [tt, setTt] = useState();
     const [wait, setWait] = useState(searchParams.get('wait') ?? 1500);
     const [countdown, setCountdown] = useState(Math.ceil((searchParams.get('wait') ?? 5000) / 1000));
-    
+
     if (searchParams.has('token'))
         localStorage.setItem('token', searchParams.get('token'));
     if (searchParams.has('user'))
         localStorage.setItem('user', searchParams.get('user'));
-    
-    const navigate = di.navigate;
-    
+
+    const navigate = (forward) => {
+        let x = clearTimeout(tt);
+        di.navigate(forward);
+    }
+
     useEffect(() => {
         const waitTime = parseInt(searchParams.get('wait') ?? 3000);
         setWait(waitTime);
         setCountdown(Math.ceil(waitTime / 1000));
-        
+
         if (searchParams.get('auto') == true || !searchParams.has('auto')) {
-            setTt(setTimeout(() => {
+            let timeOut = setTimeout(() => {
                 navigate(forward);
-            }, waitTime));
+            }, waitTime)
+            setTt(timeOut);
+            return () => { clearTimeout(timeOut) };
         }
     }, [])
-    
+
     // Countdown effect
     useEffect(() => {
         if (countdown > 0) {
             const timer = setTimeout(() => {
                 setCountdown(prev => prev - 1);
             }, 1000);
-            
+
             return () => clearTimeout(timer);
         }
     }, [countdown]);
-    
+
     return (
         <div style={{
             backgroundImage: `url(${BG})`,
@@ -62,6 +67,7 @@ const Message = ({ di }) => {
                     className='outline-none'
                     onClick={
                         () => {
+                            clearTimeout(tt);
                             navigate(forward);
                         }
                     }

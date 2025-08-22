@@ -9,7 +9,7 @@ const REST = '/rest/v2';
 
 let HOSTS = {}
 // UNIFIED-CON
-HOSTS.UNICON = 'https://onecon.local.cedcommerce.com';
+HOSTS.UNICON = { 'url': 'https://onecon.local.cedcommerce.com', 'token': 'Insert APP token here' };
 HOSTS.CATALOG = HOSTS.UNICON;
 HOSTS.SALES = HOSTS.UNICON;
 // HOSTS.PHPUNIT = '/coverage-html';
@@ -103,10 +103,10 @@ async function handleResponse(response, callback) {
     if (data.message || data.msg)
       toast.success(data.message ?? data.msg);
   } else {
-    if (response.status == 401 || response.status == 403) {
+    if (response.status == 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('business');
-      // errorRedirect('Invalid Authorization', '/login', 1500, true);
+      errorRedirect('Session Expired', '/login', 1500, true);
     }
     toast.error(data.message ?? "Error");
   }
@@ -208,7 +208,7 @@ DI = {
     get: (endpoint, host = 'UNICON', isFile = false) => {
       if (isFile)
         return `${apiEndpoints[endpoint.toLowerCase()]}`.replace("{{HOST}}", host.toLowerCase());
-      else return `${HOSTS[host.toUpperCase()]}${apiEndpoints[endpoint.toLowerCase()]}`;
+      else return `${HOSTS[host.toUpperCase()].url}${apiEndpoints[endpoint.toLowerCase()]}`;
     }
   },
   formatTime: (dateObj) => {

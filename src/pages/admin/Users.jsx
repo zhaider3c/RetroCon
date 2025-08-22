@@ -45,7 +45,7 @@ export default function Main({ di, token }) {
                 <Scroll className="justify-center items-center h-full">
                     <div className="flex flex-col bg-black/25 h-full">
                         {
-                            users.length > 0 && users.map((user, index) => {
+                            users?.length > 0 && users.map((user, index) => {
                                 let joinnedAt = di.formatTime(Number(user.user_data.created_at ?? 0) / 1000)
                                 let lastLogin = di.formatTime(Number(user?.user_data.user_stats?.last_login?.time?.$date?.$numberLong ?? 0) / 1000)
                                 return (

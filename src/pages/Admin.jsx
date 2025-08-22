@@ -35,22 +35,23 @@ const Nav = ({ pages, setPage, page }) => {
 }
 
 const Main = ({ di }) => {
-    const [adminToken, setAdminToken] = useState(localStorage.getItem("admin_token"));
+    const [adminToken, setAdminToken] = useState(localStorage.getItem("admin_token") ?? null);
+    let token = adminToken ?? localStorage.getItem("token");
     const [page, setPage] = useState("home");
     const pages = {
         'app': (
             <div className="w-full h-full flex justify-center items-center gap-5">
-                <CreateApp di={di} adminToken={adminToken} />
+                <CreateApp di={di} adminToken={token} />
             </div>
         ),
         'channel_group': (
             <div className="w-full h-full flex justify-center items-center gap-5">
-                <ChannelGroup di={di} adminToken={adminToken} />
+                <ChannelGroup di={di} adminToken={token} />
             </div>
         ),
         'channel': (
             <div className="w-full h-full flex justify-center items-center gap-5">
-                <Channel di={di} adminToken={adminToken} />
+                <Channel di={di} adminToken={token} />
             </div>
         ),
         "home": (
@@ -60,7 +61,7 @@ const Main = ({ di }) => {
         ),
         "users": (
             <div className="w-full h-full flex justify-center items-center gap-5">
-                <Users di={di} adminToken={adminToken} />
+                <Users di={di} token={token} />
             </div>
         )
     }

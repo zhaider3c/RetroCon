@@ -61,10 +61,9 @@ export default function Auth({ di }) {
                             <Scroll>
                                 <div className="flex flex-col gap-2 justify-between items-center">
                                     {sprints.map((singelSprint, i) => (
-                                        <DropdownMenuItem>
+                                        <DropdownMenuItem key={i}>
                                             <Button
                                                 className="w-64"
-                                                key={i}
                                                 onClick={() => setSprint(singelSprint)}
                                                 {...THEME.SECONDARY}
                                             >

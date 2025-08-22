@@ -86,6 +86,67 @@ const Main = ({ di }) => {
         setBody(e.target.value);
         localStorage.setItem('post-body', e.target.value);
     };
+
+    const Token = () => {
+
+        return (
+            <Popup {...THEME.ACTIVE} isOpen={tokenOpen} onClose={() => setTokenOpen(false)}>
+                <div className='flex flex-col gap-3 justify-start items-start'>
+                    <div className='w-full flex flex-col gap-5 justify-between items-start'>
+                        {
+                            Object.keys(tokens).length > 0 ?
+                                <DropdownMenu {...THEME.SECONDARY} className='h-full'>
+                                    <DropdownMenuTrigger className='h-full'>
+                                        {tokenName ?? "Select Token"}
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent {...THEME.SECONDARY} className=''>
+                                        {
+                                            Object.keys(tokens).map((x, u) => {
+                                                return (
+                                                    <DropdownMenuItem key={u} data-token={x} className='w-32 flex'>
+                                                        <Button className='w-32' {...THEME.ACTIVE} onClick={(e) => {
+                                                            setTokenName(x);
+                                                            setToken(tokens[x]);
+                                                        }}>
+                                                            {x}
+                                                        </Button>
+                                                    </DropdownMenuItem>
+                                                )
+                                            })
+                                        }
+                                    </DropdownMenuContent>
+                                </DropdownMenu> : <Card {...THEME.SECONDARY} className='h-full flex flex-col gap-3 justify-center items-center'>
+                                    <p>No saved tokens</p>
+                                </Card>
+                        }
+                    </div>
+                    <div className='flex gap-3 w-full'>
+                        <Input
+                            {...THEME.ACTIVE_INPUT}
+                            placeholder='Token Name'
+                            className='grow'
+                            value={tokenName}
+                            onChange={(e) => {
+                                setTokenName(e.target.value);
+                            }}
+                        />
+                        <Button className='px-8' {...THEME.SUCCESS} onClick={(e) => {
+                            setTokens({ ...tokens, [tokenName]: token });
+                            localStorage.setItem('postman_tokens', JSON.stringify(tokens));
+                            setTokenOpen(false);
+                            di.toast.success("Token saved");
+                        }}>Save</Button>
+                    </div>
+                    <div className='flex gap-3 h-96'>
+                        <TextArea {...THEME.SECONDARY} placeholder='Token' rows={25} cols={50} value={token} onChange={handleTokenChange} />
+                        <ReactJsonView src={{ object: parseToken(token) }} theme='tomorrow' />
+                    </div>
+                </div>
+            </Popup>
+        )
+    }
+
+
     return (
         <div className='w-full h-full bg-no-repeat bg-cover flex flex-col justify-center items-center gap-5' style={{ backgroundImage: `url(${postmanBg})` }}>
             <div>
@@ -104,48 +165,8 @@ const Main = ({ di }) => {
                         }
                     </Card>
                 </Popup>
-                <Popup {...THEME.ACTIVE} isOpen={tokenOpen} onClose={() => setTokenOpen(false)}>
-                    <div className='w-full flex flex-col gap-5 justify-between items-start'>
-                        <DropdownMenu {...THEME.ACTIVE} className='h-full'>
-                            <DropdownMenuTrigger className='h-full'>
-                                {tokenName ?? "Select Token"}
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent {...THEME.SECONDARY} className=''>
-                                {
-                                    Object.keys(tokens).map((x, u) => {
-                                        return (
-                                            <DropdownMenuItem key={u} data-token={x} className='w-32 flex'>
-                                                <Button className='w-32' {...THEME.ACTIVE} onClick={(e) => {
-                                                    setTokenName(x);
-                                                    setToken(tokens[x]);
-                                                }}>
-                                                    {x}
-                                                </Button>
-                                            </DropdownMenuItem>
-                                        )
-                                    })
-                                }
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                    <div className='flex flex-col gap-5 justify-start items-start'>
-                        <div className='flex gap-3 w-full'>
-                            <Input {...THEME.ACTIVE_INPUT} placeholder='Token Name' className='grow' value={tokenName} onChange={(e) => {
-                                setTokenName(e.target.value);
-                            }} />
-                            <Button className='px-8' {...THEME.SUCCESS} onClick={(e) => {
-                                setTokens({ ...tokens, [tokenName]: token });
-                                localStorage.setItem('postman_tokens', JSON.stringify(tokens));
-                                setTokenOpen(false);
-                                di.toast.success("Token saved");
-                            }}>Save</Button>
-                        </div>
-                        <div className='flex gap-3'>
-                            <TextArea {...THEME.SECONDARY} placeholder='Token' rows={25} cols={50} value={token} onChange={handleTokenChange} />
-                            <ReactJsonView src={{ object: parseToken(token) }} theme='tomorrow' />
-                        </div>
-                    </div>
-                </Popup>
+                <Token />
+
             </div>
             <div className='flex w-full grow overflow-hidden flex-col justify-between gap-3 p-3'>
                 <div className='flex flex-col items-between gap-3'>
@@ -219,9 +240,11 @@ const Main = ({ di }) => {
                 <div className='w-full flex grow whitespace-pre' {...THEME.ACTIVE}>
                     <Card {...THEME.ACTIVE} className='overflow-hidden'>
                         <p>Response</p>
-                        <Scroll className="flex flex-col grow h-full w-full">
-                            <ReactJsonView src={{ object: response }} theme='tomorrow' className='' />
-                        </Scroll>
+                        <div className='flex flex-col h-128 w-full'>
+                            <Scroll className="h-full w-full">
+                                <ReactJsonView src={{ object: response }} theme='tomorrow' className='' />
+                            </Scroll>
+                        </div>
                     </Card>
                     <Card className="flex flex-col gap-5 grow overflow-auto" {...THEME.ACTIVE}>
                         <p>PAY-LOAD</p>
