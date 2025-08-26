@@ -82,7 +82,10 @@ THEME.SEAMLESS = {
     bg: "transparent",
     textColor: "lime",
     borderColor: "transparent",
-    shadowColor: "black",
+    shadowColor: "transparent",
+    style: {
+        boxShadow: "none"
+    },
     baseBg: "transparent"
 }
 

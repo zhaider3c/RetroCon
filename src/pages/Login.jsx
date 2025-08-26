@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import { Button, Card, Input } from "pixel-retroui";
+import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input } from "pixel-retroui";
 import { THEME } from "./Theme";
 import { useEffect, useState } from "react";
 import Form from "@components/Form";
@@ -77,6 +77,24 @@ function TokenLoginForm({ di }) {
 }
 
 function ServerSelector({ di }) {
+    const appUrls = {
+        local: {
+            url: import.meta.env.VITE_UNICON_URL_LOCAL,
+            token: import.meta.env.VITE_UNICON_APP_TOKEN_LOCAL
+        },
+        dev: {
+            url: import.meta.env.VITE_UNICON_URL_DEV,
+            token: import.meta.env.VITE_UNICON_APP_TOKEN_DEV
+        },
+        staging: {
+            url: import.meta.env.VITE_UNICON_URL_STAGING,
+            token: import.meta.env.VITE_UNICON_APP_TOKEN_STAGING
+        },
+        prod: {
+            url: import.meta.env.VITE_UNICON_URL_PROD,
+            token: import.meta.env.VITE_UNICON_APP_TOKEN_PROD
+        }
+    };
     const [hosts, setHosts] = useState(() => {
         // Ensure we have a deep copy so edits don't mutate di.hosts directly
         return JSON.parse(JSON.stringify(di.hosts));
@@ -120,56 +138,55 @@ function ServerSelector({ di }) {
                     token = "";
                 } else if (typeof hostValue === "object" && hostValue !== null) {
                     url = hostValue.url || "";
-                    token = hostValue.token || "";
+                    token = hostValue.token || "default";
                 }
                 return (
-                    <div className="flex flex-col gap-0 w-full border-2! border-white/25! rounded-xl p-2" key={idx}>
-                        <div className="flex items-center gap-5 w-full">
-                            <Input
-                                {...THEME.ACTIVE_INPUT}
-                                className="text-center"
-                                value={hostKey}
-                                disabled
-                                readOnly
-                            />
-                            <Card {...THEME.ACTIVE} className="flex h-12 justify-center items-center gap-0 grow p-0">
+                    <div className="flex flex-col gap-0 w-full" key={idx}>
+                        <div className="grid grid-cols-4 items-center gap-5 w-full">
+                            <div className="text-amber-400 font-black col-span-1">
+                                {hostKey.toUpperCase()}
+                            </div>
+                            <Card {...THEME.ACTIVE} className="flex h-12 justify-center items-center gap-0 grow p-0 col-span-3">
                                 <span>https://</span>
-                                <Input
-                                    {...THEME.SEAMLESS}
-                                    className="grow"
-                                    value={url.replace(/^https:\/\//, "").replace(/\.com$/, "")}
-                                    onChange={e => {
-                                        const newHosts = { ...hosts };
-                                        const newUrl = "https://" + e.target.value + ".com";
-                                        if (typeof newHosts[hostKey] === "object" && newHosts[hostKey] !== null) {
-                                            newHosts[hostKey] = { ...newHosts[hostKey], url: newUrl };
-                                        } else {
-                                            // backward compatibility
-                                            newHosts[hostKey] = newUrl;
-                                        }
-                                        setHosts(newHosts);
-                                    }}
-                                />
-                                <span>.com</span>
+                                <div className="flex items-end justify-end gap-0 grow">
+                                    <DropdownMenu className="w-fit">
+                                        <DropdownMenuTrigger {...THEME.SEAMLESS}>{hosts[hostKey].url}</DropdownMenuTrigger>
+                                        <DropdownMenuContent {...THEME.SECONDARY} className="w-96">
+                                            {Object.keys(appUrls).map((url, idx) => {
+                                                return <DropdownMenuItem {...THEME.ACTIVE} className="cursor-pointer" key={idx} >
+                                                    <div onClick={() => {
+                                                        const newHosts = { ...hosts };
+                                                        newHosts[hostKey] = { url: appUrls[url].url, token: appUrls[url].token };
+                                                        setHosts(newHosts);
+                                                    }} className="flex justify-start items-center gap-0 px-3 py-1 hover:bg-white/10 rounded-xl">
+                                                        {url.toUpperCase()}
+                                                    </div>
+                                                </DropdownMenuItem>
+                                            })}
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
                             </Card>
                         </div>
-                        <div className="flex items-center gap-5 w-full ">
-                            <Input
-                                {...THEME.ACTIVE_INPUT}
-                                className="grow"
-                                value={token}
-                                placeholder="App token (optional)"
-                                onChange={e => {
-                                    const newHosts = { ...hosts };
-                                    if (typeof newHosts[hostKey] === "object" && newHosts[hostKey] !== null) {
-                                        newHosts[hostKey] = { ...newHosts[hostKey], token: e.target.value };
-                                    } else {
-                                        // backward compatibility: convert to object
-                                        newHosts[hostKey] = { url: url, token: e.target.value };
+                        <div className="flex items-center gap-5 w-full">
+                            <div>
+                                {(() => {
+                                    try {
+                                        const token = hosts[hostKey].token;
+                                        if (!token || typeof token !== "string" || token.split('.').length !== 3) {
+                                            return <span className="text-sm text-white/50">{token}</span>;
+                                        }
+                                        const payload = token.split('.')[1];
+                                        // Add padding if needed for base64 decoding
+                                        const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+                                        const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
+                                        const decoded = atob(padded);
+                                        return <span className="text-sm text-white/50">Expiration: {JSON.parse(decoded).exp ?? "Never"} Role:{JSON.parse(decoded).role}</span>;
+                                    } catch (e) {
+                                        return <span className="text-sm text-white/50">Invalid token</span>;
                                     }
-                                    setHosts(newHosts);
-                                }}
-                            />
+                                })()}
+                            </div>
                         </div>
                     </div>
                 );
