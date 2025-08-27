@@ -141,51 +141,50 @@ function ServerSelector({ di }) {
                     token = hostValue.token || "default";
                 }
                 return (
-                    <div className="flex flex-col gap-0 w-full" key={idx}>
-                        <div className="grid grid-cols-4 items-center gap-5 w-full">
-                            <div className="text-amber-400 font-black col-span-1">
-                                {hostKey.toUpperCase()}
-                            </div>
-                            <Card {...THEME.ACTIVE} className="flex h-12 justify-center items-center gap-0 grow p-0 col-span-3">
-                                <span>https://</span>
-                                <div className="flex items-end justify-end gap-0 grow">
-                                    <DropdownMenu className="w-fit">
-                                        <DropdownMenuTrigger {...THEME.SEAMLESS}>{hosts[hostKey].url}</DropdownMenuTrigger>
-                                        <DropdownMenuContent {...THEME.SECONDARY} className="w-96">
-                                            {Object.keys(appUrls).map((url, idx) => {
-                                                return <DropdownMenuItem {...THEME.ACTIVE} className="cursor-pointer" key={idx} >
-                                                    <div onClick={() => {
-                                                        const newHosts = { ...hosts };
-                                                        newHosts[hostKey] = { url: appUrls[url].url, token: appUrls[url].token };
-                                                        setHosts(newHosts);
-                                                    }} className="flex justify-start items-center gap-0 px-3 py-1 hover:bg-white/10 rounded-xl">
-                                                        {url.toUpperCase()}
-                                                    </div>
-                                                </DropdownMenuItem>
-                                            })}
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                            </Card>
-                        </div>
-                        <div className="flex items-center gap-5 w-full">
-                            <div>
-                                {(() => {
-                                    try {
-                                        const token = hosts[hostKey].token;
-                                        if (!token || typeof token !== "string" || token.split('.').length !== 3) {
-                                            return <span className="text-sm text-white/50">{token}</span>;
+                    <div className="grid grid-cols-2 w-full" key={idx}>
+                        <div className="flex flex-col gap-5 col-span-1">
+                            <p className="text-amber-400 font-black">{hostKey.toUpperCase()}</p>
+                            <div className="flex items-center gap-5 w-full">
+                                <div>
+                                    {(() => {
+                                        try {
+                                            const token = hosts[hostKey].token;
+                                            if (!token || typeof token !== "string" || token.split('.').length !== 3) {
+                                                return <span className="text-sm text-white/50">No token</span>;
+                                            }
+                                            const payload = token.split('.')[1];
+                                            // Add padding if needed for base64 decoding
+                                            const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+                                            const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
+                                            const decoded = atob(padded);
+                                            return <span className="text-sm text-white/50">Token: {JSON.parse(decoded)?.role?.toUpperCase() + " "}
+                                                Valid till: {JSON.parse(decoded).exp ?? "forever"}</span>;
+                                        } catch (e) {
+                                            return <span className="text-sm text-white/50">Invalid token</span>;
                                         }
-                                        const payload = token.split('.')[1];
-                                        // Add padding if needed for base64 decoding
-                                        const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-                                        const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
-                                        const decoded = atob(padded);
-                                        return <span className="text-sm text-white/50">Expiration: {JSON.parse(decoded).exp ?? "Never"} Role:{JSON.parse(decoded).role}</span>;
-                                    } catch (e) {
-                                        return <span className="text-sm text-white/50">Invalid token</span>;
-                                    }
-                                })()}
+                                    })()}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-col justify-end items-start gap-0 col-span-1">
+                            <DropdownMenu {...THEME.ACTIVE} className="grow">
+                                <DropdownMenuTrigger {...THEME.ACTIVE}>{hosts[hostKey].type ?? "Not Selected"}</DropdownMenuTrigger>
+                                <DropdownMenuContent {...THEME.SECONDARY} className="w-96">
+                                    {Object.keys(appUrls).map((url, idx) => {
+                                        return <DropdownMenuItem {...THEME.ACTIVE} className="cursor-pointer" key={idx} >
+                                            <div onClick={() => {
+                                                const newHosts = { ...hosts };
+                                                newHosts[hostKey] = { url: appUrls[url].url, token: appUrls[url].token, type: [url] };
+                                                setHosts(newHosts);
+                                            }} className="flex justify-start items-center gap-0 px-3 py-1 hover:bg-white/10 rounded-xl">
+                                                {url.toUpperCase()}
+                                            </div>
+                                        </DropdownMenuItem>
+                                    })}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            <div className="flex justify-end items-center gap-0 grow">
+                                {hosts[hostKey].url}
                             </div>
                         </div>
                     </div>

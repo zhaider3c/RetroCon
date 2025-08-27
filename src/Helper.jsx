@@ -9,7 +9,7 @@ const REST = '/rest/v2';
 
 let HOSTS = {}
 // UNIFIED-CON
-HOSTS.UNICON = { 'url': 'https://onecon.local.cedcommerce.com', 'token': 'Insert APP token here' };
+HOSTS.UNICON = { 'url': 'https://onecon.local.cedcommerce.com', 'token': 'Null' };
 HOSTS.CATALOG = HOSTS.UNICON;
 HOSTS.SALES = HOSTS.UNICON;
 // HOSTS.PHPUNIT = '/coverage-html';
