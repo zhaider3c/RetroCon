@@ -223,8 +223,6 @@ function Secret({ di }) {
                     let elem = e.target.querySelectorAll('div')[1];
                     if (elem) {
                         elem.style.width = '48rem';
-                    } else {
-                        console.log(e.target.querySelectorAll('div'));
                     }
                 }} onMouseLeave={(e) => {
                     let elem = e.target.querySelectorAll('div')[1];
@@ -232,7 +230,7 @@ function Secret({ di }) {
                         elem.style.width = '0px';
                     }
                 }}>
-                <div style={{ backgroundImage: `url(${SCROLL_LEFT})` }} className="h-64 w-4 bg-no-repeat bg-start bg-center"></div>
+                <div style={{ backgroundImage: `url(${SCROLL_LEFT})` }} className="h-48 w-4 bg-no-repeat bg-start bg-center"></div>
                 <div style={
                     {
                         backgroundImage: `url(${SCROLL_CENTER})`,
@@ -240,7 +238,7 @@ function Secret({ di }) {
                         transition: 'all 0.3s linear'
                     }
                 }
-                    className={`h-full bg-repeat-x bg-start bg-center text-sm justify-center items-start flex flex-col text-black overflow-hidden whitespace-nowrap`}>
+                    className={`h-48 bg-repeat-x bg-start bg-center text-sm justify-center items-start flex flex-col text-black overflow-hidden whitespace-nowrap`}>
                     <span>Beyond this threshold slumbers the forbidden might of the Admin.</span>
                     <span>Such power festers, gnawing at the mind, warping all resolve.</span>
                     <span>It sunders servers, near and distant, leaving only ruin in its wake.</span>
@@ -250,7 +248,7 @@ function Secret({ di }) {
                         I accept this accursed burden.
                     </label>
                 </div>
-                <div style={{ backgroundImage: `url(${SCROLL_RIGHT})` }} className="h-64 w-4 bg-no-repeat bg-start bg-center"></div>
+                <div style={{ backgroundImage: `url(${SCROLL_RIGHT})` }} className="h-48 w-4 bg-no-repeat bg-start bg-center"></div>
             </div>
         )
     }
