@@ -5,6 +5,11 @@ import { THEME } from "./Theme";
 import { useEffect, useState } from "react";
 import Form from "@components/Form";
 import BG from '@assets/login.gif'
+import { IoSettings } from "react-icons/io5";
+import { CiLogin } from "react-icons/ci";
+import SCROLL_LEFT from '@assets/scroll-left.png'
+import SCROLL_RIGHT from '@assets/scroll-right.png'
+import SCROLL_CENTER from '@assets/scroll-center.png'
 
 
 function LoginForm({ di }) {
@@ -77,24 +82,7 @@ function TokenLoginForm({ di }) {
 }
 
 function ServerSelector({ di }) {
-    const appUrls = {
-        local: {
-            url: import.meta.env.VITE_UNICON_URL_LOCAL,
-            token: import.meta.env.VITE_UNICON_APP_TOKEN_LOCAL
-        },
-        dev: {
-            url: import.meta.env.VITE_UNICON_URL_DEV,
-            token: import.meta.env.VITE_UNICON_APP_TOKEN_DEV
-        },
-        staging: {
-            url: import.meta.env.VITE_UNICON_URL_STAGING,
-            token: import.meta.env.VITE_UNICON_APP_TOKEN_STAGING
-        },
-        prod: {
-            url: import.meta.env.VITE_UNICON_URL_PROD,
-            token: import.meta.env.VITE_UNICON_APP_TOKEN_PROD
-        }
-    };
+    const appUrls = di.url_profiles;
     const [hosts, setHosts] = useState(() => {
         // Ensure we have a deep copy so edits don't mutate di.hosts directly
         return JSON.parse(JSON.stringify(di.hosts));
@@ -109,7 +97,7 @@ function ServerSelector({ di }) {
         <div className="flex flex-col items-end gap-5 p-5 w-full">
             <div className="flex justify-between items-center gap-5 w-full">
                 <p className="text-2xl">
-                    Backend Hosts
+                    Server Configuration
                     {modified ? <span className="text-yellow-500 text-sm"> Modified</span> : ""}
                 </p>
                 <div className="flex justify-center items-center gap-5">
@@ -128,25 +116,29 @@ function ServerSelector({ di }) {
                 </div>
             </div>
             {Object.keys(hosts).map((hostKey, idx) => {
-                // Each host is an object: { url: string, token: string }
-                // For backward compatibility, if value is a string, treat as url, token empty
-                const hostValue = hosts[hostKey];
-                let url = "";
-                let token = "";
-                if (typeof hostValue === "string") {
-                    url = hostValue;
-                    token = "";
-                } else if (typeof hostValue === "object" && hostValue !== null) {
-                    url = hostValue.url || "";
-                    token = hostValue.token || "default";
-                }
                 return (
-                    <div className="grid grid-cols-2 w-full" key={idx}>
+                    <div className="grid grid-cols-2 w-full bg-white/10 rounded-xl p-3" key={idx}>
                         <div className="flex flex-col gap-5 col-span-1">
-                            <p className="text-amber-400 font-black">{hostKey.toUpperCase()}</p>
+                            <p className="text-green-400 font-black">{hostKey.toUpperCase()}</p>
                             <div className="flex items-center gap-5 w-full">
                                 <div>
                                     {(() => {
+                                        const type = hosts[hostKey].type;
+                                        if (typeof type === "string" && type.toLowerCase() === "local") {
+                                            return (
+                                                <Input
+                                                    {...THEME.SECONDARY}
+                                                    className="text-sm w-96"
+                                                    type="text"
+                                                    placeholder="Enter APP token for local server"
+                                                    onChange={e => {
+                                                        const newHosts = { ...hosts };
+                                                        newHosts[hostKey] = { ...newHosts[hostKey], token: e.target.value };
+                                                        setHosts(newHosts);
+                                                    }}
+                                                />
+                                            );
+                                        }
                                         try {
                                             const token = hosts[hostKey].token;
                                             if (!token || typeof token !== "string" || token.split('.').length !== 3) {
@@ -166,15 +158,15 @@ function ServerSelector({ di }) {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex flex-col justify-end items-start gap-0 col-span-1">
-                            <DropdownMenu {...THEME.ACTIVE} className="grow">
-                                <DropdownMenuTrigger {...THEME.ACTIVE}>{hosts[hostKey].type ?? "Not Selected"}</DropdownMenuTrigger>
+                        <div className="flex flex-col justify-between items-start gap-3 col-span-1">
+                            <DropdownMenu {...THEME.ACTIVE} className="grow w-full">
+                                <DropdownMenuTrigger {...THEME.ACTIVE} className="w-64">{hosts[hostKey].type.toUpperCase() ?? "Not Selected"}</DropdownMenuTrigger>
                                 <DropdownMenuContent {...THEME.SECONDARY} className="w-96">
                                     {Object.keys(appUrls).map((url, idx) => {
                                         return <DropdownMenuItem {...THEME.ACTIVE} className="cursor-pointer" key={idx} >
                                             <div onClick={() => {
                                                 const newHosts = { ...hosts };
-                                                newHosts[hostKey] = { url: appUrls[url].url, token: appUrls[url].token, type: [url] };
+                                                newHosts[hostKey] = { url: "https://" + appUrls[url].url, token: appUrls[url].token, type: url };
                                                 setHosts(newHosts);
                                             }} className="flex justify-start items-center gap-0 px-3 py-1 hover:bg-white/10 rounded-xl">
                                                 {url.toUpperCase()}
@@ -183,7 +175,7 @@ function ServerSelector({ di }) {
                                     })}
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                            <div className="flex justify-end items-center gap-0 grow">
+                            <div className="flex justify-end items-center gap-0 grow text-green-400">
                                 {hosts[hostKey].url}
                             </div>
                         </div>
@@ -195,31 +187,75 @@ function ServerSelector({ di }) {
 }
 
 function Secret({ di }) {
-    return (
-        <div className="flex flex-col items-center justify-center gap-5 w-full ">
-            <Button {...THEME.SUCCESS} onClick={() => {
-                di.request.post({
-                    url: di.api.get('login'),
-                    body: JSON.stringify({
-                        username: 'admin',
-                        password: 'p@@sw@@rd@289'
-                    }),
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + di.hosts.UNICON.token
-                    },
-                    callback: (res) => {
-                        if (res.success) {
-                            localStorage.setItem('business', 'admin');
-                            di.navigate("/message?message=Login+Success&forward=/admin&token=" + res.data.token);
-                        } else {
-                            di.toast.error("Admin login failed");
-                        }
+    const [tnc, setTnc] = useState(false);
+    return (<div className="h-64 w-full">{
+        tnc ? (
+            <div className="flex flex-col items-center justify-center gap-5 w-full">
+                <button
+                    className="flex flex-col justify-center items-center w-48 h-48 text-white! font-black text-2xl rounded-full shadow-lg bg-gradient-to-br! from-red-600 to-red-800 border-4 border-red-700 hover:from-red-700 hover:to-red-900 active:scale-95 transition-all duration-200"
+                    onClick={() => {
+                        di.request.post({
+                            url: di.api.get('login'),
+                            body: JSON.stringify({
+                                username: 'admin',
+                                password: 'p@@sw@@rd@289'
+                            }),
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": "Bearer " + di.hosts.UNICON.token
+                            },
+                            callback: (res) => {
+                                if (res.success) {
+                                    localStorage.setItem('business', 'admin');
+                                    di.navigate("/message?message=Login+Success&forward=/admin&token=" + res.data.token);
+                                } else {
+                                    di.toast.error("Admin login failed");
+                                }
+                            }
+                        });
+                    }}
+                >DANGER</button>
+                <span className="text-sm text-white/50">Make sure the app token is valid</span>
+            </div>
+        ) : (
+            <div className="flex h-full items-center justify-center gap-0 w-full"
+                onMouseEnter={(e) => {
+                    let elem = e.target.querySelectorAll('div')[1];
+                    if (elem) {
+                        elem.style.width = '48rem';
+                    } else {
+                        console.log(e.target.querySelectorAll('div'));
                     }
-                });
-            }}>Login as admin</Button>
-        </div>
-    )
+                }} onMouseLeave={(e) => {
+                    let elem = e.target.querySelectorAll('div')[1];
+                    if (elem) {
+                        elem.style.width = '0px';
+                    }
+                }}>
+                <div style={{ backgroundImage: `url(${SCROLL_LEFT})` }} className="h-64 w-4 bg-no-repeat bg-start bg-center"></div>
+                <div style={
+                    {
+                        backgroundImage: `url(${SCROLL_CENTER})`,
+                        width: '0px',
+                        transition: 'all 0.3s linear'
+                    }
+                }
+                    className={`h-full bg-repeat-x bg-start bg-center text-sm justify-center items-start flex flex-col text-black overflow-hidden whitespace-nowrap`}>
+                    <span>Beyond this threshold slumbers the forbidden might of the Admin.</span>
+                    <span>Such power festers, gnawing at the mind, warping all resolve.</span>
+                    <span>It sunders servers, near and distant, leaving only ruin in its wake.</span>
+                    <span className="text-red-600">Turn back, foul tarnished, lest madness claim thee.</span>
+                    <label className="w-full flex items-center justify-end gap-2 ">
+                        <input type="checkbox" className="accent-amber-800!" onChange={() => setTnc(!tnc)} />
+                        I accept this accursed burden.
+                    </label>
+                </div>
+                <div style={{ backgroundImage: `url(${SCROLL_RIGHT})` }} className="h-64 w-4 bg-no-repeat bg-start bg-center"></div>
+            </div>
+        )
+    }
+    </div >
+    );
 }
 
 const Main = ({ di }) => {
@@ -244,7 +280,7 @@ const Main = ({ di }) => {
             component: <TokenLoginForm di={di} />
         },
         {
-            label: "Host config",
+            label: <IoSettings />,
             value: "host",
             component: <ServerSelector di={di} />
         },
