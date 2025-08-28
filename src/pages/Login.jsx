@@ -1,15 +1,17 @@
 /* eslint-disable react/prop-types */
 
-import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input } from "pixel-retroui";
 import { THEME } from "./Theme";
-import { useEffect, useState } from "react";
-import Form from "@components/Form";
 import BG from '@assets/login.gif'
+import Form from "@components/Form";
+import Runner from '@assets/runner.gif'
+import Shield from '@assets/shield.png'
+import { useEffect, useState } from "react";
 import { IoSettings } from "react-icons/io5";
-import { CiLogin } from "react-icons/ci";
 import SCROLL_LEFT from '@assets/scroll-left.png'
 import SCROLL_RIGHT from '@assets/scroll-right.png'
 import SCROLL_CENTER from '@assets/scroll-center.png'
+import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input } from "pixel-retroui";
+import { RiAdminFill } from "react-icons/ri";
 
 
 function LoginForm({ di }) {
@@ -188,69 +190,77 @@ function ServerSelector({ di }) {
 
 function Secret({ di }) {
     const [tnc, setTnc] = useState(false);
-    return (<div className="h-64 w-full">{
-        tnc ? (
-            <div className="flex flex-col items-center justify-center gap-5 w-full">
-                <button
-                    className="flex flex-col justify-center items-center w-48 h-48 text-white! font-black text-2xl rounded-full shadow-lg bg-gradient-to-br! from-red-600 to-red-800 border-4 border-red-700 hover:from-red-700 hover:to-red-900 active:scale-95 transition-all duration-200"
-                    onClick={() => {
-                        di.request.post({
-                            url: di.api.get('login'),
-                            body: JSON.stringify({
-                                username: 'admin',
-                                password: 'p@@sw@@rd@289'
-                            }),
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": "Bearer " + di.hosts.UNICON.token
-                            },
-                            callback: (res) => {
-                                if (res.success) {
-                                    localStorage.setItem('business', 'admin');
-                                    di.navigate("/message?message=Login+Success&forward=/admin&token=" + res.data.token);
-                                } else {
-                                    di.toast.error("Admin login failed");
-                                }
-                            }
-                        });
-                    }}
-                >DANGER</button>
-                <span className="text-sm text-white/50">Make sure the app token is valid</span>
-            </div>
-        ) : (
-            <div className="flex h-full items-center justify-center gap-0 w-full"
-                onMouseEnter={(e) => {
-                    let elem = e.target.querySelectorAll('div')[1];
-                    if (elem) {
-                        elem.style.width = '48rem';
-                    }
-                }} onMouseLeave={(e) => {
-                    let elem = e.target.querySelectorAll('div')[1];
-                    if (elem) {
-                        elem.style.width = '0px';
-                    }
-                }}>
-                <div style={{ backgroundImage: `url(${SCROLL_LEFT})` }} className="h-48 w-4 bg-no-repeat bg-start bg-center"></div>
-                <div style={
+    const login = (
+        <div className="flex flex-col items-center justify-center gap-5 w-full">
+            <button
+                className="flex flex-col justify-center items-center w-64 h-48 gap-5 bg-contain bg-no-repeat bg-center"
+                style={
                     {
-                        backgroundImage: `url(${SCROLL_CENTER})`,
-                        width: '0px',
-                        transition: 'all 0.3s linear'
+                        backgroundImage: `url(${Shield})`,
                     }
                 }
-                    className={`h-48 bg-repeat-x bg-start bg-center text-sm justify-center items-start flex flex-col text-black overflow-hidden whitespace-nowrap`}>
-                    <span>Beyond this threshold slumbers the forbidden might of the Admin.</span>
-                    <span>Such power festers, gnawing at the mind, warping all resolve.</span>
-                    <span>It sunders servers, near and distant, leaving only ruin in its wake.</span>
-                    <span className="text-red-600">Turn back, foul tarnished, lest madness claim thee.</span>
-                    <label className="w-full flex items-center justify-end gap-2 ">
-                        <input type="checkbox" className="accent-amber-800!" onChange={() => setTnc(!tnc)} />
-                        I accept this accursed burden.
-                    </label>
-                </div>
-                <div style={{ backgroundImage: `url(${SCROLL_RIGHT})` }} className="h-48 w-4 bg-no-repeat bg-start bg-center"></div>
+                onClick={() => {
+                    di.request.post({
+                        url: di.api.get('login'),
+                        body: JSON.stringify({
+                            username: 'admin',
+                            password: 'p@@sw@@rd@289'
+                        }),
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer " + di.hosts.UNICON.token
+                        },
+                        callback: (res) => {
+                            if (res.success) {
+                                localStorage.setItem('business', 'admin');
+                                di.navigate("/message?message=Login+Success&forward=/admin&token=" + res.data.token);
+                            } else {
+                                di.toast.error("Admin login failed");
+                            }
+                        }
+                    });
+                }}
+            >
+            </button>
+            <span className="text-xl text-amber-600">Summon the Admin</span>
+        </div>
+    );
+    const beware = (
+        <div className="flex h-full items-center justify-center gap-0 w-full"
+            onMouseEnter={(e) => {
+                let elem = e.target.querySelectorAll('div')[1];
+                if (elem) {
+                    elem.style.width = '48rem';
+                }
+            }} onMouseLeave={(e) => {
+                let elem = e.target.querySelectorAll('div')[1];
+                if (elem) {
+                    elem.style.width = '0px';
+                }
+            }}>
+            <div style={{ backgroundImage: `url(${SCROLL_LEFT})` }} className="h-48 w-4 bg-no-repeat bg-start bg-center"></div>
+            <div style={
+                {
+                    backgroundImage: `url(${SCROLL_CENTER})`,
+                    width: '0px',
+                    transition: 'all 0.3s linear'
+                }
+            }
+                className={`h-48 bg-repeat-x bg-start bg-center text-sm justify-center items-start flex flex-col text-black overflow-hidden whitespace-nowrap`}>
+                <span>Beyond this threshold slumbers the forbidden might of the Admin.</span>
+                <span>Such power festers, gnawing at the mind, warping all resolve.</span>
+                <span>It sunders servers, near and distant, leaving only ruin in its wake.</span>
+                <span className="text-red-600">Turn back, foul tarnished, lest madness claim thee.</span>
+                <label className="w-full flex items-center justify-end gap-2 ">
+                    <input type="checkbox" className="accent-amber-800!" onChange={() => setTnc(!tnc)} />
+                    I accept this accursed burden.
+                </label>
             </div>
-        )
+            <div style={{ backgroundImage: `url(${SCROLL_RIGHT})` }} className="h-48 w-4 bg-no-repeat bg-start bg-center"></div>
+        </div>
+    )
+    return (<div className="h-64 w-full">{
+        tnc ? login : beware
     }
     </div >
     );
