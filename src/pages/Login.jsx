@@ -3,6 +3,7 @@
 import { THEME } from "./Theme";
 import BG from '@assets/login.gif'
 import Form from "@components/Form";
+import Slider from "@components/Slider";
 import Runner from '@assets/runner.gif'
 import Shield from '@assets/shield.png'
 import { useEffect, useState } from "react";
@@ -11,7 +12,6 @@ import SCROLL_LEFT from '@assets/scroll-left.png'
 import SCROLL_RIGHT from '@assets/scroll-right.png'
 import SCROLL_CENTER from '@assets/scroll-center.png'
 import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input } from "pixel-retroui";
-import { RiAdminFill } from "react-icons/ri";
 
 
 function LoginForm({ di }) {
@@ -103,6 +103,7 @@ function ServerSelector({ di }) {
                     {modified ? <span className="text-yellow-500 text-sm"> Modified</span> : ""}
                 </p>
                 <div className="flex justify-center items-center gap-5">
+                    <Slider {...THEME.SECONDARY} className='h-full'/>
                     <Button
                         {...THEME.SUCCESS}
                         className="items-end justify-center flex w-24 h-8 font-black text-xl"
@@ -199,7 +200,8 @@ function Secret({ di }) {
                         backgroundImage: `url(${Shield})`,
                     }
                 }
-                onClick={() => {
+                onClick={(e) => {
+                    e.target.style.backgroundImage = `url(${Runner})`;
                     di.request.post({
                         url: di.api.get('login'),
                         body: JSON.stringify({
