@@ -33,7 +33,7 @@ function LoginForm({ di }) {
             callback: (res) => {
                 if (res.success) {
                     if (data.email == 'admin') {
-                        localStorage.setItem('business', 'admin');
+                        localStorage.setItem('business', res.user_id);
                     }
                     di.navigate("/message?message=Login+Success&token=" + res.data.token);
                 } else {
@@ -90,35 +90,15 @@ function ServerSelector({ di }) {
         return JSON.parse(JSON.stringify(di.hosts));
     });
     const [modified, setModified] = useState(false);
+    const [isOnecon, setIsOnecon] = useState(true);
 
     useEffect(() => {
         setModified(JSON.stringify(hosts) !== JSON.stringify(di.hosts));
     }, [hosts, di.hosts]);
 
-    return (
-        <div className="flex flex-col items-end gap-5 p-5 w-full">
-            <div className="flex justify-between items-center gap-5 w-full">
-                <p className="text-2xl">
-                    Server Configuration
-                    {modified ? <span className="text-yellow-500 text-sm"> Modified</span> : ""}
-                </p>
-                <div className="flex justify-center items-center gap-5">
-                    <Slider {...THEME.SECONDARY} className='h-full'/>
-                    <Button
-                        {...THEME.SUCCESS}
-                        className="items-end justify-center flex w-24 h-8 font-black text-xl"
-                        onClick={() => {
-                            di.hosts = hosts;
-                            localStorage.setItem("hosts", JSON.stringify(hosts));
-                            setModified(false);
-                            di.toast.success("Hosts saved");
-                        }}
-                    >
-                        Save
-                    </Button>
-                </div>
-            </div>
-            {Object.keys(hosts).map((hostKey, idx) => {
+    function Multicon() {
+        return (
+            Object.keys(hosts).map((hostKey, idx) => {
                 return (
                     <div className="grid grid-cols-2 w-full bg-white/10 rounded-xl p-3" key={idx}>
                         <div className="flex flex-col gap-5 col-span-1">
@@ -126,22 +106,6 @@ function ServerSelector({ di }) {
                             <div className="flex items-center gap-5 w-full">
                                 <div>
                                     {(() => {
-                                        const type = hosts[hostKey].type;
-                                        if (typeof type === "string" && type.toLowerCase() === "local") {
-                                            return (
-                                                <Input
-                                                    {...THEME.SECONDARY}
-                                                    className="text-sm w-96"
-                                                    type="text"
-                                                    placeholder="Enter APP token for local server"
-                                                    onChange={e => {
-                                                        const newHosts = { ...hosts };
-                                                        newHosts[hostKey] = { ...newHosts[hostKey], token: e.target.value };
-                                                        setHosts(newHosts);
-                                                    }}
-                                                />
-                                            );
-                                        }
                                         try {
                                             const token = hosts[hostKey].token;
                                             if (!token || typeof token !== "string" || token.split('.').length !== 3) {
@@ -184,8 +148,97 @@ function ServerSelector({ di }) {
                         </div>
                     </div>
                 );
-            })}
-        </div>
+            })
+        );
+
+    }
+
+    function Onecon() {
+        const hostKey = "UNICON";
+        const decodedToken = () => {
+            let data = null;
+            try {
+                const token = atob(hosts[hostKey]?.token.split('.')[1]);
+                data = JSON.parse(token);
+                return data;
+            } catch (e) {                
+                return false;
+            }
+        };
+        return (
+            <div className="flex flex-col gap-5 grow p-5 m-3 bg-white/10 rounded-xl">
+                <div className="flex gap-5 items-center justify-center">
+                    <div className="flex flex-col gap-5 items-start justify-center">
+                        <DropdownMenu {...THEME.ACTIVE} style={{ border: "0.4rem solid transparent" }}>
+                            <DropdownMenuTrigger {...THEME.ACTIVE} className="w-48">{hosts[hostKey].type.toUpperCase() ?? "Not Selected"}</DropdownMenuTrigger>
+                            <DropdownMenuContent {...THEME.SECONDARY} className="">
+                                {Object.keys(appUrls).map((url, idx) => {
+                                    return <DropdownMenuItem {...THEME.ACTIVE} className="cursor-pointer" key={idx} >
+                                        <div onClick={() => {
+                                            const newHosts = { ...hosts };
+                                            for (let i of Object.keys(newHosts)) {
+                                                newHosts[i] = { url: "https://" + appUrls[url].url, token: appUrls[url].token, type: url };
+                                            }
+                                            setHosts(newHosts);
+                                        }} className="flex justify-start items-center gap-0 px-3 py-1 hover:bg-white/10 rounded-xl">
+                                            {url.toUpperCase()}
+                                        </div>
+                                    </DropdownMenuItem>
+                                })}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                    <div className="w-fit text-green-400">
+                        {Object.keys(hosts).map((x, i) => {
+                            return (
+                                <div key={i} className="grid grid-cols-4">
+                                    <p className="col-span-1">{x.toUpperCase()}</p>
+                                    <p className="col-span-3">{hosts[x].url}</p>
+                                </div>)
+                        })}
+                    </div>
+                </div>
+                <div className="flex gap-5 items-start justify-start w-full">
+                    {decodedToken() && <div>
+                        <p>Role: {decodedToken().role?.toUpperCase()}</p>
+                        <p>User ID: {decodedToken().user_id}</p>
+                        <p>Valid till: {decodedToken().exp || "forever"}</p>
+                    </div>}
+                </div>
+            </div>
+        )
+    }
+
+    return (
+        <div className="flex flex-col grow">
+            <div className="flex justify-between items-center gap-5 w-full">
+                <p className="text-2xl">
+                    Server Configuration
+                    {modified ? <span className="text-yellow-500 text-sm"> Modified</span> : ""}
+                </p>
+                <div className="flex justify-center items-center gap-5">
+                    <label className="text-sm">Micro Service</label>
+                    <Slider {...THEME.SECONDARY} onClick={(e) => {
+                        setIsOnecon(e.checked);
+                    }} />
+                    <Button
+                        {...THEME.SUCCESS}
+                        className="items-end justify-center flex w-24 h-8 font-black text-xl"
+                        onClick={() => {
+                            di.hosts = hosts;
+                            localStorage.setItem("hosts", JSON.stringify(hosts));
+                            setModified(false);
+                            di.toast.success("Hosts saved");
+                        }}
+                    >
+                        Save
+                    </Button>
+                </div>
+            </div>
+            <div className="w-full grow flex flex-col gap-5">
+                {!isOnecon ? <Multicon /> : <Onecon />}
+            </div>
+        </div >
     )
 }
 
@@ -214,7 +267,7 @@ function Secret({ di }) {
                         },
                         callback: (res) => {
                             if (res.success) {
-                                localStorage.setItem('business', 'admin');
+                                localStorage.setItem('business', res.user_id);
                                 di.navigate("/message?message=Login+Success&forward=/admin&token=" + res.data.token);
                             } else {
                                 di.toast.error("Admin login failed");
@@ -302,12 +355,12 @@ const Main = ({ di }) => {
                 <div className="text-white flex flex-col items-start gap-5" style={{ margin: "0px", backgroundColor: THEME.SECONDARY.bg }}>
                     <div className="flex justify-start items-center w-full gap-0 p-0" style={{ margin: "0px" }}>
                         {tabs.map((x) => {
-                            return <div onClick={() => setTab(x.value)} className='py-3 px-5 m-0 rounded-md'
+                            return <div key={x.value} onClick={() => setTab(x.value)} className='py-3 px-5 m-0 rounded-md'
                                 style={{ backgroundColor: tab === x.value ? activeColor : inactiveColor }}>{x.label}</div>
                         })}
                     </div>
                 </div>
-                <div style={{ marginTop: "0px", borderTop: "none", backgroundColor: THEME.ACTIVE.bg }} className="min-w-256 flex flex-col items-start gap-5 p-5">
+                <div style={{ marginTop: "0px", borderTop: "none", backgroundColor: THEME.ACTIVE.bg }} className="min-w-256 flex items-start gap-5 p-5">
                     {tabs.find(x => x.value === tab)?.component}
                 </div>
             </Card>

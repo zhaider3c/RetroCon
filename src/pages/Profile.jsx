@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Button, Card, TextArea } from 'pixel-retroui';
 import { THEME } from './Theme';
 import ReactJson from '@microlink/react-json-view';
+import Scroll from '@components/Scroll';
+import BG from '@assets/profile-bg.png';
 
 export default function Profile({ di }) {
     const [business, setBusiness] = useState({});
@@ -20,19 +22,13 @@ export default function Profile({ di }) {
         });
     }, []);
     return (
-        <div className='w-full h-full flex gap-5 justify-center items-center bg-linear-to-r from-purple-900 to-red-300'>
-            <Card {...THEME.SECONDARY} className=''>
-                <p>Business</p>
-                <div className='w-full'>
-                    <ReactJson src={business} theme='monokai' />
-                </div>
-            </Card>
-            <Card {...THEME.SECONDARY}>
-                <p>User</p>
-                <div className='w-full'>
-                    <ReactJson src={user} theme='monokai' />
-                </div>
-            </Card>
-        </div>
+        <div className='w-full h-full flex flex-col gap-5 justify-center items-center bg-cover bg-center' style={{ backgroundImage: `url(${BG})` }}>
+            <div className='w-full h-16 flex flex-row-reverse gap-3 justify-start items-center bg-black/75 backdrop-blur-sm! text-white p-5'>
+                <p className='text-xl'>{user.organisation_name}</p>
+            </div>
+            <div className='w-full grow'>
+        
+            </div>
+        </div >
     )
 }

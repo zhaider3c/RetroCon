@@ -53,34 +53,51 @@ function Variants({ productWithImage }) {
     </Card>);
 }
 
+function Channels({ channels }) {
+    return (<div className='w-full col-span-2 flex flex-col'>
+        {channels.map((channel, i) => {
+            let state = btoa(JSON.stringify({ matketplace: channel.code, code: channel.code, businessId: localStorage.getItem('business') }));
+            return (
+                <Card key={i} className='flex justify-between items-center'{...THEME.ACTIVE}>
+                    <p>{channel.name}</p>
+                    <Button {...THEME.SECONDARY}
+                        className='text-sm'>
+                        <a href={`${channel?.auth_url ?? '#'}?channel_id=${channel.id}&state=${state}&sandbox=1`} target='_blank'>Connect</a>
+                    </Button>
+                </Card>
+            )
+        })}
+    </div>);
+}
+
 const Dashboard = ({ di }) => {
 
     const [user, setUser] = useState({});
     const [product, setProduct] = useState({});
     const [productWithImage, setProductWithImage] = useState({}); // These are variants. Param name is wrong
     const [account, setAccount] = useState([]);
+    const [channels, setChannels] = useState([]);
     useEffect(() => {
+        di.request.get({
+            url: di.api.get('channel'), callback: (data) => {
+                setChannels(data.data);
+            }
+        });
         di.request.get({
             url: di.api.get('user'), callback: (data) => {
                 setUser(data.data);
             }
         });
-    }, []);
-    useEffect(() => {
         di.request.get({
             url: di.api.get('product-count'), callback: (data) => {
                 setProduct(data.data);
             }
         });
-    }, []);
-    useEffect(() => {
         di.request.get({
             url: di.api.get('product-count') + "?filter[u_product_type][1]=variant", callback: (data) => {
                 setProductWithImage(data.data);
             }
         });
-    }, []);
-    useEffect(() => {
         di.request.get({
             url: di.api.get('account-setting'), callback: (data) => {
                 setAccount(data.data);
@@ -92,14 +109,14 @@ const Dashboard = ({ di }) => {
         [
             ProductStatus({ product }),
             Variants({ productWithImage }),
+            // Account({ account })
+        ],
+        [
+            <Card {...THEME.ACTIVE} className='w-full text-2xl'>Channels</Card>,
+            Channels({ channels })
+        ],
+        [
             Account({ account })
-        ],
-        [
-            <div className='col-span-4 overflow-hidden'>
-                <Json data={user} className='w-full h-full overflow-auto' />
-            </div>
-        ],
-        [
         ],
     ];
 

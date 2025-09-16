@@ -37,7 +37,9 @@ const Sidebar = ({ links = [], di }) => {
             </div>
             <Button {...THEME.ACTIVE} onClick={() => {
                 di.request.get({ url: di.api.get('logout') });
+                hosts = localStorage.getItem('hosts');
                 localStorage.clear();
+                localStorage.setItem('hosts', hosts);
                 di.navigate('/');
             }} className='flex items-center justify-between px-5'>
                 <RiLogoutBoxFill className='text-3xl text-yellow-900/75' />

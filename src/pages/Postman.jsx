@@ -23,22 +23,32 @@ const PRESETS = {
 
 
 const Main = ({ di }) => {
-    const HOSTS = {
-        ...(di?.hosts || {}),
-        "Production": "https://unicon-backend.cedcommerce.com",
-        "Dev": "https://uni-backend.cifapps.com",
-    }
-    const [url, setUrl] = useState(null);
+
+    // Only keep unique values in HOSTS
+    const hostEntries = [
+        ...(di?.hosts ? Object.keys(di.hosts).map(x => [x, di.hosts[x].url]) : []),
+        ["Production", "https://unicon-backend.cedcommerce.com"],
+        ["Dev", "https://uni-backend.cifapps.com"],
+    ];
+
+    // Remove duplicate URLs, keep first occurrence
+    const seenUrls = new Set();
+    const uniqueHostEntries = hostEntries.filter(([_, url]) => {
+        if (seenUrls.has(url)) return false;
+        seenUrls.add(url);
+        return true;
+    });
+
+    const HOSTS = Object.fromEntries(uniqueHostEntries);
+    const [url, setUrl] = useState('/rest/v2/ping');
     const [token, setToken] = useState(localStorage.getItem('postman_token') || localStorage.getItem('token') || '');
-    const [response, setResponse] = useState(null);
-    const [host, setHost] = useState("None");
+    const [response, setResponse] = useState({});
+    const [host, setHost] = useState(HOSTS.UNICON);
     const [verb, setVerb] = useState("GET");
     const [body, setBody] = useState(localStorage.getItem('post-body') || '');
     const [loading, setLoading] = useState(false);
-    const [tokenOpen, setTokenOpen] = useState(false);
     const [predifOpen, setPredifOpen] = useState(false);
-    const [tokens, setTokens] = useState(JSON.parse(localStorage.getItem('postman_tokens') || '{}'));
-    const [tokenName, setTokenName] = useState(null);
+    const [user, setUser] = useState({ name: "not_set" });
     // Keyboard event listener
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -53,6 +63,14 @@ const Main = ({ di }) => {
         };
     }, [predifOpen]);
 
+    useEffect(() => {
+        di.getUser().then(r => {
+            console.log(r);
+
+            setUser(r);
+        });
+    }, []);
+
     // Parse JWT token safely
     const parseToken = (token) => {
         try {
@@ -64,6 +82,7 @@ const Main = ({ di }) => {
             return {};
         }
     };
+    const decodedToken = parseToken(token);
 
     // Debounce function helper
     const DEBOUNCE_TIME = 500;
@@ -77,76 +96,10 @@ const Main = ({ di }) => {
 
     // Debounced handlers
     const handleUrlChange = (e) => setUrl(e.target.value);
-    const handleTokenChange = (e) => {
-        const value = e.target.value;
-        setToken(value);
-        localStorage.setItem('postman_token', value);
-    };
     const handleBodyChange = (e) => {
         setBody(e.target.value);
         localStorage.setItem('post-body', e.target.value);
     };
-
-    const Token = () => {
-
-        return (
-            <Popup {...THEME.ACTIVE} isOpen={tokenOpen} onClose={() => setTokenOpen(false)}>
-                <div className='flex flex-col gap-3 justify-start items-start'>
-                    <div className='w-full flex flex-col gap-5 justify-between items-start'>
-                        {
-                            Object.keys(tokens).length > 0 ?
-                                <DropdownMenu {...THEME.SECONDARY} className='h-full'>
-                                    <DropdownMenuTrigger className='h-full'>
-                                        {tokenName ?? "Select Token"}
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent {...THEME.SECONDARY} className=''>
-                                        {
-                                            Object.keys(tokens).map((x, u) => {
-                                                return (
-                                                    <DropdownMenuItem key={u} data-token={x} className='w-32 flex'>
-                                                        <Button className='w-32' {...THEME.ACTIVE} onClick={(e) => {
-                                                            setTokenName(x);
-                                                            setToken(tokens[x]);
-                                                        }}>
-                                                            {x}
-                                                        </Button>
-                                                    </DropdownMenuItem>
-                                                )
-                                            })
-                                        }
-                                    </DropdownMenuContent>
-                                </DropdownMenu> : <Card {...THEME.SECONDARY} className='h-full flex flex-col gap-3 justify-center items-center'>
-                                    <p>No saved tokens</p>
-                                </Card>
-                        }
-                    </div>
-                    <div className='flex gap-3 w-full'>
-                        <Input
-                            {...THEME.ACTIVE_INPUT}
-                            placeholder='Token Name'
-                            className='grow'
-                            value={tokenName}
-                            onChange={(e) => {
-                                setTokenName(e.target.value);
-                            }}
-                        />
-                        <Button className='px-8' {...THEME.SUCCESS} onClick={(e) => {
-                            setTokens({ ...tokens, [tokenName]: token });
-                            localStorage.setItem('postman_tokens', JSON.stringify(tokens));
-                            setTokenOpen(false);
-                            di.toast.success("Token saved");
-                        }}>Save</Button>
-                    </div>
-                    <div className='flex gap-3 h-96'>
-                        <TextArea {...THEME.SECONDARY} placeholder='Token' rows={25} cols={50} value={token} onChange={handleTokenChange} />
-                        <ReactJsonView src={{ object: parseToken(token) }} theme='tomorrow' />
-                    </div>
-                </div>
-            </Popup>
-        )
-    }
-
-
     return (
         <div className='w-full h-full bg-no-repeat bg-cover flex flex-col justify-center items-center gap-5' style={{ backgroundImage: `url(${postmanBg})` }}>
             <div>
@@ -165,13 +118,19 @@ const Main = ({ di }) => {
                         }
                     </Card>
                 </Popup>
-                <Token />
 
             </div>
             <div className='flex w-full grow overflow-hidden flex-col justify-between gap-3 p-3'>
                 <div className='flex flex-col items-between gap-3'>
-                    <div className='flex gap-3 items-center justify-between'>
-                        <Button onClick={() => setTokenOpen(true)} {...THEME.ACTIVE} className='h-full'>Token</Button>
+                    <div className='flex gap-3 items-center justify-between h-10'>
+                        <Card {...THEME.ACTIVE} className='h-full text-sm flex flex-col items-start justify-center'>
+                            <span>
+                                {user?.name ?? user?.firstname ?? user?.username}
+                            </span>
+                            <span className='capitalize'>
+                                {decodedToken?.role ?? "???"}
+                            </span>
+                        </Card>
                         <DropdownMenu {...THEME.ACTIVE} className='px-1 h-full'>
                             <DropdownMenuTrigger className='h-full'>
                                 {verb ?? "---"}
@@ -216,13 +175,15 @@ const Main = ({ di }) => {
                         <Input {...THEME.ACTIVE_INPUT} placeholder='/rest/v2/ping' onChange={handleUrlChange} value={url} className='grow h-full flex items-center justify-center' />
                         <Button {...(loading ? THEME.BLOCKED : THEME.ACTIVE)} className='h-full' onClick={async () => {
                             setLoading(true);
+                            let business = localStorage.getItem('business');
                             try {
                                 setResponse({});
                                 const response = await fetch(host === "None" ? url : host + url, {
                                     method: verb,
                                     headers: {
                                         'Authorization': 'Bearer ' + token,
-                                        'Content-Type': 'application/json'
+                                        ...(business && business.length >= 12 ? { 'Business': business } : {}),
+                                        ...(verb === 'POST' ? { 'Content-Type': 'application/json' } : {})
                                     },
                                     ...(verb === 'POST' ? { body: body } : {})
                                 });
@@ -238,18 +199,21 @@ const Main = ({ di }) => {
                     </div>
                 </div>
                 <div className='w-full flex grow whitespace-pre' {...THEME.ACTIVE}>
-                    <Card {...THEME.ACTIVE} className='overflow-hidden'>
-                        <p>Response</p>
+                    <Card {...THEME.ACTIVE} className='overflow-hidden grow'>
+                        <p className='bg-black/25 px-3 w-full py-3'>Response</p>
                         <div className='flex flex-col h-128 w-full'>
                             <Scroll className="h-full w-full">
                                 <ReactJsonView src={{ object: response }} theme='tomorrow' className='' />
                             </Scroll>
                         </div>
                     </Card>
-                    <Card className="flex flex-col gap-5 grow overflow-auto" {...THEME.ACTIVE}>
-                        <p>PAY-LOAD</p>
-                        <TextArea {...THEME.MATRIX} value={body} className='grow' onChange={handleBodyChange} />
-                    </Card>
+                    {
+
+                        (verb == 'POST' || verb == 'PUT' || verb == 'PATCH') && (<Card className="flex flex-col gap-5 grow overflow-auto" {...THEME.ACTIVE}>
+                            <p>PAY-LOAD</p>
+                            <TextArea {...THEME.MATRIX} value={body} className='grow' onChange={handleBodyChange} />
+                        </Card>)
+                    }
                 </div>
             </div>
         </div >
