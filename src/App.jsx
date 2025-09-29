@@ -25,9 +25,11 @@ import { Main as SSO } from '@pages/sso/Main.jsx';
 import Staff from '@pages/Staff';
 import Jira from '@pages/Jira/Main';
 import Profile from '@pages/Profile';
+import User from '@pages/user/Main';
 
 const NAV_URLS = [
   // --- show: true ---
+  { text: "User", url: '/user', component: <User di={DI} />, show: true },
   { text: "Jira", url: '/jira', component: <Jira di={DI} />, show: true },
   { text: "Admin", url: '/admin', component: <Admin di={DI} />, show: true },
   { text: "Canvas", url: '/canvas', component: <Whiteboard di={DI} />, show: true },

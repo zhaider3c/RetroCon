@@ -9,8 +9,6 @@ import { useEffect, useState } from "react";
 
 export default function Auth({ di }) {
 
-
-
     const [url, setUrl] = useState(null);
     const [data, setData] = useState({});
 
@@ -53,7 +51,7 @@ export default function Auth({ di }) {
 
     return (
         <div className="flex flex-col items-center justify-center h-full gap-4">
-            <User />
+            {data?.accountId && <User />}
             <Card {...THEME.SECONDARY} className="flex flex-col items-end justify-center gap-2">
                 <p className="text-2xl font-bold w-full text-start">Jira oAuth</p>
                 <p className="text-sm text-gray-600">

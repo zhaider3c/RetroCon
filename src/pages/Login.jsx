@@ -325,7 +325,7 @@ const Main = ({ di }) => {
     const [tab, setTab] = useState("login");
     const activeColor = THEME.ACTIVE.bg;
     const inactiveColor = THEME.SECONDARY.bg;
-
+    localStorage.removeItem("business");
     const tabs = [
         {
             label: "Login",

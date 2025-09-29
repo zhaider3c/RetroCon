@@ -71,28 +71,8 @@ const Main = ({ di, adminToken }) => {
             </Card>
             <div className="flex flex-col gap-5 justify-center items-center p-5">
                 <div className="w-full flex flex-col gap-5 justify-start items-center">
-                    <Form submitText="Create" fields={{
-                        name: {
-                            label: "Name",
-                            type: "text",
-                            placeholder: "Zed Industries",
-                        },
-                        code: {
-                            label: "Code",
-                            type: "text",
-                            placeholder: "ZED123",
-                        },
-                        currency: {
-                            label: "Currency",
-                            type: "text",
-                            placeholder: "USD",
-                        },
-                        country: {
-                            label: "Country",
-                            type: "text",
-                            placeholder: "United States",
-                        }
-                    }} />
+                    <TextArea {...THEME.ACTIVE_INPUT} placeholder="Enter JSON data here..." rows={15}
+                        onChange={(e) => setData(e.target.value)} />
                 </div>
                 <div className="flex flex-col gap-5 justify-start items-center w-full">
                     <label htmlFor="channel" className="block text-xl font-medium text-start w-full text-purple-200">Channels</label>

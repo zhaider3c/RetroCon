@@ -6,6 +6,7 @@ import { TbTriangleFilled } from "react-icons/tb";
 import { FaFileCsv } from "react-icons/fa6";
 import toast from 'react-hot-toast';
 import productBg from '@assets/product-bg.gif';
+import NYAN from '@assets/nyan-loader.webp';
 
 const BG = "product-bg.gif";
 const PER_PAGE = 5;
@@ -63,7 +64,7 @@ const Grid = ({ products, di }) => {
                         <Card key={e.id} {...THEME.SECONDARY} className={'bg-cover bg-center items-center flex flex-col-reverse gap-2 border-box'}>
                             <div className={`flex w-full h-full items-center gap-5`}>
                                 <img className='w-16 aspect-square rounded-xl'
-                                    src={e.images?.length?e.images[0].url:"na"}></img>
+                                    src={e.images?.length ? e.images[0].url : "na"}></img>
                                 <div className='flex flex-col justify-start h-full items-start gap-0'>
                                     <div className='flex justify-start items-center w-full gap-5'>
                                         <span>{e.title}</span>
@@ -132,7 +133,88 @@ const FileUpload = ({ di }) => {
         </div >
     )
 }
-
+function Import({ di }) {
+    const [accounts, setAccounts] = useState([]);
+    useEffect(() => {
+        di.request.get({
+            url: di.api.get('account-all'),
+            callback: (data) => {
+                setAccounts(data.data);
+            }
+        });
+    }, []);
+    const [data, setData] = useState(null);
+    const [response, setResponse] = useState(null);
+    const importType = {
+        amazon: 'feed',
+        walmart: 'feed',
+        shein: 'api',
+        tiktok: 'api',
+    }
+    return (
+        <div className='w-128 items-center justify-center flex'>
+            <Card className='flex flex-col gap-5 justify-between items-start px-5!' {...THEME.ACTIVE}>
+                <p>Import from marketplace</p>
+                <DropdownMenu className='w-full'>
+                    <DropdownMenuTrigger {...THEME.SECONDARY}>
+                        {data ? accounts.filter(account => account.id == data.account_id)[0].name : 'Select Account'}
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent {...THEME.SECONDARY} className='flex flex-col gap-1'>
+                        {accounts.map((account) => (
+                            <DropdownMenuItem key={account.id}>
+                                <Button {...THEME.SEAMLESS} onClick={() => {
+                                    setData({
+                                        account_id: account.id,
+                                        channel_id: account.channel_id,
+                                        marketplace: account.name.split('_')[0].toLowerCase(),
+                                        type: importType[account.name.split('_')[0].toLowerCase()],
+                                    });
+                                }}>
+                                    {account.name}
+                                </Button>
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                <Button {...THEME.SUCCESS} onClick={(e) => {
+                    if (data) {
+                        // e.target.style.display = 'none'; 
+                        setResponse(
+                            <div className='rounded-xl border-2! border-blue-400! flex flex-col gap-5 justify-center items-center w-24 h-24'
+                                style={{
+                                    backgroundImage: `url(${NYAN})`,
+                                    backgroundSize: 'contain',
+                                    backgroundPosition: 'center',
+                                }}>
+                            </div>
+                        );
+                        di.request.post({
+                            url: di.api.get('product-import'),
+                            body: JSON.stringify(data),
+                            callback: (res) => {
+                                setResponse(<p className={`${res.success ? 'text-green-500' : 'text-red-500'}`}>
+                                    {res.messsage ?? ""}
+                                </p>);
+                            },
+                            error_callback: (res) => {
+                                setResponse(<p className={`${res.success ? 'text-green-500' : 'text-red-500'}`}>
+                                    {res.messsage ?? ""}
+                                </p>);
+                            }
+                        });
+                    } else {
+                        setResponse(<p className='text-red-500'>Please select an account</p>);
+                    }
+                }}>
+                    Start
+                </Button>
+                <div className='w-full items-center justify-center flex h-32'>
+                    {response ?? ""}
+                </div>
+            </Card>
+        </div>
+    )
+}
 const Products = ({ di }) => {
     const [products, setProducts] = useState(false);
     const [cursor, setCursor] = useState(false);
@@ -197,7 +279,8 @@ const Products = ({ di }) => {
     return (
         <div style={{ backgroundImage: `url('${productBg}')` }} className='w-full h-full flex flex-col gap-5 justify-center items-center bg-cover bg-center p-5'>
             <Popup {...THEME.SECONDARY} isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
-                <FileUpload di={di} />
+                {/* <FileUpload di={di} /> */}
+                <Import di={di} />
             </Popup>
             <div className='flex flex-col gap-5 justify-center items-center h-full w-3/4'>
                 <Card {...THEME.SECONDARY} className='flex gap-5 items-center justify-center text-2xl w-full px-5 py-3'>

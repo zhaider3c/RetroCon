@@ -29,7 +29,7 @@ const Main = ({ di, adminToken }) => {
     }, []);
     return (
         <div className="w-full h-full flex justify-center items-start gap-5 p-5">
-            <div className="flex gap-5 flex-col">
+            <div className="flex w-full gap-5 flex-col">
                 <p className="text-4xl text-start">Apps</p>
                 {apps && apps.map((e, i) => {
                     return (
@@ -62,7 +62,7 @@ const Main = ({ di, adminToken }) => {
                     )
                 })}
             </div>
-            <div className="flex flex-col gap-5 justify-center items-center">
+            <div className="flex flex-col w-full gap-5 justify-center items-center">
                 <p className="text-purple-200 text-xl text-start w-full">Create new app</p>
                 <TextArea {...THEME.ACTIVE_INPUT}
                     id="name" placeholder="New app json data"

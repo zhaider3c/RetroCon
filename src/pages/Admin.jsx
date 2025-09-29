@@ -12,7 +12,7 @@ import BG from "@assets/admin.gif";
 const Nav = ({ pages, setPage, page }) => {
     return (
         (
-            <div className="grid grid-cols-12 gap-3 justify-start items-between w-full h-16 overflow-hidden   ">
+            <div className="flex flex-col gap-3 justify-start items-between h-full overflow-hidden bg-white/25 border-e-2! border-cyan-800! p-5 backdrop-blur-md!">
                 {
                     Object.keys(pages).map((x, i) => {
                         return (
@@ -66,18 +66,12 @@ const Main = ({ di }) => {
         )
     }
     return (
-        <div className="w-full h-full bg-linear-to-br from-purple-800 to-purple-950 flex flex-col justify-start items-start gap-5 p-5 bg-cover bg-center"
+        <div className="w-full h-full bg-linear-to-br from-purple-800 to-purple-950 flex flex-col justify-start items-start gap-5 bg-cover bg-center"
             style={{ backgroundImage: `url(${BG})` }}>
-            <div className="flex gap-5 w-full items-center justify-between">
-                <Input {...THEME.ACTIVE_INPUT} placeholder="Admin Token" value={adminToken} className="grow h-fit" onChange={(e) => {
-                    setAdminToken(e.target.value);
-                    localStorage.setItem("admin_token", e.target.value);
-                }} />
-            </div>
-            <div className="w-full grow flex flex-col justify-center items-center gap-5">
+            <div className="w-full grow flex justify-center items-center gap-5">
                 <Nav pages={pages} setPage={setPage} page={page} />
                 <div className="w-full flex justify-center grow items-center">
-                    <Card {...THEME.SECONDARY} className="">
+                    <Card {...THEME.SECONDARY} className="w-full">
                         {pages[page]}
                     </Card>
                 </div>

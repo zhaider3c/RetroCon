@@ -1,5 +1,6 @@
+import { Card } from 'pixel-retroui';
 import toast from 'react-hot-toast';
-
+import { THEME } from '@pages/Theme';
 
 
 let HEADERS = {
@@ -9,7 +10,7 @@ const REST = '/rest/v2';
 
 let HOSTS = {}
 // UNIFIED-CON
-HOSTS.UNICON = { 'url': 'https://onecon.local.cedcommerce.com', 'token': 'Null', type: 'Not selected' };
+HOSTS.UNICON = { 'url': 'https://unicon.local.cedcommerce.com', 'token': 'Null', type: 'Not selected' };
 HOSTS.CATALOG = HOSTS.UNICON;
 HOSTS.SALES = HOSTS.UNICON;
 
@@ -19,14 +20,42 @@ const VITE_UNICON_APP_TOKEN_DEV = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2Vy
 const VITE_UNICON_APP_TOKEN_LOCAL = import.meta.env.VITE_LOCAL_APP_KEY || "Env not set";
 
 
-const VITE_UNICON_URL_LOCAL = "onecon.local.cedcommerce.com"
+const VITE_UNICON_URL_LOCAL = "unicon.local.cedcommerce.com"
 const VITE_UNICON_URL_DEV = "uni-backend.cifapps.com"
 const VITE_UNICON_URL_STAGING = "uni-stag-backend.cifapps.com"
 const VITE_UNICON_URL_PROD = "unicon-backend.cedcommerce.com"
 
 HOSTS = { ...HOSTS, ...JSON.parse(localStorage.getItem("hosts")) };
 
-
+const TOAST = {
+  success: (message) => {
+    toast.custom((data) => (
+      <div className='text-white rounded-md min-w-48 flex min-h-10 justify-center items-center overflow-hidden backdrop-blur-md! bg-black/25'
+        style={
+          {
+            backgroundColor: THEME.ACTIVE.bg,
+          }
+        }>
+        <div className='w-2 h-full bg-green-400'>
+        </div>
+        <div className='grow px-4'>
+          {message}
+        </div>
+      </div>
+    ));
+  },
+  error: (message) => {
+    toast.custom((data) => (
+      <div className='text-white rounded-md min-w-48 flex min-h-10 justify-center items-center overflow-hidden backdrop-blur-md! bg-black/25'>
+        <div className='w-2 h-full bg-red-400'>
+        </div>
+        <div className='grow px-4'>
+          {message}
+        </div>
+      </div>
+    ))
+  }
+}
 const apiEndpoints = {
   phpunit: '/',
   app: `${REST}/apps`,
@@ -72,6 +101,8 @@ const apiEndpoints = {
   'jira-user-issue': `${REST}/jira/user/issues`,
   'admin-user': `${REST}/admin/user`,
   'admin-user-token': `${REST}/user/access-token`,
+  'fire-event': `${REST}/ashisogi/event/fire`,
+  'account-all': `${REST}/account`,
 };
 
 let DI = {};
@@ -97,23 +128,31 @@ function errorRedirect(message, to = '/logout', time = 3000, handle = true) {
   }
 }
 
-function defaultErrorHandler(error) {
-  toast.error(error.message);
-  console.error(error.response);
+function defaultErrorHandler(error, error_callback) {
+  if (error_callback) {
+    error_callback(error);
+  } else {
+    TOAST.error(error.message);
+  }
+  console.error(error);
 }
 
 async function handleResponse(response, callback) {
   let data = await response.json();
   if (response.ok) {
     if (data.message || data.msg)
-      toast.success(data.message ?? data.msg);
+      if (data.success) {
+        TOAST.success(data.message ?? data.msg);
+      } else {
+        TOAST.error(data.message ?? data.msg);
+      }
   } else {
     if (response.status == 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('business');
       errorRedirect('Session Expired', '/login', 1500, true);
     }
-    toast.error(data.message ?? "Error");
+    TOAST.error(data.message ?? "Error");
   }
   callback(data);
   return response.ok;
@@ -145,15 +184,13 @@ DI = {
       if (!url) {
         url = '/rest/v2/ping';
       }
-      try {
-        await fetch(url, {
-          method: 'GET',
-          headers: sendHeaders
-        }).then(response => handleResponse(response, callback));
-      } catch (error) {
-        defaultErrorHandler(error);
-        error_callback(error);
-      }
+
+      await fetch(url, {
+        method: 'GET',
+        headers: sendHeaders
+      }).then(response => handleResponse(response, callback)).catch(error => {
+        defaultErrorHandler(error, error_callback);
+      });
     },
     delete: async (
       { url,
@@ -166,15 +203,13 @@ DI = {
       if (!url) {
         url = '/rest/v2/ping';
       }
-      try {
-        await fetch(url, {
-          method: 'DELETE',
-          headers: sendHeaders
-        }).then(response => handleResponse(response, callback));
-      } catch (error) {
-        defaultErrorHandler(error);
-        error_callback(error);
-      }
+
+      await fetch(url, {
+        method: 'DELETE',
+        headers: sendHeaders
+      }).then(response => handleResponse(response, callback)).catch(error => {
+        defaultErrorHandler(error, error_callback);
+      });
     },
     post: async (
       {
@@ -197,17 +232,13 @@ DI = {
       if (!url) {
         url = '/rest/v2/ping';
       }
-
-      try {
-        await fetch(url, {
-          method: 'POST',
-          headers: sendHeaders,
-          body: body
-        }).then(response => handleResponse(response, callback));
-      } catch (error) {
-        defaultErrorHandler(error);
-        error_callback(error);
-      }
+      await fetch(url, {
+        method: 'POST',
+        headers: sendHeaders,
+        body: body
+      }).then(response => handleResponse(response, callback)).catch(error => {
+        defaultErrorHandler(error, error_callback);
+      });
     },
   },
   api: {
@@ -240,10 +271,7 @@ DI.getUser = () => {
 };
 
 DI.hosts = HOSTS;
-DI.toast = {
-  error: toast.error,
-  success: toast.success,
-}
+DI.toast = TOAST;
 
 DI.url_profiles = {
   dev: {
@@ -263,5 +291,7 @@ DI.url_profiles = {
     token: VITE_UNICON_APP_TOKEN_LOCAL,
   },
 }
-
+DI.decodedToken = () => {
+  return JSON.parse(atob(localStorage.getItem('token').split('.')[1]));
+}
 export { DI };
