@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input, Popup } from 'pixel-retroui';
 import { THEME } from './Theme';
 import { TbTriangleFilled } from "react-icons/tb";
-import { FaFileCsv } from "react-icons/fa6";
 import toast from 'react-hot-toast';
 import productBg from '@assets/product-bg.gif';
 import NYAN from '@assets/nyan-loader.webp';
+import { BiDownload } from 'react-icons/bi';
 
 const BG = "product-bg.gif";
 const PER_PAGE = 5;
@@ -310,8 +310,9 @@ const Products = ({ di }) => {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button {...THEME.ACTIVE} onClick={() => setPopupOpen(true)} className='p-2'> <FaFileCsv className='text-3xl' /> </Button>
+                    <Button {...THEME.ACTIVE} onClick={() => setPopupOpen(true)} className='p-2'> <BiDownload className='text-3xl' /> </Button>
                 </Card>
+                 
                 <div {...THEME.SECONDARY} className='w-full grow overflow-auto'>
                     <Grid products={products} di={di}></Grid>
                 </div>

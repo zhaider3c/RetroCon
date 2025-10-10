@@ -45,7 +45,7 @@ function LoginForm({ di }) {
 
     return (
         <div className="h-full flex flex-col justify-center items-center grow gap-5 w-full rounded-xl p-3 backdrop-blur-sm">
-            <p className="text-2xl">Login</p>
+            <p className="text-sm text-start w-full">Server: {di.hosts.UNICON.url}</p>
             <Form
                 fields={{
                     email: {
@@ -343,7 +343,7 @@ const Main = ({ di }) => {
             component: <TokenLoginForm di={di} />
         },
         {
-            label: <IoSettings />,
+            label: <span className="flex items-center gap-2"><IoSettings /> Server Config</span>,
             value: "host",
             component: <ServerSelector di={di} />
         },
@@ -355,7 +355,7 @@ const Main = ({ di }) => {
                 <div className="text-white flex flex-col items-start gap-5" style={{ margin: "0px", backgroundColor: THEME.SECONDARY.bg }}>
                     <div className="flex justify-start items-center w-full gap-0 p-0" style={{ margin: "0px" }}>
                         {tabs.map((x) => {
-                            return <div key={x.value} onClick={() => setTab(x.value)} className='py-3 px-5 m-0 rounded-md'
+                            return <div key={x.value} onClick={() => setTab(x.value)} className='py-3 px-5 m-0 rounded-md cursor-pointer'
                                 style={{ backgroundColor: tab === x.value ? activeColor : inactiveColor }}>{x.label}</div>
                         })}
                     </div>

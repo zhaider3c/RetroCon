@@ -103,6 +103,7 @@ const apiEndpoints = {
   'admin-user-token': `${REST}/user/access-token`,
   'fire-event': `${REST}/ashisogi/event/fire`,
   'account-all': `${REST}/account`,
+  'account-step': `${REST}/setup-steps`,
 };
 
 let DI = {};
@@ -170,76 +171,43 @@ function filterHeaders(headers) {
   );
 }
 
+async function call({ url, method, body = null, headers = {}, callback = () => { }, error_callback = () => { } }) {
+  init(url);
+  let sendHeaders = { ...HEADERS, ...headers };
+  if (!body) {
+    sendHeaders["Content-Type"] = null;
+  } else {
+    if (typeof body === 'object') {
+      body = JSON.stringify(body);
+    }
+  }
+  sendHeaders = filterHeaders(sendHeaders);
+  await fetch(url, {
+    method: method,
+    headers: sendHeaders,
+    ...(body ? { body: body } : {})
+  }).then(response => handleResponse(response, callback)).catch(error => {
+    defaultErrorHandler(error, error_callback);
+  });
+}
+
 DI = {
   request: {
-    get: async (
-      { url,
-        headers = {},
-        callback = (res) => { },
-        error_callback = (err) => { } }
-    ) => {
-      init(url);
-      let sendHeaders = { ...headers, "Content-Type": "null" };
-      sendHeaders = filterHeaders(sendHeaders);
-      if (!url) {
-        url = '/rest/v2/ping';
-      }
-
-      await fetch(url, {
-        method: 'GET',
-        headers: sendHeaders
-      }).then(response => handleResponse(response, callback)).catch(error => {
-        defaultErrorHandler(error, error_callback);
-      });
+    get: ({ url, headers, callback, error_callback }) => {
+      call({ url, method: "GET", body: null, headers, callback, error_callback });
     },
-    delete: async (
-      { url,
-        headers = {},
-        callback = (res) => { },
-        error_callback = (err) => { } }
-    ) => {
-      init(url);
-      let sendHeaders = filterHeaders(headers);
-      if (!url) {
-        url = '/rest/v2/ping';
-      }
-
-      await fetch(url, {
-        method: 'DELETE',
-        headers: sendHeaders
-      }).then(response => handleResponse(response, callback)).catch(error => {
-        defaultErrorHandler(error, error_callback);
-      });
+    post: ({ url, body, headers, callback, error_callback }) => {
+      call({ url, method: "POST", body, headers, callback, error_callback });
     },
-    post: async (
-      {
-        url,
-        headers = {},
-        body = "{}",
-        callback = (res) => { },
-        error_callback = (err) => { }
-      }
-    ) => {
-      init(url);
-
-      // If body is a string, set Content-Type to application/json, else don't set it
-      let baseHeaders = { ...headers };
-      if (typeof body === "string") {
-        baseHeaders["Content-Type"] = "application/json";
-      }
-      let sendHeaders = filterHeaders(baseHeaders);
-
-      if (!url) {
-        url = '/rest/v2/ping';
-      }
-      await fetch(url, {
-        method: 'POST',
-        headers: sendHeaders,
-        body: body
-      }).then(response => handleResponse(response, callback)).catch(error => {
-        defaultErrorHandler(error, error_callback);
-      });
+    put: ({ url, body, headers, callback, error_callback }) => {
+      call({ url, method: "PUT", body, headers, callback, error_callback });
     },
+    patch: ({ url, body, headers, callback, error_callback }) => {
+      call({ url, method: "PATCH", body, headers, callback, error_callback });
+    },
+    delete: ({ url, headers, callback, error_callback }) => {
+      call({ url, method: "DELETE", body: null, headers, callback, error_callback });
+    }
   },
   api: {
     get: (endpoint, host = 'UNICON', isFile = false) => {
