@@ -1,7 +1,6 @@
-import { Card } from 'pixel-retroui';
 import toast from 'react-hot-toast';
 import { THEME } from '@pages/Theme';
-
+import { useState } from 'react';
 
 let HEADERS = {
 }
@@ -104,6 +103,9 @@ const apiEndpoints = {
   'fire-event': `${REST}/ashisogi/event/fire`,
   'account-all': `${REST}/account`,
   'account-step': `${REST}/setup-steps`,
+  'config': `${REST}/config`,
+  'product-inventory': `${REST}/inventory`,
+  'unlinked-products': `${REST}/product/unlinked`,
 };
 
 let DI = {};
@@ -173,14 +175,16 @@ function filterHeaders(headers) {
 
 async function call({ url, method, body = null, headers = {}, callback = () => { }, error_callback = () => { } }) {
   init(url);
-  let sendHeaders = { ...HEADERS, ...headers };
+  let sendHeaders = { ...HEADERS };
   if (!body) {
     sendHeaders["Content-Type"] = null;
   } else {
+    sendHeaders["Content-Type"] = "application/json";
     if (typeof body === 'object') {
       body = JSON.stringify(body);
     }
   }
+  sendHeaders = { ...sendHeaders, ...headers };
   sendHeaders = filterHeaders(sendHeaders);
   await fetch(url, {
     method: method,
@@ -225,17 +229,12 @@ DI = {
     ${date.getDate().toString().padStart(2, '0')} ${(MONTHS[date.getMonth()])}, ${date.getFullYear()}`
   }
 };
-
 DI.getUser = () => {
-  return (async () => {
-    let user;
-    await DI.request.get(({
-      url: DI.api.get('user'), callback: (res) => {
-        user = res.data;
-      }
-    }));
-    return user;
-  })();
+  let localStorageUser = localStorage.getItem('user');
+  if(localStorageUser && localStorageUser !== 'undefined'){
+    return JSON.parse(localStorage.getItem('user'));
+  }
+  return false;
 };
 
 DI.hosts = HOSTS;
@@ -259,7 +258,15 @@ DI.url_profiles = {
     token: VITE_UNICON_APP_TOKEN_LOCAL,
   },
 }
-DI.decodedToken = () => {
-  return JSON.parse(atob(localStorage.getItem('token').split('.')[1]));
+
+
+DI.decodedToken = (token) => {
+  if (!token) {
+    token = localStorage.getItem('token');
+  }
+  let decoded = JSON.parse(atob(token.split('.')[1]));
+  console.log(decoded);
+
+  return decoded ?? false;
 }
 export { DI };

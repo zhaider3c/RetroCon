@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DI } from './Helper';
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { Toaster } from 'react-hot-toast';
@@ -29,38 +29,31 @@ import User from '@pages/user/Main';
 
 const NAV_URLS = [
   // --- show: true ---
-  { text: "User", url: '/user', component: <User di={DI} />, show: true },
-  { text: "Jira", url: '/jira', component: <Jira di={DI} />, show: true },
-  { text: "Admin", url: '/admin', component: <Admin di={DI} />, show: true },
-  { text: "Canvas", url: '/canvas', component: <Whiteboard di={DI} />, show: true },
-  { text: "Products", url: '/product', component: <Products di={DI} />, show: true },
-  { text: "Dashboard", url: '/dashboard', component: <Dashboard di={DI} />, show: true },
-  { text: "Attributes", url: '/attribute', component: <Attribute di={DI} />, show: true },
-  { text: "Custom List", url: '/custom-list', component: <CustomList di={DI} />, show: true },
-  { text: "Notifications", url: '/notification', component: <Notification di={DI} />, show: true },
-  { text: "Classification", url: '/classification', component: <Classification di={DI} />, show: true },
-  { text: "Postman", url: '/postman', component: <Postman di={DI} />, show: true, tip: "Press Ctrl+B to open preset menu" },
+  { text: "Jira", url: '/jira', component: Jira, show: true },
+  { text: "Admin", url: '/admin', component: Admin, show: true },
+  { text: "Settings", url: '/user', component: User, show: true },
+  { text: "Canvas", url: '/canvas', component: Whiteboard, show: true },
+  { text: "Products", url: '/product', component: Products, show: true },
+  { text: "Dashboard", url: '/dashboard', component: Dashboard, show: true },
+  { text: "Attributes", url: '/attribute', component: Attribute, show: true },
+  { text: "Custom List", url: '/custom-list', component: CustomList, show: true },
+  { text: "Notifications", url: '/notification', component: Notification, show: true },
+  { text: "Classification", url: '/classification', component: Classification, show: true },
+  { text: "Postman", url: '/postman', component: Postman, show: true, tip: "Press Ctrl+B to open preset menu" },
   // --- show: false ---
-  { text: "SSO", url: '/sso', component: <SSO di={DI} />, show: false },
-  { text: "Staff", url: '/staff', component: <Staff di={DI} />, show: false },
-  { text: "Login", url: '/login', component: <Login di={DI} />, show: false },
-  { text: "Cache", url: '/cache', component: <Cache di={DI} />, show: false },
-  { text: "Logout", url: '/login', component: <Navigate to={'/'} />, show: false },
-  { text: "Message", url: '/message', component: <Message di={DI} />, show: false },
-  { text: "Country", url: '/country', component: <Country di={DI} />, show: false },
-  { text: "Profile", url: '/profile', component: <Profile di={DI} />, show: false },
-  { text: "Php Unit", url: '/phpunit', component: <Phpunit di={DI} />, show: false },
-  { text: "Currency", url: '/currency', component: <Currency di={DI} />, show: false },
-  { text: "Businesses", url: '/business', component: <Business di={DI} />, show: false },
-  { text: "API Reference", url: '/swagger', component: <Swagger di={DI} />, show: false },
-].sort((a, b) => {
-  // Sort by the string length of the 'show' value (true/false as string), then by value itself (true before false)
-  // But since 'show' is always boolean, sort by true before false, then by text length
-  if (a.show === b.show) {
-    return a.text.length - b.text.length;
-  }
-  return (a.show === true ? -1 : 1);
-});
+  { text: "SSO", url: '/sso', component: SSO, show: false },
+  { text: "Staff", url: '/staff', component: Staff, show: false },
+  { text: "Login", url: '/login', component: Login, show: false },
+  { text: "Cache", url: '/cache', component: Cache, show: false },
+  { text: "Logout", url: '/login', component: null, show: false },
+  { text: "Message", url: '/message', component: Message, show: false },
+  { text: "Country", url: '/country', component: Country, show: false },
+  { text: "Profile", url: '/profile', component: Profile, show: false },
+  { text: "Php Unit", url: '/phpunit', component: Phpunit, show: false },
+  { text: "Currency", url: '/currency', component: Currency, show: false },
+  { text: "Businesses", url: '/business', component: Business, show: false },
+  { text: "API Reference", url: '/swagger', component: Swagger, show: false },
+]
 
 const App = () => {
   DI.navigate = useNavigate();
@@ -73,8 +66,13 @@ const App = () => {
           <Route path="/auth/login" element={<Message di={DI} />} />
           {
             NAV_URLS.map((e, i) => {
+              const Component = e.component;
               return (
-                <Route key={i} path={e.url} element={e.component} />
+                <Route
+                  key={i}
+                  path={e.url}
+                  element={Component ? <Component di={DI} /> : <Navigate to={'/'} />}
+                />
               )
             })
           }

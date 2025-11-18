@@ -3,6 +3,8 @@
 import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input, TextArea } from "pixel-retroui";
 import { THEME } from "@pages/Theme";
 import { useEffect, useState } from "react";
+import ReactJson from "@microlink/react-json-view";
+import Scroll from "@components/Scroll";
 
 const Accounts = ({ di }) => {
     const [accounts, setAccounts] = useState([]);
@@ -46,9 +48,9 @@ const Accounts = ({ di }) => {
             </div>
         );
         const ignoreKyes = ['setup_info', 'created_at', 'updated_at', 'name', 'expires_in', 'id', 'additional_data'];
-        const censorKyes = ['api_key', 'api_secret', 'api_token', "access_token", 'refresh_token', 'shop_cipher'];
+        const censorKyes = ['api_key', 'api_secret', 'api_token', "access_token", 'refresh_token', 'shop_cipher', "secret_key"];
         return (
-            <div className='flex flex-col gap-2 justify-center items-start backdrop-blur-lg! border-2! border-white! bg-white/50 rounded-xl p-0 w-fit text-zinc-800 max-w-256 overflow-hidden text-pretty break-all'>
+            <div className='flex flex-col gap-2 justify-center items-start backdrop-blur-lg! border-2! border-white! bg-white/50 rounded-xl p-0 w-fit text-zinc-800 max-w-256 overflow-hidden text-pretty break-all h-128 overflow-y-auto'>
                 <div className="flex flex-col justify-center items-start w-full bg-blue-900/25 px-5 py-3">
                     <div className="flex justify-between items-start w-full">
                         {account.updated_at && <span className="text-sm">Updated: {di.formatTime(new Date(account.updated_at).getTime() / 1000)}</span>}
@@ -59,20 +61,27 @@ const Accounts = ({ di }) => {
                         <span className='text-sm text-slate-800'>{account.id}</span>
                     </div>
                 </div>
-                <div className="flex flex-col justify-center items-start w-full px-5 py-3">
-                    {
-                        Object.keys(account).map((key, index) => {
-                            if (ignoreKyes.includes(key)) return null;
-                            return (
-                                <div key={key}>
-                                    <span className='font-black'>{key}: </span>
-                                    <span className={`${censorKyes.includes(key) ? 'blur-xs!' : ''} hover:blur-none!`}>
-                                        {account[key].toString()}
-                                    </span>
-                                </div>
-                            )
-                        })
-                    }
+                <div className="flex flex-col justify-center items-start w-full overflow-hidden px-5 py-3">
+                    <Scroll className="grow w-full h-full">
+                        <ReactJson src={account} theme={{
+                            base00: "rgba(0,0,0,0)",  // background: transparent
+                            base01: "rgba(0,0,0,0)",  // unused or hover: transparent
+                            base02: "rgba(0,0,0,0)",  // unused or accent: transparent
+                            base03: "#000",  // dark shade: black
+                            base04: "#000",  // lighter shade: black
+                            base05: "#000",  // main text: black
+                            base06: "#000",  // lighter text: black
+                            base07: "#000",  // highlights: black
+                            base08: "#000",  // errors, insertions: black
+                            base09: "#000",  // numbers: black
+                            base0A: "#000",  // booleans: black
+                            base0B: "#000",  // strings: black
+                            base0C: "#000",  // variable: black
+                            base0D: "#000",  // params: black
+                            base0E: "#000",  // classes, keywords: black
+                            base0F: "#000", // undefined value
+                        }} name={null} className='bg-transparent!' />
+                    </Scroll>
                 </div>
 
             </div>

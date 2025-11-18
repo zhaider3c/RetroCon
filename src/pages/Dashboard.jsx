@@ -5,6 +5,8 @@ import { THEME } from './Theme';
 import Scroll from '@components/Scroll.jsx';
 import Json from '@components/Json.jsx';
 import uniNew from '@assets/uni-new.png';
+import { CgSpinner } from 'react-icons/cg';
+import { PiPlugsConnected } from 'react-icons/pi';
 
 const COLORS = [
     "#ff2f2f",
@@ -32,9 +34,17 @@ function ProductStatus({ product }) {
 }
 
 function Account({ account }) {
+    if (!account || account.length == 0) {
+        return (
+            <Card {...THEME.ACTIVE} className='w-full col-span-3 flex flex-col h-full overflow-auto p-3'>
+                <p>No accounts connected</p>
+            </Card>
+        );
+    }
+
     return (<Card {...THEME.ACTIVE} className='w-full col-span-3 flex flex-col h-full overflow-auto p-3'>
         {
-            account && Object.keys(account).map((x, i) => {
+            Object.keys(account).map((x, i) => {
                 return (
                     <div key={i} className='flex gap-5 justify-between'>
                         <p >{x}</p>
@@ -53,28 +63,46 @@ function Variants({ productWithImage }) {
     </Card>);
 }
 
-function Channels({ channels }) {
+function Channels({ channels, accounts }) {
     return (<div className='w-full col-span-2 flex flex-col'>
         {channels.map((channel, i) => {
             let state = btoa(JSON.stringify({ matketplace: channel.code, code: channel.code, businessId: localStorage.getItem('business') }));
+            let connected = accounts.find(account => account.channel_id == channel.id);
             return (
-                <Card key={i} className='flex justify-between items-center'{...THEME.ACTIVE}>
-                    <p>{channel.name}</p>
+                <Card key={i} className='flex justify-between items-center gap-5'{...THEME.ACTIVE}>
+                    <p className='grow'>{channel.name}</p>
+                    {connected && <div className='w-fit flex text-green-950 items-center justify-end bg-green-100 rounded-sm p-1 gap-3'>
+                        <PiPlugsConnected className=' text-2xl' />
+                        <span>
+                            Connected
+                        </span>
+                    </div>}
                     <Button {...THEME.SECONDARY}
-                        className='text-sm'>
-                        <a href={`${channel?.auth_url ?? '#'}?channel_id=${channel.id}&state=${state}&sandbox=1`} target='_blank'>Connect</a>
+                        className='text-sm w-32'>
+                        <a href={`${channel?.auth_url ?? '#'}?channel_id=${channel.id}&state=${state}&sandbox=1`} target='_blank'>
+                            {connected ? 'Reconnect' : 'Connect'}
+                        </a>
                     </Button>
                 </Card>
             )
         })}
     </div>);
 }
-function Events({ di, channels, }) {
-    const [accounts, setAccounts] = useState([]);
+function Events({ di, accounts }) {
     const [account, setAccount] = useState(null);
-
     const [data, setData] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [response, setResponse] = useState(null);
 
+    function handleResponse(data) {
+        setResponse(data);
+        setIsLoading(false);
+    }
+
+    function fireEvent(callback) {
+        setIsLoading(true);
+        callback();
+    }
     async function getGroup(channel_id) {
         let foundGroup = null;
         await di.request.get({
@@ -92,30 +120,23 @@ function Events({ di, channels, }) {
         });
         return foundGroup;
     }
-
-    useEffect(() => {
-        di.request.get({
-            url: di.api.get('account-all'),
-            callback: (data) => {
-                setAccounts(data.data);
-            }
-        });
-    }, []);
-
     const events = [
         {
             event: 'User::onConfirm',
             component: (
                 <div className='flex flex-col gap-2'>
-                    <Button className='' onClick={(e) => {
+                    <Button className='' onClick={(e) => fireEvent((e) => {
                         di.request.post({
                             url: di.api.get('fire-event'),
                             body: JSON.stringify({
                                 event: 'User::onConfirm',
                                 business_id: localStorage.getItem('business')
-                            })
+                            }),
+                            callback: (data) => {
+                                handleResponse(data);
+                            }
                         });
-                    }}>
+                    })}>
                         User::onConfirm
                     </Button>
                 </div>
@@ -153,14 +174,17 @@ function Events({ di, channels, }) {
                         </DropdownMenuContent>
                     </DropdownMenu>
 
-                    <Button className='' onClick={(e) => {
+                    <Button className='' onClick={(e) => fireEvent((e) => {
                         di.request.post({
                             url: di.api.get('fire-event'),
                             body: JSON.stringify(
                                 data
-                            )
+                            ),
+                            callback: (data) => {
+                                handleResponse(data);
+                            }
                         });
-                    }}>
+                    })}>
                         Fire Event
                     </Button>
                 </div>
@@ -169,7 +193,7 @@ function Events({ di, channels, }) {
     ]
 
     return (
-        <Card {...THEME.ACTIVE} className='w-full col-span-2 flex flex-col justify-center items-start'>
+        <Card {...THEME.ACTIVE} className='w-full col-span-2 flex flex-col justify-center items-start gap-3'>
             <p className='text-xl '>Events</p>
             <div className='flex flex-col gap-3 justify-between items-start'>
                 {
@@ -183,6 +207,12 @@ function Events({ di, channels, }) {
                     })
                 }
             </div>
+            <div className='flex justify-center items-center w-full'>
+                {isLoading ?
+                    <CgSpinner className='animate-spin text-4xl' />
+                    :
+                    response?.success ? "Event Fired" : ""}
+            </div>
         </Card>
     );
 }
@@ -193,6 +223,17 @@ const Dashboard = ({ di }) => {
     const [productWithImage, setProductWithImage] = useState({}); // These are variants. Param name is wrong
     const [account, setAccount] = useState([]);
     const [channels, setChannels] = useState([]);
+    const [accounts, setAccounts] = useState([]);
+
+    useEffect(() => {
+        di.request.get({
+            url: di.api.get('account-all'),
+            callback: (data) => {
+                setAccounts(data.data);
+            }
+        });
+    }, []);
+
     useEffect(() => {
         di.request.get({
             url: di.api.get('channel'), callback: (data) => {
@@ -229,20 +270,17 @@ const Dashboard = ({ di }) => {
         ],
         [
             <Card {...THEME.ACTIVE} className='w-full text-2xl'>Channels</Card>,
-            Channels({ channels })
+            Channels({ channels: channels, accounts: accounts })
         ],
         [
             Account({ account }),
-            Events({ di: di, accounts: account, channels: channels })
+            Events({ di: di, accounts: accounts })
         ],
     ];
 
     return (
         <div className='flex flex-col gap-5 w-full h-full p-5 bg-cover bg-bottom' style={{ backgroundImage: `url("${uniNew}")` }}>
-            <Card {...THEME.SECONDARY}>
-                <h1>Dashboard - {user?.business_name ?? user?.organisation_name}</h1>
-            </Card>
-            <div className='overflow-hidden w-full flex justify-between items-start p-5 gap-5 h-128 '>
+            <div className='overflow-hidden w-full flex justify-between items-start p-5 gap-5 grow '>
                 {
                     elements.map((x, i) => {
                         return (<Scroll {...THEME.SECONDARY} key={i} className='grow'>

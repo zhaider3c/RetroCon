@@ -157,7 +157,7 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
                                 {JSON.stringify(e)}
                             </div>
                             <div className='col-span-2 text-sm flex w-full justify-between items-start'>
-                                <div className='text-2xl text-orange-900'>{e.name}</div>
+                                <div className='text-xl text-orange-400'>{e.name}</div>
                                 {(e.is_required || e.use_for_variation) && <div className={`text-orange-900 border-3 border-black 
                                 text-right rounded-md -translate-y-9  px-2 text-xl font-mono font-black`}
                                     style={
@@ -166,12 +166,13 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
                                         }
                                     }
                                 >
-                                    {e.is_required?<span className='text-rose-600'>REQUIRED</span>:""}
-                                    {e.use_for_variation?<span className='text-brown-700'>VARIATION</span>:""}
-                                    </div>}
+                                    {e.is_required ? <span className='text-rose-400'>REQUIRED</span> : ""}
+                                    {e.use_for_variation ? <span className='text-brown-700'>VARIATION</span> : ""}
+                                </div>}
                             </div>
-                            <div className=''>code: {e.code}</div>
-                            <div className=''>type: {e.type}</div>
+                            <div className=''>Code: {e.code}</div>
+                            <div className=''>Type: {e.type}</div>
+                            <div className=''>In use: {e.in_use ? "Yes" : "No"}</div>
                         </Card>
                     })
                 }

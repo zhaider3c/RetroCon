@@ -100,6 +100,26 @@ THEME.TRANSPARENT = {
     }
 }
 
+THEME.JSON = {}
+THEME.JSON.DEFAULT = {
+    base00: "rgba(0,0,0,0)",  // background: transparent
+    base01: "rgba(0,0,0,0)",  // unused or hover: transparent
+    base02: "rgba(0,0,0,0)",  // unused or accent: transparent
+    base03: "#777",  // dark shade: black
+    base04: "#fff",  // lighter shade: black
+    base05: "#0f0",  // main text: black
+    base06: "#7ff",  // lighter text: black
+    base07: "#0f0",  // highlights: black
+    base08: "#f00",  // errors, insertions: black
+    base09: "#aff",  // numbers: black
+    base0A: "#aff",  // booleans: black
+    base0B: "#aff",  // strings: black
+    base0C: "#aff",  // variable: black
+    base0D: "#aaa",  // params: black
+    base0E: "#aaa",  // classes, keywords: black
+    base0F: "#fff", // undefined value
+}
+
 THEME.ACTIVE = THEME.BLACK;
 THEME.SECONDARY = THEME.MIDNIGHT;
 THEME.ACTIVE_INPUT = THEME.MATRIX;

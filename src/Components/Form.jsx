@@ -68,7 +68,7 @@ export default function Form({
                 return (
                     <DropdownMenu {...THEME.ACTIVE} className="p-3 w-full">
                         <DropdownMenuTrigger className="w-full">
-                            {formData[fieldName] || 'Select...'}
+                            {field.options.find(option => option.value === formData[fieldName])?.label || 'Select...'}
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="flex gap-3">
                             {field.options.map((option, index) => (

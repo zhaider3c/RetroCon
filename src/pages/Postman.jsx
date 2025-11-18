@@ -48,7 +48,7 @@ const Main = ({ di }) => {
     const [body, setBody] = useState(localStorage.getItem('post-body') || '');
     const [loading, setLoading] = useState(false);
     const [predifOpen, setPredifOpen] = useState(false);
-    const [user, setUser] = useState({ name: "not_set" });
+    const [user, setUser] = useState(di.getUser());
     // Keyboard event listener
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -62,14 +62,6 @@ const Main = ({ di }) => {
             document.body.removeEventListener('keydown', handleKeyDown);
         };
     }, [predifOpen]);
-
-    useEffect(() => {
-        di.getUser().then(r => {
-            console.log(r);
-
-            setUser(r);
-        });
-    }, []);
 
     // Parse JWT token safely
     const parseToken = (token) => {

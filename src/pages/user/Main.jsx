@@ -3,14 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { THEME } from '@pages/Theme';
 import Accounts from '@pages/user/Accounts';
 import BG from '@assets/user_bg.gif';
+import Config from '@pages/user/Config';
 
 const Nav = ({ pages, setPage, page, di }) => {
-    const [user, setUser] = useState(null);
-    useEffect(() => {
-        di.getUser().then(r => {
-            setUser(r);
-        });
-    }, []);
+    const [user, setUser] = useState(di.getUser());
     return (<div className='flex flex-col gap-2 h-full bg-black/25 p-0 backdrop-blur-sm!'>
         <p className='text-2xl border-b-2! border-white/50! text-center p-3'>{user?.name}</p>
         <div className='flex flex-col gap-2 py-3'>
@@ -29,6 +25,11 @@ const Main = ({ di }) => {
             'text': "Accounts",
             'hint': "Marketplace Accounts",
             'component': <Accounts di={di} />
+        },
+        {
+            'text': "Config",
+            'hint': "Configuration",
+            'component': <Config di={di} />
         }
     ]
     const [page, setPage] = useState(pages[0]);
