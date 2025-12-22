@@ -56,28 +56,29 @@ const TOAST = {
   }
 }
 const apiEndpoints = {
-  phpunit: '/',
-  app: `${REST}/apps`,
-  user: `${REST}/user`,
-  cache: `${REST}/redis`,
-  staff: `${REST}/staff`,
-  media: `${REST}/media`,
-  menu: `${REST}/staff/menu`,
-  channel: `${REST}/channel`,
-  country: `${REST}/country`,
-  product: `${REST}/product`,
-  login: `${REST}/user/login`,
-  currency: `${REST}/currency`,
-  activity: `${REST}/activity`,
-  logout: `${REST}/user/logout`,
-  attribute: `${REST}/attribute`,
-  state: `${REST}/country/state`,
-  swagger: `${REST}/swagger/json`,
-  business: `${REST}/business`,
+  'phpunit': '/',
+  'app': `${REST}/apps`,
+  'user': `${REST}/user`,
+  'cache': `${REST}/cache`,
+  'staff': `${REST}/staff`,
+  'media': `${REST}/media`,
+  'menu': `${REST}/staff/menu`,
+  'channel': `${REST}/channel`,
+  'country': `${REST}/country`,
+  'product': `${REST}/product`,
+  'login': `${REST}/user/login`,
+  'currency': `${REST}/currency`,
+  'activity': `${REST}/activity`,
+  'logout': `${REST}/user/logout`,
+  'attribute': `${REST}/attribute`,
+  'state': `${REST}/country/state`,
+  'swagger': `${REST}/swagger/json`,
+  'business': `${REST}/business`,
   'staff-all': `${REST}/staff/all`,
   'sso-client': `${REST}/sso/client`,
   'business-all': `${REST}/business`,
   'cache-list': `${REST}/redis/list`,
+  'cache-flush': `${REST}/cache/flush`,
   'custom-list': `${REST}/custom-list`,
   'product-csv': `${REST}/product/csv`,
   'sso-scope': `${REST}/sso/oauth/scope`,
@@ -106,6 +107,7 @@ const apiEndpoints = {
   'config': `${REST}/config`,
   'product-inventory': `${REST}/inventory`,
   'unlinked-products': `${REST}/product/unlinked`,
+  'system-attribute': `${REST}/system/attribute`,
 };
 
 let DI = {};
@@ -163,20 +165,17 @@ async function handleResponse(response, callback) {
 
 function filterHeaders(headers) {
   return Object.fromEntries(
-    Object.entries({ ...HEADERS, ...headers }).filter(
-      ([key, value]) => {
-        if (value && (value.includes('null') || value.includes('undefined'))) {
-          return false;
-        }
-        return Boolean(value);
-      })
+    Object.entries(headers).filter(
+      ([key, value]) => value !== null && value !== undefined)
   );
 }
 
-async function call({ url, method, body = null, headers = {}, callback = () => { }, error_callback = () => { } }) {
+async function call({ url, method, body = null, headers = {}, callback = () => { }, error_callback = () => { }, isUpload = false }) {
   init(url);
   let sendHeaders = { ...HEADERS };
   if (!body) {
+    sendHeaders["Content-Type"] = null;
+  } else if (isUpload) {
     sendHeaders["Content-Type"] = null;
   } else {
     sendHeaders["Content-Type"] = "application/json";
@@ -184,8 +183,7 @@ async function call({ url, method, body = null, headers = {}, callback = () => {
       body = JSON.stringify(body);
     }
   }
-  sendHeaders = { ...sendHeaders, ...headers };
-  sendHeaders = filterHeaders(sendHeaders);
+  sendHeaders = filterHeaders({ ...sendHeaders, ...headers });
   await fetch(url, {
     method: method,
     headers: sendHeaders,
@@ -199,6 +197,9 @@ DI = {
   request: {
     get: ({ url, headers, callback, error_callback }) => {
       call({ url, method: "GET", body: null, headers, callback, error_callback });
+    },
+    upload: ({ url, body, headers, callback, error_callback }) => {
+      call({ url, method: "POST", body, headers, callback, error_callback, isUpload: true });
     },
     post: ({ url, body, headers, callback, error_callback }) => {
       call({ url, method: "POST", body, headers, callback, error_callback });
@@ -231,7 +232,7 @@ DI = {
 };
 DI.getUser = () => {
   let localStorageUser = localStorage.getItem('user');
-  if(localStorageUser && localStorageUser !== 'undefined'){
+  if (localStorageUser && localStorageUser !== 'undefined') {
     return JSON.parse(localStorage.getItem('user'));
   }
   return false;

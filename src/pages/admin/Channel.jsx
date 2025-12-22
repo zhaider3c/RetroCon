@@ -23,7 +23,6 @@ const Main = ({ di, adminToken }) => {
     const [apps, setApps] = useState([]);
     const [data, setData] = useState("");
     const [channels, setChannels] = useState([]);
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [channelIndex, setChannelIndex] = useState(null);
 
     useEffect(() => {
@@ -66,19 +65,11 @@ const Main = ({ di, adminToken }) => {
 
     return (
         <div className=" p-5 w-full h-full flex justify-center items-start gap-5">
-            <Popup isOpen={isPopupOpen} {...THEME.GRAY} onClose={() => setIsPopupOpen(false)}>
-                <div className="h-[50rem]">
-                    <Scroll>
-                        <Json data={apps[channelIndex]} />
-                    </Scroll>
-                </div>
-            </Popup>
             <Card className="flex gap-5 flex-col" {...THEME.ACTIVE}>
                 <p className="text-4xl text-start">Channels</p>
                 {apps && apps.map((e, i) => {
                     return (
                         <Card key={i} className="flex gap-5 p-5" {...THEME.SECONDARY} onClick={(e) => {
-                            // setIsPopupOpen(true);
                             setChannelIndex(i);
                             setData(JSON.stringify(channels[i], null, 2));
                         }}>
@@ -87,7 +78,7 @@ const Main = ({ di, adminToken }) => {
                     )
                 })}
             </Card>
-            <div className="flex flex-col gap-5 justify-center items-start grow h-196">
+            <div className="flex flex-col gap-5 justify-center items-start grow  h-196">
                 <Scroll className="grow w-full">
                     {data && <JsonEditor
                         className="w-full"

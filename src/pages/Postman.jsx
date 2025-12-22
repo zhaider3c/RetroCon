@@ -5,6 +5,10 @@ import { THEME } from './Theme';
 import Scroll from '@components/Scroll';
 import ReactJsonView from '@microlink/react-json-view';
 import postmanBg from '@assets/postman.png';
+import { FaCopy } from 'react-icons/fa';
+import { FcRefresh } from 'react-icons/fc';
+import { PiBracketsCurlyLight } from 'react-icons/pi';
+import { FiRefreshCcw } from 'react-icons/fi';
 
 const VERBS =
     [
@@ -49,6 +53,9 @@ const Main = ({ di }) => {
     const [loading, setLoading] = useState(false);
     const [predifOpen, setPredifOpen] = useState(false);
     const [user, setUser] = useState(di.getUser());
+
+    let historyKey = 0;
+    let urlHistory = localStorage.getItem('postman_url_history')?.split(':::') ?? [];
     // Keyboard event listener
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -75,23 +82,23 @@ const Main = ({ di }) => {
         }
     };
     const decodedToken = parseToken(token);
-
-    // Debounce function helper
-    const DEBOUNCE_TIME = 500;
-    const debounce = (func, wait = DEBOUNCE_TIME) => {
-        let timeout;
-        return (...args) => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func(...args), wait);
-        };
-    };
-
     // Debounced handlers
-    const handleUrlChange = (e) => setUrl(e.target.value);
+    const handleUrlChange = (e) => {
+        setUrl(e.target.value);
+        return true;
+    }
     const handleBodyChange = (e) => {
         setBody(e.target.value);
         localStorage.setItem('post-body', e.target.value);
     };
+    function getPreset() {
+        let history = {};
+        urlHistory.map(x => {
+            history[x.split('/').pop()] = x;
+        });
+        return { ...PRESETS, ...history };
+    }
+    let presets = getPreset();
     return (
         <div className='w-full h-full bg-no-repeat bg-cover flex flex-col justify-center items-center gap-5' style={{ backgroundImage: `url(${postmanBg})` }}>
             <div>
@@ -99,9 +106,9 @@ const Main = ({ di }) => {
                     <h1 className='text-2xl text-center'>Common URLS</h1>
                     <Card {...THEME.SECONDARY} className='grid grid-cols-1 justify-center items-center gap-3'>
                         {
-                            Object.keys(PRESETS).map((x, u) => {
+                            (presets = getPreset()) && presets && Object.keys(presets).map((x, u) => {
                                 return (
-                                    <Button key={u} {...THEME.ACTIVE} data-url={PRESETS[x]} onClick={(e) => {
+                                    <Button key={u} {...THEME.ACTIVE} data-url={presets[x]} onClick={(e) => {
                                         setUrl(e.target.getAttribute('data-url'));
                                         setPredifOpen(false);
                                     }}>{x}</Button>
@@ -110,7 +117,6 @@ const Main = ({ di }) => {
                         }
                     </Card>
                 </Popup>
-
             </div>
             <div className='flex w-full grow overflow-hidden flex-col justify-between gap-3 p-3'>
                 <div className='flex flex-col items-between gap-3'>
@@ -164,9 +170,29 @@ const Main = ({ di }) => {
                                 }
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <Input {...THEME.ACTIVE_INPUT} placeholder='/rest/v2/ping' onChange={handleUrlChange} value={url} className='grow h-full flex items-center justify-center' />
+                        <Input {...THEME.ACTIVE_INPUT} placeholder='/rest/v2/ping' onChange={handleUrlChange} onKeyDown={(e) => {
+                            if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                historyKey = (historyKey - 1 >= 0) ? historyKey - 1 : 0;
+                                setUrl(urlHistory[historyKey]);
+                                return true;
+                            } if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                historyKey = historyKey + 1 < urlHistory.length ? historyKey + 1 : urlHistory.length - 1;
+                                setUrl(urlHistory[historyKey] ?? 0);
+                                return true;
+                            }
+                        }}
+                            value={url} className='grow h-full flex items-center justify-center' />
                         <Button {...(loading ? THEME.BLOCKED : THEME.ACTIVE)} className='h-full' onClick={async () => {
                             setLoading(true);
+                            if (!urlHistory.includes(url)) {
+                                urlHistory.push(url);
+                                localStorage.setItem('postman_url_history', urlHistory.join(':::'));
+                            }
+                            if (urlHistory.length > 10) {
+                                urlHistory = urlHistory.slice(1);
+                            }
                             let business = localStorage.getItem('business');
                             try {
                                 setResponse({});
@@ -187,7 +213,13 @@ const Main = ({ di }) => {
                             } finally {
                                 setLoading(false);
                             }
-                        }} disabled={loading} >Yeet!</Button>
+                        }} disabled={loading} >
+                            <div>{loading ?
+                                <FiRefreshCcw className='text-2xl text-green-500' /> :
+                                <span>Yeet!</span>
+                            }
+                            </div>
+                        </Button>
                     </div>
                 </div>
                 <div className='w-full flex grow whitespace-pre' {...THEME.ACTIVE}>
@@ -200,9 +232,22 @@ const Main = ({ di }) => {
                         </div>
                     </Card>
                     {
-
                         (verb == 'POST' || verb == 'PUT' || verb == 'PATCH') && (<Card className="flex flex-col gap-5 grow overflow-auto" {...THEME.ACTIVE}>
-                            <p>PAY-LOAD</p>
+                            <div className='flex justify-start items-center gap-3'>
+                                <p>Payload</p>
+                                <button onClick={() => {
+                                    try {
+                                        setBody(JSON.stringify(JSON.parse(body), null, 2));
+                                    } catch (error) {
+                                        di.toast.error('Invalid JSON');
+                                    }
+                                }}>
+                                    <div className='flex justify-start items-center gap-3 bg-yellow-500/25 px-3 py-1 rounded-md'>
+                                        <PiBracketsCurlyLight className='text-2xl text-yellow-500' />
+                                        <span className='text-sm'>  Format JSON</span>
+                                    </div>
+                                </button>
+                            </div>
                             <TextArea {...THEME.MATRIX} value={body} className='grow' onChange={handleBodyChange} />
                         </Card>)
                     }

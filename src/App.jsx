@@ -26,12 +26,14 @@ import Staff from '@pages/Staff';
 import Jira from '@pages/Jira/Main';
 import Profile from '@pages/Profile';
 import User from '@pages/user/Main';
+import SystemAttribute from '@pages/attribute/System';
 
 const NAV_URLS = [
   // --- show: true ---
   { text: "Jira", url: '/jira', component: Jira, show: true },
   { text: "Admin", url: '/admin', component: Admin, show: true },
   { text: "Settings", url: '/user', component: User, show: true },
+  { text: "Local Queue", url: '/cache', component: Cache, show: true },
   { text: "Canvas", url: '/canvas', component: Whiteboard, show: true },
   { text: "Products", url: '/product', component: Products, show: true },
   { text: "Dashboard", url: '/dashboard', component: Dashboard, show: true },
@@ -44,7 +46,6 @@ const NAV_URLS = [
   { text: "SSO", url: '/sso', component: SSO, show: false },
   { text: "Staff", url: '/staff', component: Staff, show: false },
   { text: "Login", url: '/login', component: Login, show: false },
-  { text: "Cache", url: '/cache', component: Cache, show: false },
   { text: "Logout", url: '/login', component: null, show: false },
   { text: "Message", url: '/message', component: Message, show: false },
   { text: "Country", url: '/country', component: Country, show: false },
@@ -53,6 +54,7 @@ const NAV_URLS = [
   { text: "Currency", url: '/currency', component: Currency, show: false },
   { text: "Businesses", url: '/business', component: Business, show: false },
   { text: "API Reference", url: '/swagger', component: Swagger, show: false },
+  { text: "System Attributes", url: '/attribute/system', component: SystemAttribute, show: false },
 ]
 
 const App = () => {

@@ -2,13 +2,15 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Input, Popup } from 'pixel-retroui';
 import { THEME } from './Theme';
-import { TbTriangleFilled } from "react-icons/tb";
+import { TbBinaryTree2Filled, TbTriangleFilled } from "react-icons/tb";
+import { FaAsterisk } from 'react-icons/fa';
 
 
 const BG = "https://media.licdn.com/dms/image/v2/C5622AQELEjXGaw74OA/feedshare-shrink_800/feedshare-shrink_800/0/1617991168518?e=2147483647&v=beta&t=pZvDdEB_rbXUeYv_cp54DRdnTItrBywdDIqCEXtsuz4";
 
 async function loadAttributes(di, cursor, filter = false, setAttributes) {
     let attrData;
+    // filter = "&filter['is_visible_on_frontend'][1]=true";
     let url = di.api.get('attribute')
         + "?per_page=16"
         + (filter ? `${filter}` : "")
@@ -131,8 +133,11 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
                 <p className='text-2xl'>Attributes</p>
                 <Button className='min-w-32' {...THEME.ACTIVE} onClick={e => {
                     setFilter((filter + 1) % filterValues.length);
-
                 }} >{filterValues[filter][0]}</Button>
+                <p onClick={() => { di.navigate("/attribute/system") }} className='text-blue-400 cursor-pointer text-sm flex flex-col gap-0'>
+                    <span >System</span>
+                    <span >Attributes</span>
+                </p>
             </div>
             <div>
                 <Button {...THEME.ACTIVE} onClick={() => {
@@ -156,23 +161,24 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
                             <div id='full-data' className='hidden'>
                                 {JSON.stringify(e)}
                             </div>
-                            <div className='col-span-2 text-sm flex w-full justify-between items-start'>
+                            <div className='col-span-2 text-sm flex w-full justify-start items-start gap-3'>
                                 <div className='text-xl text-orange-400'>{e.name}</div>
-                                {(e.is_required || e.use_for_variation) && <div className={`text-orange-900 border-3 border-black 
-                                text-right rounded-md -translate-y-9  px-2 text-xl font-mono font-black`}
-                                    style={
-                                        {
-                                            backgroundColor: THEME.ACTIVE.bg
-                                        }
-                                    }
-                                >
-                                    {e.is_required ? <span className='text-rose-400'>REQUIRED</span> : ""}
-                                    {e.use_for_variation ? <span className='text-brown-700'>VARIATION</span> : ""}
-                                </div>}
                             </div>
-                            <div className=''>Code: {e.code}</div>
-                            <div className=''>Type: {e.type}</div>
-                            <div className=''>In use: {e.in_use ? "Yes" : "No"}</div>
+                            <div className='flex justify-between items-center w-full'>
+                                <div className='flex flex-col gap-0 justify-start items-start'>
+                                    <div className=''>Code: {e.code}</div>
+                                    <div className=''>Type: {e.type}</div>
+                                    <div className=''>In use: {e.in_use ? "Yes" : "No"}</div>
+                                </div>
+                                <div className={`flex flex-col gap-0 justify-end items-end grow h-full`}>
+                                    {e.is_required ? <span className='flex text-red-400 group duration-300 gap-1'><FaAsterisk />
+                                        <span className='inline-block overflow-hidden w-0 group-hover:w-24 duration-300'>Required</span>
+                                    </span> : ""}
+                                    {e.use_for_variation ? <span className='flex text-blue-400 group duration-300 gap-1'><TbBinaryTree2Filled />
+                                        <span className='inline-block overflow-hidden w-0 group-hover:w-24 duration-300'>Variation</span>
+                                    </span> : ""}
+                                </div>
+                            </div>
                         </Card>
                     })
                 }

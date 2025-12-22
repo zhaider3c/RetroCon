@@ -70,10 +70,10 @@ const Main = ({ di }) => {
             style={{ backgroundImage: `url(${BG})` }}>
             <div className="w-full grow flex justify-center items-center gap-5">
                 <Nav pages={pages} setPage={setPage} page={page} />
-                <div className="w-full flex flex-col justify-center grow items-center h-full">
-                    <Card {...THEME.SECONDARY} className="grow">
+                <div className="grow flex flex-col justify-center items-center gap-5 p-3">
+                    <div className="w-full">
                         {pages[page]}
-                    </Card>
+                    </div>
                 </div>
             </div>
         </div>

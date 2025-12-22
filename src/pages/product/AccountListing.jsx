@@ -5,6 +5,9 @@ import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, Drop
 import { THEME } from '../Theme';
 import Pagination from '@components/Paginator';
 import { LuRefreshCw } from 'react-icons/lu';
+import { FaEllipsis } from 'react-icons/fa6';
+import ReactJson from '@microlink/react-json-view';
+import Scroll from '@components/Scroll';
 
 const PER_PAGE = 5;
 
@@ -30,12 +33,12 @@ const AccountSelector = ({ accounts, account, setAccount }) => {
     )
 }
 
-const Products = ({ products, keyMap }) => {
+const Products = ({ products, keyMap, setPopup }) => {
     return (
         <div className='flex flex-col gap-3 w-full h-165!'>
             {products && products.map((p, i) => {
                 return (
-                    <div key={i} className='flex gap-0 bg-white/25 rounded-xl p-3 border-2! border-white gap-5'> {
+                    <div key={i} className='flex gap-0 bg-white/25 rounded-xl p-3 border-2! border-white gap-5 items-center'> {
                         Object.keys(keyMap).map((k, ki) => {
                             let field = p[keyMap[k].original_field];
                             if (typeof field == 'object') {
@@ -43,8 +46,12 @@ const Products = ({ products, keyMap }) => {
                             }
                             return (<div key={ki} className='flex flex-col gap-0'>
                                 <span className='font-bold'>{k}: </span>
-                                <span className='ps-5'>{typeof field == 'object' ? 'SKIPPED -- TO BIG' : field}</span></div>)
-                        })}
+                                <span className='ps-5'>{typeof field == 'object' ? 'SKIPPED -- TO BIG' : field}</span>
+                            </div>
+                            )
+                        })
+                    }
+                        <p onClick={() => setPopup(p)} className='cursor-pointer text-white'><FaEllipsis /></p>
                     </div>
                 )
             })}
@@ -98,8 +105,9 @@ const Main = ({ di }) => {
     function fetchProducts(account, di, setCursor, nextCursor, filter) {
         return di.request.get({
             url: di.api.get('unlinked-products') + "?account_id=" + account.id
-                + "&per_page=7" +
+                + "&per_page=" + PER_PAGE +
                 (nextCursor ? "&cursor=" + nextCursor : "") +
+                ("&all_products=true") +
                 (filter ? "&filter[quantity][1]=" + filter : ""),
             callback: (data) => {
                 setProducts(data.data);
@@ -117,6 +125,7 @@ const Main = ({ di }) => {
     const [nextCursor, setNextCursor] = useState(false);
     const [filter, setFilter] = useState(false);
     const [page, setPage] = useState(1);
+    const [popup, setPopup] = useState(false);
     useEffect(() => {
         fetchAccounts(di);
     }, []);
@@ -133,6 +142,13 @@ const Main = ({ di }) => {
 
     return (
         <div className='flex flex-col gap-5 p-5'>
+            <Popup {...THEME.SECONDARY} isOpen={popup} onClose={() => setPopup(false)}>
+                <div className='w-256 h-128'>
+                    <Scroll>
+                        <ReactJson src={popup} theme={THEME.JSON.DEFAULT} />
+                    </Scroll>
+                </div>
+            </Popup>
             <div className='flex justify-start items-center gap-5'>
                 <AccountSelector accounts={accounts} account={accounts[account]} setAccount={setAccount} />
                 <Filter setFilter={setFilter} filter={filter} setCursor={setCursor} setNextCursor={setNextCursor} />
@@ -142,7 +158,7 @@ const Main = ({ di }) => {
                         (e) => { e.target.style.transform = "rotate(360deg)"; }
                     } /></Button>
             </div>
-            <Products products={products} keyMap={keyMap} />
+            <Products products={products} keyMap={keyMap} setPopup={setPopup} />
             <Pagination page={page} setPage={setPage} cursor={cursor} setNextCursor={setNextCursor} />
         </div>
     )

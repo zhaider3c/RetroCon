@@ -13,7 +13,7 @@ export default function Scroll({ children, className, itemsClass, ...args }) {
                         </div>
                     )
                 }) : (
-                    <div className='w-full py-5'>
+                    <div className='w-full'>
                         {children}
                     </div>
                 )}

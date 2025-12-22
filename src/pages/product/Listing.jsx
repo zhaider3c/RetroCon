@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import productBg from '@assets/product-bg.gif';
 import NYAN from '@assets/nyan-loader.webp';
 import { BiDownload } from 'react-icons/bi';
+import { GrDocumentMissing } from 'react-icons/gr';
 
 const PER_PAGE = 5;
 
@@ -20,18 +21,26 @@ const Grid = ({ products, di }) => {
                     return (
                         <Card key={e.id} {...THEME.SECONDARY} className={'bg-cover bg-center items-center flex flex-col-reverse gap-2 border-box'}>
                             <div className={`flex w-full h-full items-center gap-5`}>
-                                <img className='w-16 aspect-square rounded-xl'
-                                    src={e.images?.length ? e.images[0].url : "na"}></img>
+                                <div className='w-16 aspect-square rounded-xl h-full text-center flex items-center justify-center'>
+                                    {e.images?.length > 0 ?
+                                        <img className='w-16 rounded-xl h-full bg-red-500' src={e.images[0].url} /> :
+                                        <div className='w-full h-full flex items-center justify-center bg-slate-700 rounded-xl'>
+                                            <GrDocumentMissing className='text-2xl text-zinc-400' />
+                                        </div>
+                                    }
+                                </div>
                                 <div className='flex flex-col justify-start h-full items-start gap-0'>
                                     <div className='flex justify-start items-center w-full gap-5'>
                                         <span>{e.title}</span>
                                         <span>${e.price}</span>
-                                        <span className>SKU: {e.sku}</span>
+                                        <span >SKU: {e.sku}</span>
+                                        <span className="capitalize text-green-400">{e.status}</span>
                                     </div>
                                     <div className='flex justify-start items-center w-full gap-5'>
-                                        <span className='text-orange-900 capitalize'>Type: {e.u_product_type}</span>
-                                        <span className='text-orange-900 capitalize'>{isVariant ? "Variant" : ""}</span>
+                                        <span className='text-orange-400 capitalize'>Type: {e.u_product_type == "variant" ? "Parent" : "Simple"}</span>
+                                        <span className='text-orange-400 capitalize'>{isVariant ? "Variant" : ""}</span>
                                         <span className>ID: {e.id}</span>
+                                        <span className>Classified: {e.u_classification_id ? "Yes" : "No"}</span>
                                     </div>
                                 </div>
                                 <Button onClick={() => {
@@ -181,7 +190,10 @@ const Products = ({ di }) => {
     const FILTERS = {
 
         simple: {
-            and_filter: { u_product_type: { '1': "simple" } }
+            and_filter: {
+                u_product_type: { '1': "simple" },
+                u_visibility: { '1': 1 }
+            }
         },
 
         parent: {
@@ -193,8 +205,8 @@ const Products = ({ di }) => {
 
         child: {
             and_filter: {
-                u_product_type: { '1': "variant" },
-                u_relation_id: { '12': "0" }
+                u_product_type: { '1': "simple" },
+                u_visibility: { '1': 2 }
             }
         },
     };
@@ -202,6 +214,7 @@ const Products = ({ di }) => {
     function prepTypeFilter(type) {
         let xp = urlEncodeObject(FILTERS[type].and_filter, 'and_filter');
         setFilter(xp);
+
     }
     function urlEncodeObject(obj, prefix = '') {
         const query = [];
@@ -269,7 +282,7 @@ const Products = ({ di }) => {
                     </DropdownMenu>
                     <Button {...THEME.ACTIVE} onClick={() => setPopupOpen(true)} className='p-2'> <BiDownload className='text-3xl' /> </Button>
                 </Card>
-                 
+
                 <div {...THEME.SECONDARY} className='w-full grow overflow-auto'>
                     <Grid products={products} di={di}></Grid>
                 </div>
