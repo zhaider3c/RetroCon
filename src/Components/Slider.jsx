@@ -1,26 +1,37 @@
 import { Button, Card } from "pixel-retroui"
 import { THEME } from "@pages/Theme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 const Slider = (props) => {
-    const [isOn, setIsOn] = useState(false);
+    const [isOn, setIsOn] = useState(() => !!props.checked);
+    useEffect(() => {
+        setIsOn(!!props.checked);
+    }, [props.checked]);
+    const styles = {
+        'true': {
+            borderColor: props.borderColor ?? "black",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            userSelect: "none",
+            boxShadow: `inset 2px 2px 0 2px var(--button-custom-shadow, var(--shadow-button, ${props.shadowColor ?? "black"})), inset -2px -2px 0 2px var(--button-custom-bg, var(--bg-button, ${props.bg ?? THEME.SECONDARY.bg}))`,
+            color: props.textColor ?? "white",
+        },
+        'false': {
+            borderColor: props.borderColor ?? "black",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            userSelect: "none",
+            boxShadow: `inset 2px 2px 0 2px var(--button-custom-shadow, var(--shadow-button, ${props.shadowColor ?? "black"})), inset -2px -2px 0 2px var(--button-custom-bg, var(--bg-button, ${props.bg ?? THEME.SECONDARY.bg}))`,
+            color: props.textColor ?? "white",
+        }
+    }
     return (
         <div
             className="min-h-8 min-w-16 flex items-center duration-300 cursor-pointer relative rounded"
-            data-on={isOn}
-            style={{
-                borderColor: props.borderColor ?? "black",
-                backgroundColor: "rgba(0,0,0,0.5)",
-                userSelect: "none",
-                boxShadow: `inset 2px 2px 0 2px var(--button-custom-shadow, var(--shadow-button, ${props.shadowColor ?? "black"})), inset -2px -2px 0 2px var(--button-custom-bg, var(--bg-button, ${props.bg ?? THEME.SECONDARY.bg}))`,
-                color: props.textColor ?? "white",
-            }}
+            data-on={isOn ? 'true' : 'false'}
+            style={styles[isOn ? 'true' : 'false']}
             onClick={(e) => {
-                setIsOn(!isOn);
-                let child = e.target.children[0];
-                if (isOn) {
-                    child.style.left == "50%"
-                }
-                if (child.style.left === "0%") {
+                const nextOn = e.currentTarget.dataset.on === 'false';
+                setIsOn(nextOn);
+                const child = e.currentTarget.children[0];
+                if (nextOn) {
                     child.style.backgroundColor = props.activeBg ?? THEME.SUCCESS.bg;
                     child.style.borderColor = props.borderSuccessColor ?? THEME.SUCCESS.borderColor;
                     child.style.left = "50%";
@@ -29,8 +40,8 @@ const Slider = (props) => {
                     child.style.borderColor = props.borderColor ?? "black";
                     child.style.left = "0%";
                 }
-                e.checked = e.target.dataset.on === 'true';                
-                props.onClick?.(e)
+                e.checked = nextOn;
+                props.onClick?.(e);
             }}
         >
             <div

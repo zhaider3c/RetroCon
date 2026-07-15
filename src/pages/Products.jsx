@@ -1,46 +1,52 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
-import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input, Popup } from 'pixel-retroui';
-import { THEME } from './Theme';
+import React, { useState } from 'react';
 import Listing from '@pages/product/Listing';
 import Inventory from '@pages/product/Inventory';
 import AccountListing from '@pages/product/AccountListing';
+import LinkedListing from '@pages/product/LinkedListing';
+import productBg from '@assets/product-bg.gif';
+import PageSidebar from '@components/PageSidebar';
 
 
 const Products = ({ di }) => {
-    const pages = [
+    const sections = [
         {
-            'label': 'Listing',
-            description: 'View and manage products',
-            component: <Listing di={di} />
+            items: [
+                { label: 'Listing', component: <Listing di={di} /> },
+                { label: 'Inventory', component: <Inventory di={di} /> },
+            ],
         },
         {
-            label: 'Inventory',
-            description: 'View and manage inventory',
-            component: <Inventory di={di} />
+            title: 'Marketplace Listing',
+            items: [
+                { label: 'Linked', component: <LinkedListing di={di} /> },
+                { label: 'Unlinked', component: <AccountListing di={di} /> },
+                { label: 'All Products', component: <AccountListing di={di} allProducts /> },
+            ],
         },
-        {
-            label: 'Marketplace',
-            description: 'View and manage products imported from marketplace',
-            component: <AccountListing di={di} />
-        }
-    ]
+    ];
 
-    const [activePage, setPage] = useState(pages[0]);
+    const allItems = sections.flatMap((s) => s.items);
+    const [active, setActive] = useState(allItems[0].label);
+    const activePage = allItems.find((p) => p.label === active);
+
+    const sidebarSections = sections.map((s) => ({
+        title: s.title,
+        items: s.items.map((item) => ({
+            label: item.label,
+            active: active === item.label,
+            onClick: () => setActive(item.label),
+        })),
+    }));
+
     return (
-        <div className="h-full w-full flex bg-cover bg-center overflow-hidden bg-cyan-800">
-            <Card {...THEME.ACTIVE} className="p-3 flex flex-col justify-start items-center gap-2 h-full">
-                {pages.map((page) => {
-                    return <Button key={page.label} onClick={() => setPage(page)} className="w-full" {...(activePage === page.label ? THEME.SUCCESS : THEME.SECONDARY)}>
-                        {page.label}
-                    </Button>
-                })}
-            </Card>
-            <div className="grow h-full">
-                {activePage.component}
+        <div style={{ backgroundImage: `url('${productBg}')` }} className="h-full w-full flex bg-cover bg-center overflow-hidden">
+            <PageSidebar theme="default" sections={sidebarSections} />
+            <div className="grow h-full min-w-0 overflow-hidden">
+                {activePage?.component}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Products;

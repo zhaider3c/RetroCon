@@ -57,9 +57,17 @@ THEME.WHITE = {
 THEME.DANGER = {
     bg: "#ff003f",
     textColor: "white",
-    borderColor: "black",
-    shadowColor: "black",
-    baseBg: "black"
+    borderColor: "#800020",    // darker red shade for border
+    shadowColor: "black",      // changed to black as per instruction
+    baseBg: "#FF0000",
+}
+
+THEME.WARNING = {
+    bg: "#FFC107",               // Amber, Material Design yellow
+    textColor: "#3A2F00",        // Deep brown for good contrast with amber
+    borderColor: "#222",         // Nearly black border
+    shadowColor: "#C68400",      // Shadow in dark amber
+    baseBg: "#FFC107",
 }
 
 THEME.SUCCESS = {
@@ -91,13 +99,32 @@ THEME.SEAMLESS = {
 
 THEME.TRANSPARENT = {
     bg: "transparent",
-    textColor: "transparent",
+    textColor: "b0f0faf",
     borderColor: "transparent",
     shadowColor: "transparent",
     baseBg: "transparent",
     style: {
         boxShadow: "none"
     }
+}
+
+THEME.TRANSLUCENT = {
+    bg: "#303030",
+    textColor: "white",
+    borderColor: "black",
+    shadowColor: "black",
+    baseBg: "#404040",
+    style:{
+        opacity: 0.5
+    }
+}
+
+THEME.ACCENT = {
+    bg: "#007bff",
+    textColor: "white",
+    borderColor: "black",
+    shadowColor: "black",
+    baseBg: "#007bff",
 }
 
 THEME.JSON = {}
@@ -120,8 +147,36 @@ THEME.JSON.DEFAULT = {
     base0F: "#fff", // undefined value
 }
 
+THEME.PRIMARY = THEME.BLACK;
 THEME.ACTIVE = THEME.BLACK;
 THEME.SECONDARY = THEME.MIDNIGHT;
 THEME.ACTIVE_INPUT = THEME.MATRIX;
 THEME.ACTIVE_BUTTON = THEME.GRAY;
 THEME.BLOCKED = THEME.GRAY;
+
+export function themeToSidebarVars(theme) {
+  return {
+    '--sidebar': theme.bg,
+    '--sidebar-foreground': theme.textColor,
+    '--sidebar-border': theme.borderColor,
+    '--sidebar-ring': theme.borderColor,
+    '--sidebar-accent': theme.baseBg,
+    '--sidebar-accent-foreground': theme.textColor,
+    '--sidebar-primary': theme.baseBg,
+    '--sidebar-primary-foreground': theme.textColor,
+    '--accent': theme.baseBg,
+    '--accent-foreground': theme.textColor,
+    '--primary': theme.baseBg,
+    '--primary-foreground': theme.textColor,
+  };
+}
+
+export function pixelBevelStyle(theme) {
+  return {
+    backgroundColor: theme.bg,
+    color: theme.textColor,
+    border: `5px solid ${theme.borderColor}`,
+    borderRadius: 0,
+    boxShadow: `${theme.shadowColor} 2px 2px 0 2px, ${theme.bg} -2px -2px 0 2px`,
+  };
+}

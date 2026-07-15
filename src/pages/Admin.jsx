@@ -1,37 +1,29 @@
 /* eslint-disable react/prop-types */
 
-import { Button, Card, Input, TextArea } from "pixel-retroui";
-import { THEME } from "./Theme";
 import { useState } from "react";
 import CreateApp from "@pages/admin/CreateApp";
 import ChannelGroup from "@pages/admin/ChannelGroup";
 import Channel from "@pages/admin/Channel";
 import Users from "@pages/admin/Users";
 import BG from "@assets/admin.gif";
+import Ai from "@pages/admin/Ai";
+import PageSidebar from "@components/PageSidebar";
 
 const Nav = ({ pages, setPage, page }) => {
-    return (
-        (
-            <div className="flex flex-col gap-3 justify-start items-between h-full overflow-hidden bg-white/25 border-e-2! border-cyan-800! p-5 backdrop-blur-md!">
-                {
-                    Object.keys(pages).map((x, i) => {
-                        return (
-                            <Button
-                                key={x}
-                                onClick={() => setPage(x)}
-                                className="col-span-1 p-0 h-8 text-xs overflow-hidden"
-                                {...(page === x ? THEME.SUCCESS : THEME.SECONDARY)}
-                            >
-                                <p className={`${x.length > 5 ? "marquee" : ""} whitespace-nowrap`}>
-                                    {x.toLocaleUpperCase().replace('_', " ")}
-                                </p>
-                            </Button>
-                        )
-                    })
-                }
-            </div>
-        )
-    )
+    const sections = [{
+        items: Object.keys(pages).map((x) => ({
+            key: x,
+            label: (
+                <p className={`${x.length > 5 ? "marquee" : ""} whitespace-nowrap`}>
+                    {x.toLocaleUpperCase().replace('_', " ")}
+                </p>
+            ),
+            active: page === x,
+            onClick: () => setPage(x),
+            className: "h-10 text-xs overflow-hidden",
+        })),
+    }];
+    return <PageSidebar theme="glass" glassClassName="bg-white/20" sections={sections} />;
 }
 
 const Main = ({ di }) => {
@@ -62,6 +54,11 @@ const Main = ({ di }) => {
         "users": (
             <div className="w-full h-full flex justify-center items-center gap-5">
                 <Users di={di} token={token} />
+            </div>
+        ),
+        "ai": (
+            <div className="w-full h-full flex justify-center items-center gap-5">
+                <Ai di={di} adminToken={token} />
             </div>
         )
     }

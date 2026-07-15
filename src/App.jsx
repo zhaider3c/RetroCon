@@ -17,7 +17,7 @@ import Classification from '@pages/Classification';
 import Country from '@pages/Country';
 import Currency from '@pages/Currency';
 import Login from '@pages/Login';
-import Postman from '@pages/Postman';
+import Transmitter from '@pages/Transmitter';
 import Admin from '@pages/Admin';
 import Whiteboard from '@pages/Whiteboard';
 import { Main as Menubar } from '@components/Menubar';
@@ -27,22 +27,26 @@ import Jira from '@pages/Jira/Main';
 import Profile from '@pages/Profile';
 import User from '@pages/user/Main';
 import SystemAttribute from '@pages/attribute/System';
+import Warehouse from '@pages/Warehouse';
+import Chat from '@pages/Chat';
 
 const NAV_URLS = [
   // --- show: true ---
-  { text: "Jira", url: '/jira', component: Jira, show: true },
   { text: "Admin", url: '/admin', component: Admin, show: true },
   { text: "Settings", url: '/user', component: User, show: true },
-  { text: "Local Queue", url: '/cache', component: Cache, show: true },
+  { text: "Local Queue", url: '/cache', component: Cache, show: true, local_only: true },
   { text: "Canvas", url: '/canvas', component: Whiteboard, show: true },
   { text: "Products", url: '/product', component: Products, show: true },
+  { text: "Warehouse", url: '/warehouse', component: Warehouse, show: true },
   { text: "Dashboard", url: '/dashboard', component: Dashboard, show: true },
   { text: "Attributes", url: '/attribute', component: Attribute, show: true },
   { text: "Custom List", url: '/custom-list', component: CustomList, show: true },
   { text: "Notifications", url: '/notification', component: Notification, show: true },
   { text: "Classification", url: '/classification', component: Classification, show: true },
-  { text: "Postman", url: '/postman', component: Postman, show: true, tip: "Press Ctrl+B to open preset menu" },
+  { text: "Transmitter", url: '/transmitter', component: Transmitter, show: true, tip: "Press Ctrl+K to open preset menu" },
   // --- show: false ---
+  { text: "Chat", url: '/chat', component: Chat, show: false, local_only: true },
+  { text: "Jira", url: '/jira', component: Jira, show: false },
   { text: "SSO", url: '/sso', component: SSO, show: false },
   { text: "Staff", url: '/staff', component: Staff, show: false },
   { text: "Login", url: '/login', component: Login, show: false },

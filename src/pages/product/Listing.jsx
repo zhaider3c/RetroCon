@@ -1,59 +1,116 @@
 
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input, Popup } from 'pixel-retroui';
 import { THEME } from '../Theme';
-import { TbTriangleFilled } from "react-icons/tb";
 import toast from 'react-hot-toast';
-import productBg from '@assets/product-bg.gif';
 import NYAN from '@assets/nyan-loader.webp';
 import { BiDownload } from 'react-icons/bi';
-import { GrDocumentMissing } from 'react-icons/gr';
+import { MdCheckCircle, MdCancel } from 'react-icons/md';
+import { TbBox, TbBoxMultiple, TbGitBranch } from 'react-icons/tb';
+import ProductTable, { Pill, Badge, Field } from '@components/ProductTable';
+import ChipFilter from '@components/ChipFilter';
+import Pagination from '@components/Paginator';
+
+const TYPE_OPTIONS = [
+    { label: 'All', value: false },
+    { label: 'Simple', value: 'simple' },
+    { label: 'Parent', value: 'parent' },
+    { label: 'Variant', value: 'child' },
+];
 
 const PER_PAGE = 5;
 
 const Grid = ({ products, di }) => {
-    return (
-        <div className='flex flex-col gap-5'>
-            {
-                products?.data && products.data.map((e, i) => {
-                    const isVariant = e.u_product_type == 'variant' && !e.u_relation_id;
-                    return (
-                        <Card key={e.id} {...THEME.SECONDARY} className={'bg-cover bg-center items-center flex flex-col-reverse gap-2 border-box'}>
-                            <div className={`flex w-full h-full items-center gap-5`}>
-                                <div className='w-16 aspect-square rounded-xl h-full text-center flex items-center justify-center'>
-                                    {e.images?.length > 0 ?
-                                        <img className='w-16 rounded-xl h-full bg-red-500' src={e.images[0].url} /> :
-                                        <div className='w-full h-full flex items-center justify-center bg-slate-700 rounded-xl'>
-                                            <GrDocumentMissing className='text-2xl text-zinc-400' />
-                                        </div>
-                                    }
-                                </div>
-                                <div className='flex flex-col justify-start h-full items-start gap-0'>
-                                    <div className='flex justify-start items-center w-full gap-5'>
-                                        <span>{e.title}</span>
-                                        <span>${e.price}</span>
-                                        <span >SKU: {e.sku}</span>
-                                        <span className="capitalize text-green-400">{e.status}</span>
-                                    </div>
-                                    <div className='flex justify-start items-center w-full gap-5'>
-                                        <span className='text-orange-400 capitalize'>Type: {e.u_product_type == "variant" ? "Parent" : "Simple"}</span>
-                                        <span className='text-orange-400 capitalize'>{isVariant ? "Variant" : ""}</span>
-                                        <span className>ID: {e.id}</span>
-                                        <span className>Classified: {e.u_classification_id ? "Yes" : "No"}</span>
-                                    </div>
-                                </div>
-                                <Button onClick={() => {
-                                    di.request.post({ url: di.api.get('product-delete'), body: JSON.stringify({ ids: [e.id], operation_type: "selected" }) })
-                                }}>Delete</Button>
-                            </div>
-                        </Card>
-                    )
-                })
-            }
-        </div >
+    const [accountsById, setAccountsById] = useState({});
+
+    useEffect(() => {
+        di.request.get({
+            url: di.api.get('account-all'),
+            callback: (data) => {
+                const map = {};
+                (data?.data || []).forEach((a) => { map[a.id] = a; });
+                setAccountsById(map);
+            },
+        });
+    }, []);
+
+    function resolveChannels(e) {
+        const ids = e.u_account_id || [];
+        if (!Array.isArray(ids) || ids.length === 0) return null;
+        const names = ids.map((id) => {
+            const oid = typeof id === 'object' ? id?.$oid : id;
+            const a = accountsById[oid];
+            return a?.name?.replaceAll('_', ' ') || oid;
+        });
+        return names.join(', ');
+    }
+
+    function typeBadge(e) {
+        const isParent = e.u_product_type === 'variant';
+        const isVariant = e.u_product_type === 'simple' && e.u_relation_id;
+        if (isParent) return <Badge icon={<TbBoxMultiple />} label="Parent" theme={THEME.ACCENT} />;
+        if (isVariant) return <Badge icon={<TbGitBranch />} label="Variant" theme={THEME.WARNING} />;
+        return <Badge icon={<TbBox />} label="Simple" />;
+    }
+
+    const getHeader = (e) => (
+        <div className="flex items-center gap-2 min-w-0">
+            <span className="text-base font-bold truncate" title={e.title}>{e.title}</span>
+            <span className="text-xs opacity-50 font-mono truncate">{e._id || e.id}</span>
+        </div>
     );
-}
+
+    const getBadges = (e) => (
+        <>
+            <Badge
+                icon={e.status === 'active' ? <MdCheckCircle /> : <MdCancel />}
+                label={e.status}
+                theme={e.status === 'active' ? THEME.SUCCESS : THEME.GRAY}
+            />
+            {typeBadge(e)}
+        </>
+    );
+
+    const columns = [
+        { field: 'sku', label: 'SKU' },
+        {
+            label: 'Price',
+            render: (e) => <Field label='Price'>${e.price}</Field>,
+        },
+        {
+            render: (e) => {
+                const channels = resolveChannels(e);
+                return channels ? <Field label='Channels'>{channels}</Field> : null;
+            },
+        },
+        { field: 'barcode', label: 'Barcode' },
+    ];
+
+    const actions = [
+        {
+            label: 'Delete',
+            theme: THEME.DANGER,
+            onClick: (e) =>
+                di.request.post({
+                    url: di.api.get('product-delete'),
+                    body: JSON.stringify({ ids: [e.id], operation_type: 'selected' }),
+                }),
+        },
+    ];
+
+    return (
+        <ProductTable
+            items={products?.data}
+            columns={columns}
+            actions={actions}
+            getImage={(e) => e.images?.[0]?.url}
+            getHeader={getHeader}
+            getBadges={getBadges}
+            emptyMessage="No products"
+        />
+    );
+};
 
 const FileUpload = ({ di }) => {
     const [hash, setHash] = useState(false);
@@ -117,9 +174,48 @@ function Import({ di }) {
         shein: 'api',
         tiktok: 'api',
     }
+
+    const loadingResponse = (
+        <div className='rounded-xl border-2! border-blue-400! flex flex-col gap-5 justify-center items-center w-24 h-24'
+            style={{
+                backgroundImage: `url(${NYAN})`,
+                backgroundSize: 'contain',
+                backgroundPosition: 'center',
+            }}>
+        </div>
+    );
+    const renderResult = (res) => (
+        <p className={`${res.success ? 'text-green-500' : 'text-red-500'}`}>
+            {res.message ?? res.messsage ?? ""}
+        </p>
+    );
+
+    function triggerAutoLink(product_type) {
+        if (!data) {
+            setResponse(<p className='text-red-500'>Please select an account</p>);
+            return;
+        }
+        const business_id = di.getCurrentBusiness();
+        if (!business_id) {
+            setResponse(<p className='text-red-500'>No business selected</p>);
+            return;
+        }
+        setResponse(loadingResponse);
+        di.request.post({
+            url: di.api.get('product-autolink'),
+            body: JSON.stringify({
+                marketplace: data.marketplace,
+                product_type,
+                business_id,
+                account_id: data.account_id,
+            }),
+            callback: (res) => setResponse(renderResult(res)),
+            error_callback: (res) => setResponse(renderResult(res)),
+        });
+    }
+
     return (
-        <div className='w-128 items-center justify-center flex'>
-            <Card className='flex flex-col gap-5 justify-between items-start px-5!' {...THEME.ACTIVE}>
+        <div className='w-128 flex flex-col gap-5 justify-between items-start p-5'>
                 <p>Import from marketplace</p>
                 <DropdownMenu className='w-full'>
                     <DropdownMenuTrigger {...THEME.SECONDARY}>
@@ -142,48 +238,47 @@ function Import({ di }) {
                         ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <Button {...THEME.SUCCESS} onClick={(e) => {
-                    if (data) {
-                        // e.target.style.display = 'none'; 
-                        setResponse(
-                            <div className='rounded-xl border-2! border-blue-400! flex flex-col gap-5 justify-center items-center w-24 h-24'
-                                style={{
-                                    backgroundImage: `url(${NYAN})`,
-                                    backgroundSize: 'contain',
-                                    backgroundPosition: 'center',
-                                }}>
-                            </div>
-                        );
-                        di.request.post({
-                            url: di.api.get('product-import'),
-                            body: JSON.stringify(data),
-                            callback: (res) => {
-                                setResponse(<p className={`${res.success ? 'text-green-500' : 'text-red-500'}`}>
-                                    {res.messsage ?? ""}
-                                </p>);
-                            },
-                            error_callback: (res) => {
-                                setResponse(<p className={`${res.success ? 'text-green-500' : 'text-red-500'}`}>
-                                    {res.messsage ?? ""}
-                                </p>);
-                            }
-                        });
-                    } else {
-                        setResponse(<p className='text-red-500'>Please select an account</p>);
-                    }
-                }}>
-                    Start
-                </Button>
+                <div className='flex gap-3'>
+                    <Button {...THEME.SUCCESS} onClick={() => {
+                        if (data) {
+                            setResponse(loadingResponse);
+                            di.request.post({
+                                url: di.api.get('product-import'),
+                                body: JSON.stringify(data),
+                                callback: (res) => setResponse(renderResult(res)),
+                                error_callback: (res) => setResponse(renderResult(res)),
+                            });
+                        } else {
+                            setResponse(<p className='text-red-500'>Please select an account</p>);
+                        }
+                    }}>
+                        Start Import
+                    </Button>
+                </div>
+
+                <div className='w-full border-t border-white/15 pt-3 flex flex-col gap-3'>
+                    <p>Auto Link</p>
+                    <p className='text-xs opacity-60'>Match marketplace products to catalog by SKU / barcode (per account's linking preference).</p>
+                    <div className='flex gap-3'>
+                        <Button {...THEME.ACCENT} onClick={() => triggerAutoLink('simple')}>
+                            Auto Link Simple
+                        </Button>
+                        <Button {...THEME.ACCENT} onClick={() => triggerAutoLink('variant')}>
+                            Auto Link Variant
+                        </Button>
+                    </div>
+                </div>
+
                 <div className='w-full items-center justify-center flex h-32'>
                     {response ?? ""}
                 </div>
-            </Card>
         </div>
     )
 }
 const Products = ({ di }) => {
     const [products, setProducts] = useState(false);
     const [cursor, setCursor] = useState(false);
+    const [page, setPage] = useState(1);
     const [search, setSearch] = useState(false);
     const [filter, setFilter] = useState(false);
 
@@ -211,11 +306,6 @@ const Products = ({ di }) => {
         },
     };
 
-    function prepTypeFilter(type) {
-        let xp = urlEncodeObject(FILTERS[type].and_filter, 'and_filter');
-        setFilter(xp);
-
-    }
     function urlEncodeObject(obj, prefix = '') {
         const query = [];
         for (const key in obj) {
@@ -236,62 +326,49 @@ const Products = ({ di }) => {
 
     const [popupOpen, setPopupOpen] = useState(false);
     useEffect(() => {
+        const typeFilter = filter ? urlEncodeObject(FILTERS[filter].and_filter, 'and_filter') : '';
         di.request.get({
             url: di.api.get('product') + `?${cursor ? 'cursor=' + cursor : ""}` +
                 `&per_page=${PER_PAGE ?? 10}` +
                 `&${search ? 'filter[sku][3]=' + search : ""}` +
-                `&${filter ? filter : ""}`, callback: data => {
+                `&${typeFilter}`, callback: data => {
                     setProducts({ ...data });
                 }
         });
     }, [cursor, search, filter]);
-    let tt;
+    const searchTimer = useRef(null);
     return (
-        <div style={{ backgroundImage: `url('${productBg}')` }} className='w-full h-full flex flex-col gap-5 justify-center items-center bg-cover bg-center p-5'>
+        <div className='w-full h-full flex flex-col gap-5 justify-center items-center p-5 min-w-0 overflow-hidden'>
             <Popup {...THEME.SECONDARY} isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
                 {/* <FileUpload di={di} /> */}
                 <Import di={di} />
             </Popup>
-            <div className='flex flex-col gap-5 justify-center items-center h-full w-3/4'>
-                <Card {...THEME.SECONDARY} className='flex gap-5 items-center justify-center text-2xl w-full px-5 py-3'>
+            <div className='flex flex-col gap-5 justify-center items-between h-full grow w-full min-w-0 overflow-hidden'>
+                <Card {...THEME.SECONDARY} className='flex gap-5 items-center justify-center text-2xl w-auto px-5 py-3'>
                     <span>
                         Products
                     </span>
                     <Input {...THEME.ACTIVE_INPUT} className='grow ' placeholder='Search SKU' onChange={(e) => {
-                        clearInterval(tt);
-                        tt = setTimeout(() => {
+                        clearTimeout(searchTimer.current);
+                        searchTimer.current = setTimeout(() => {
+                            setCursor(false);
                             setSearch(e.target.value);
                         }, 700);
                     }}></Input>
-                    <DropdownMenu {...THEME.ACTIVE} className=''>
-                        <DropdownMenuTrigger className=''>
-                            Filter
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuItem>
-                                <div className='flex flex-col gap-3 items-start justify-start'>
-                                    <p>Type: </p>
-                                    <div className='flex flex-col justify-center gap-5'>
-                                        <Button onClick={() => { prepTypeFilter('simple') }}>Simple</Button>
-                                        <Button onClick={() => { prepTypeFilter('parent') }}>Parent</Button>
-                                        <Button onClick={() => { prepTypeFilter('child') }}>Variant</Button>
-                                    </div>
-                                </div>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <ChipFilter
+                        label='Type'
+                        value={filter}
+                        options={TYPE_OPTIONS}
+                        onChange={(v) => { setCursor(false); setFilter(v); }}
+                    />
                     <Button {...THEME.ACTIVE} onClick={() => setPopupOpen(true)} className='p-2'> <BiDownload className='text-3xl' /> </Button>
                 </Card>
 
-                <div {...THEME.SECONDARY} className='w-full grow overflow-auto'>
+                <div {...THEME.SECONDARY} className='w-full grow min-w-0 min-h-0 overflow-hidden flex'>
                     <Grid products={products} di={di}></Grid>
                 </div>
-                <div className='flex'>
-                    <Button className={`py-2 px-5 ${products?.cursor?.prev ? '' : 'opacity-25'}`} {...THEME.ACTIVE} onClick={() => { setCursor(products.cursor.prev); }}>
-                        <TbTriangleFilled className='-rotate-90 text-yellow-900/75' /></Button>
-                    <Card className='py-2 px-4' {...THEME.SECONDARY}></Card>
-                    <Button className={`py-2 px-5 ${products?.cursor?.next ? '' : 'opacity-25'}`}{...THEME.ACTIVE} onClick={() => { setCursor(products.cursor.next); }}>
-                        <TbTriangleFilled className='rotate-90 text-yellow-900/75' /></Button>
+                <div className='flex justify-center'>
+                    <Pagination page={page} setPage={setPage} cursor={products?.cursor} setNextCursor={setCursor} />
                 </div>
             </div>
         </div >

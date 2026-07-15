@@ -12,11 +12,30 @@ import SCROLL_LEFT from '@assets/scroll-left.png'
 import SCROLL_RIGHT from '@assets/scroll-right.png'
 import SCROLL_CENTER from '@assets/scroll-center.png'
 import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input } from "pixel-retroui";
+import { useSearchParams } from "react-router-dom";
+import { CgClose } from "react-icons/cg";
 
 
 function LoginForm({ di }) {
+    const [loginData, setLoginData] = useState(
+        () => { return JSON.parse(localStorage.getItem('login_data')) || {} }
+    );
+    const [rememberMe, setRememberMe] = useState(() => { return loginData.email && loginData.password ? true : false });
+
+    useEffect(() => {
+        setRememberMe(loginData.email && loginData.password ? true : false);
+    }, [loginData])
+
 
     function onSubmit(data) {
+        console.log(data);
+        if (rememberMe) {
+            localStorage.setItem('login_data', JSON.stringify(data));
+            setLoginData(data);
+        }
+        if (loginData.email && loginData.password) {
+            data = loginData;
+        }
         di.request.post({
             url: di.api.get('login'),
             body: JSON.stringify({
@@ -27,8 +46,7 @@ function LoginForm({ di }) {
                 password: data.password
             }),
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + di.hosts.UNICON.token
+                "Content-Type": "application/json"
             },
             callback: (res) => {
                 if (res.success) {
@@ -42,6 +60,7 @@ function LoginForm({ di }) {
             }
         });
     }
+
 
     return (
         <div className="h-full flex flex-col justify-center items-center grow gap-5 w-full rounded-xl p-3 backdrop-blur-sm">
@@ -59,7 +78,15 @@ function LoginForm({ di }) {
                         placeholder: "Its a secret!"
                     }
                 }}
-                onSubmit={onSubmit} submitText="Login" />
+                onSubmit={onSubmit} submitText="Login"
+                data={loginData}
+                rememberMe={true}
+                onRememberChange={(e) => {
+                    setRememberMe(e)
+                    localStorage.removeItem('login_data');
+                }}
+                di={di}
+            />
         </div>);
 }
 
@@ -161,7 +188,7 @@ function ServerSelector({ di }) {
                 const token = atob(hosts[hostKey]?.token.split('.')[1]);
                 data = JSON.parse(token);
                 return data;
-            } catch (e) {                
+            } catch (e) {
                 return false;
             }
         };
@@ -262,8 +289,7 @@ function Secret({ di }) {
                             password: 'p@@sw@@rd@289'
                         }),
                         headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": "Bearer " + di.hosts.UNICON.token
+                            "Content-Type": "application/json"
                         },
                         callback: (res) => {
                             if (res.success) {
@@ -326,6 +352,7 @@ const Main = ({ di }) => {
     const activeColor = THEME.ACTIVE.bg;
     const inactiveColor = THEME.SECONDARY.bg;
     localStorage.removeItem("business");
+    const [searchParams, setSearchParams] = useSearchParams();
     const tabs = [
         {
             label: "Login",
@@ -350,20 +377,28 @@ const Main = ({ di }) => {
     ]
 
     return (
-        <div className="w-full h-full flex justify-center items-center bg-no-repeat bg-bottom bg-cover p-5" style={{ backgroundImage: `url(${BG})` }}>
-            <Card {...THEME.ACTIVE} style={{ margin: '0px', padding: '0px' }} className="flex flex-col justify-between items-stretched p-5" >
-                <div className="text-white flex flex-col items-start gap-5" style={{ margin: "0px", backgroundColor: THEME.SECONDARY.bg }}>
-                    <div className="flex justify-start items-center w-full gap-0 p-0" style={{ margin: "0px" }}>
-                        {tabs.map((x) => {
-                            return <div key={x.value} onClick={() => setTab(x.value)} className='py-3 px-5 m-0 rounded-md cursor-pointer'
-                                style={{ backgroundColor: tab === x.value ? activeColor : inactiveColor }}>{x.label}</div>
-                        })}
+        <div className="w-full h-full flex flex-col justify-center items-center bg-no-repeat bg-bottom bg-cover p-5 gap-5" style={{ backgroundImage: `url(${BG})` }}>
+            <div className="flex flex-col justify-center items-center gap-5 w-fit">
+                {searchParams.get('error') && (
+                    <Card {...THEME.WARNING} className="flex justify-center items-center px-5 py-3 w-full gap-5" >
+                        <p className="text-yellow-900 text-xl font-black">{searchParams.get('error')}</p>
+                        <button onClick={() => setSearchParams({})}><CgClose className="text-yellow-900" /></button>
+                    </Card>
+                )}
+                <Card {...THEME.ACTIVE} style={{ margin: '0px', padding: '0px' }} className="flex flex-col justify-between items-stretched p-5" >
+                    <div className="text-white flex flex-col items-start gap-5" style={{ margin: "0px", backgroundColor: THEME.SECONDARY.bg }}>
+                        <div className="flex justify-start items-center w-full gap-0 p-0" style={{ margin: "0px" }}>
+                            {tabs.map((x) => {
+                                return <div key={x.value} onClick={() => setTab(x.value)} className='py-3 px-5 m-0 rounded-md cursor-pointer'
+                                    style={{ backgroundColor: tab === x.value ? activeColor : inactiveColor }}>{x.label}</div>
+                            })}
+                        </div>
                     </div>
-                </div>
-                <div style={{ marginTop: "0px", borderTop: "none", backgroundColor: THEME.ACTIVE.bg }} className="min-w-256 flex items-start gap-5 p-5">
-                    {tabs.find(x => x.value === tab)?.component}
-                </div>
-            </Card>
+                    <div style={{ marginTop: "0px", borderTop: "none", backgroundColor: THEME.ACTIVE.bg }} className="min-w-256 flex items-start gap-5 p-5">
+                        {tabs.find(x => x.value === tab)?.component}
+                    </div>
+                </Card>
+            </div>
         </div>
     )
 };

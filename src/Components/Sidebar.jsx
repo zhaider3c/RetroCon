@@ -5,6 +5,9 @@ import { THEME } from '@pages/Theme';
 import { RiLogoutBoxFill } from "react-icons/ri";
 
 const Sidebar = ({ links = [], di }) => {
+
+    const SAFE_SESSION_KEYS = ['hosts', 'login_data']
+
     return (
         <Card {...THEME.SECONDARY} className='h-full w-1/6 flex flex-col gap-4 p-4 overflow-hidden'>
             <Bubble {...THEME.ACTIVE} className='text-2xl text-center' onClick={() => { }}>
@@ -36,11 +39,9 @@ const Sidebar = ({ links = [], di }) => {
                 </div>
             </div>
             <Button {...THEME.ACTIVE} onClick={() => {
+                di.clearLocalStorage();
                 di.request.get({ url: di.api.get('logout') });
-                hosts = localStorage.getItem('hosts');
-                localStorage.clear();
-                localStorage.setItem('hosts', hosts);
-                di.navigate('/');
+                // di.navigate('/');
             }} className='flex items-center justify-between px-5'>
                 <RiLogoutBoxFill className='text-3xl text-yellow-900/75' />
                 <p> Logout</p>

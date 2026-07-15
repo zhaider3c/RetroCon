@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input, Popup } from 'pixel-retroui';
 import { THEME } from './Theme';
-import { TbTriangleFilled } from "react-icons/tb";
 import toast from 'react-hot-toast';
 import { RiDeleteBinFill } from 'react-icons/ri';
+import Pagination from '@components/Paginator';
 
 
 const BG = "https://media.licdn.com/dms/image/v2/C5622AQELEjXGaw74OA/feedshare-shrink_800/feedshare-shrink_800/0/1617991168518?e=2147483647&v=beta&t=pZvDdEB_rbXUeYv_cp54DRdnTItrBywdDIqCEXtsuz4";
@@ -221,6 +221,7 @@ const Attributes = ({ attributes, setter, di, curosr }) => {
 const Main = ({ di }) => {
     const [attributes, setData] = useState([]);
     const [cursor, setCursor] = useState(false);
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
         loadClassification(di, cursor, false, setData);
@@ -228,12 +229,8 @@ const Main = ({ di }) => {
     return (
         <div style={{ backgroundImage: `url('${BG}')` }} className='flex flex-col w-full h-full flex gap-5 justify-center items-center bg-cover bg-center overflow-hidden'>
             <Attributes di={di} setter={setData} attributes={attributes?.data} cursor={cursor}></Attributes>
-            <div className='flex'>
-                <Button className={`py-2 px-5 ${attributes?.cursor?.prev ? '' : 'opacity-25'}`} {...THEME.ACTIVE} onClick={() => { setCursor(attributes.cursor.prev); }}>
-                    <TbTriangleFilled className='-rotate-90 text-yellow-900/75' /></Button>
-                <Card className='py-2 px-4' {...THEME.SECONDARY}></Card>
-                <Button className={`py-2 px-5 ${attributes?.cursor?.next ? '' : 'opacity-25'}`}{...THEME.ACTIVE} onClick={() => { setCursor(attributes.cursor.next); }}>
-                    <TbTriangleFilled className='rotate-90 text-yellow-900/75' /></Button>
+            <div className='flex justify-center'>
+                <Pagination page={page} setPage={setPage} cursor={attributes?.cursor} setNextCursor={setCursor} />
             </div>
         </div>
     );

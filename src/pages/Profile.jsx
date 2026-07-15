@@ -21,13 +21,24 @@ export default function Profile({ di }) {
             }
         });
     }, []);
+
+    const COLORS = {
+        'purple': '#541987bf',
+        'green': '#4BD933',
+    }
+
     return (
         <div className='w-full h-full flex flex-col gap-5 justify-center items-center bg-cover bg-center' style={{ backgroundImage: `url(${BG})` }}>
-            <div className='w-full h-16 flex flex-row-reverse gap-3 justify-start items-center bg-black/75 backdrop-blur-sm! text-white p-5'>
+            <div className='w-full h-16 flex flex-row-reverse gap-3 justify-start items-center backdrop-blur-sm! text-white p-5 border-b-3!'
+                style={{
+                    borderColor: COLORS.green,
+                    backgroundColor: COLORS.purple,
+                }}
+            >
                 <p className='text-xl'>{user.organisation_name}</p>
             </div>
             <div className='w-full grow'>
-        
+
             </div>
         </div >
     )

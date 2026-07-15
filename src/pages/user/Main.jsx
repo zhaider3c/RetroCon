@@ -1,23 +1,26 @@
-import { Button } from 'pixel-retroui';
-import React, { useEffect, useState } from 'react';
-import { THEME } from '@pages/Theme';
+import React, { useState } from 'react';
 import Accounts from '@pages/user/Accounts';
 import BG from '@assets/user_bg.gif';
 import Config from '@pages/user/Config';
+import PageSidebar from '@components/PageSidebar';
 
 const Nav = ({ pages, setPage, page, di }) => {
-    const [user, setUser] = useState(di.getUser());
-    return (<div className='flex flex-col gap-2 h-full bg-black/25 p-0 backdrop-blur-sm!'>
-        <p className='text-2xl border-b-2! border-white/50! text-center p-3'>{user?.name}</p>
-        <div className='flex flex-col gap-2 py-3'>
-            {
-                page && pages.map((page) => {
-                    return <Button {...(page === page ? THEME.SUCCESS : THEME.SECONDARY)} onClick={() => setPage(page)}>
-                        {page.text}
-                    </Button>;
-                })}
-        </div>
-    </div>);
+    const [user] = useState(di.getUser());
+    const sections = [{
+        items: pages.map((p) => ({
+            key: p.text,
+            label: p.text,
+            active: page.text === p.text,
+            onClick: () => setPage(p),
+        })),
+    }];
+    return (
+        <PageSidebar
+            theme="glass"
+            header={<p className='text-2xl border-b-2! border-white/50! text-center p-3'>{user?.name}</p>}
+            sections={sections}
+        />
+    );
 };
 const Main = ({ di }) => {
     const pages = [

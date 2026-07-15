@@ -14,6 +14,7 @@ export default function Main({ di, token }) {
     const [popupUser, setPopupUser] = useState(null);
     const [cursor, setCursor] = useState(null);
     const [activeCursor, setActiveCursor] = useState(null);
+    const [page, setPage] = useState(1);
 
     const UNICON_FRONTEND = 'app.local.cedcommerce.com'; // <------------------- CHANGE!!!!
 
@@ -57,7 +58,7 @@ export default function Main({ di, token }) {
                 )}
             </div>
             <div className="flex justify-center items-center w-full">
-                <Pagination cursor={cursor} setNextCursor={setActiveCursor} />
+                <Pagination page={page} setPage={setPage} cursor={cursor} setNextCursor={setActiveCursor} />
             </div>
             <div className="justify-center items-start flex w-full">
                 <div className="grid grid-cols-2 gap-3">
